@@ -1,4 +1,4 @@
-const CACHE_NAME = "hampta-mountain-body-v8";
+const CACHE_NAME = "hampta-mountain-body-v9";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,7 +9,8 @@ const ASSETS = [
   "./icons/apple-touch-icon.png",
   "./assets/duel/tarun-badge.png",
   "./assets/duel/sudhanshu-badge.png",
-  "./assets/duel/stamp-sheet.png"
+  "./assets/duel/stamp-sheet.png",
+  "./assets/splash/ios-launch-1170x2532.jpg"
 ];
 
 self.addEventListener("install", (event) => {

@@ -14,6 +14,7 @@
   <title>Hampta Mountain Body</title>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+  <link rel="apple-touch-startup-image" href="./assets/splash/ios-launch-1170x2532.jpg" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
   <link rel="preload" href="./assets/duel/tarun-badge.png" as="image" />
   <link rel="preload" href="./assets/duel/sudhanshu-badge.png" as="image" />
   <style>
@@ -803,6 +804,54 @@
     .identity-choice b { display: block; font-size: 17px; line-height: 1.15; }
     .identity-choice span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
 
+    .notify-primer {
+      position: fixed;
+      inset: 0;
+      z-index: 75;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 18px 12px calc(18px + var(--safe-bottom));
+      background: linear-gradient(180deg, rgba(2,5,4,.15), rgba(2,5,4,.78));
+    }
+    .notify-primer.active { display: flex; }
+    .notify-sheet {
+      width: min(100%, 480px);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(12,21,18,.94);
+      -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 24px 70px rgba(0,0,0,.46);
+      padding: 16px;
+      animation: sheet-rise .28s ease both;
+    }
+    .notify-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      font-size: 22px;
+      font-weight: 950;
+    }
+    .notify-sheet h2 {
+      margin: 12px 0 0;
+      font-size: 23px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+    .notify-sheet p { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .notify-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 14px; }
+    .notify-actions .btn { min-height: 50px; }
+    .notify-actions .wide { grid-column: 1 / -1; }
+    @keyframes sheet-rise {
+      from { transform: translateY(18px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
     .duel-hero {
       margin: 14px 0;
       border: 1px solid rgba(255,255,255,.1);
@@ -954,6 +1003,7 @@
       .nav-btn { font-size: 9px; }
       .week-metrics { grid-template-columns: repeat(2, 1fr); }
       .duel-cards { grid-template-columns: 1fr; }
+      .notify-actions { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -978,6 +1028,19 @@
           <img src="./assets/duel/sudhanshu-badge.png" alt="" loading="eager" decoding="async" />
           <span><b>I am Sudhanshu</b><span>Trail Contender</span></span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="notify-primer" id="notifyPrimer" role="dialog" aria-modal="true" aria-labelledby="notifyTitle">
+    <div class="notify-sheet">
+      <div class="notify-icon" aria-hidden="true">!</div>
+      <h2 id="notifyTitle">Enable trek alerts?</h2>
+      <p>Get the test alert now, then tick-mark alerts when a stage, workout, or gear item is locked. Best on the Home Screen app.</p>
+      <div class="notify-actions">
+        <button class="btn primary" id="notifyEnableNow" type="button">Enable</button>
+        <button class="btn" id="notifyTestNow" type="button">Test</button>
+        <button class="btn wide" id="notifyLater" type="button">Not now</button>
       </div>
     </div>
   </div>
@@ -1208,6 +1271,7 @@
     const PLAYER_KEY = "hampta_duel_player_v1";
     const DUEL_KEY = "hampta_duel_snapshot_v1";
     const SYNC_QUEUE_KEY = "hampta_duel_sync_queue_v1";
+    const NOTIFY_ONBOARD_KEY = "hampta_notify_onboard_v1";
     const DUEL_CODE = "HAMPTA20";
     const SUPABASE_URL = "https://spjpyeqxezijhobanclz.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwanB5ZXF4ZXppamhvYmFuY2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDI1NzQsImV4cCI6MjA5Nzg3ODU3NH0.TwE8BLeRC9CHoJKadrH56qh3RRQCX5Bg_lr5MuGc4i4";
@@ -1310,11 +1374,27 @@
       publishLocalDuelData(loadStore());
       renderAll();
       toast(`${players[id].name} profile active`);
+      window.setTimeout(() => showNotificationPrimer(true), 320);
     }
     function renderIdentityGate() {
       const gate = document.getElementById("identityGate");
       if (!gate) return;
       gate.classList.toggle("active", !selectedPlayerId());
+    }
+    function shouldShowNotificationPrimer(force = false) {
+      if (!selectedPlayerId()) return false;
+      if ("Notification" in window && Notification.permission !== "default") return false;
+      return force || localStorage.getItem(NOTIFY_ONBOARD_KEY) !== "done";
+    }
+    function showNotificationPrimer(force = false) {
+      const primer = document.getElementById("notifyPrimer");
+      if (!primer || !shouldShowNotificationPrimer(force)) return;
+      primer.classList.add("active");
+    }
+    function hideNotificationPrimer(done = false) {
+      const primer = document.getElementById("notifyPrimer");
+      if (primer) primer.classList.remove("active");
+      if (done) localStorage.setItem(NOTIFY_ONBOARD_KEY, "done");
     }
     function blankStore() {
       return { version: 2, createdAt: new Date().toISOString(), days: {}, gear: {} };
@@ -2125,7 +2205,7 @@
     }
     async function requestNotificationAccess() {
       if (!("Notification" in window)) {
-        toast("Notifications unavailable");
+        toast("Open from Home Screen for alerts");
         return;
       }
       try {
@@ -2149,7 +2229,7 @@
     async function testNotification() {
       const permission = await ensureNotificationPermission();
       if (permission !== "granted") {
-        toast("Notifications not allowed");
+        toast(permission === "unavailable" ? "Open from Home Screen for alerts" : "Notifications not allowed");
         renderDeviceStatus(loadStore());
         return;
       }
@@ -2551,6 +2631,20 @@
       document.getElementById("copyCoachReport").addEventListener("click", copyCoachReport);
       document.getElementById("shareCoachReport").addEventListener("click", shareCoachReport);
       document.getElementById("downloadCoachReport").addEventListener("click", downloadCoachReport);
+      document.getElementById("notifyEnableNow").addEventListener("click", async () => {
+        await requestNotificationAccess();
+        const state = notificationState();
+        hideNotificationPrimer(state === "granted" || state === "denied");
+      });
+      document.getElementById("notifyTestNow").addEventListener("click", async () => {
+        await testNotification();
+        const state = notificationState();
+        hideNotificationPrimer(state === "granted" || state === "denied");
+      });
+      document.getElementById("notifyLater").addEventListener("click", () => {
+        hideNotificationPrimer(true);
+        toast("Alerts skipped");
+      });
       ["kneePain", "shinPain", "energy", "soreness"].forEach((id) => {
         document.getElementById(id).addEventListener("change", saveBodyLog);
       });
@@ -2598,6 +2692,7 @@
     bindEvents();
     renderAll();
     openInitialTab();
+    window.setTimeout(showNotificationPrimer, 450);
     registerServiceWorker();
     flushSyncQueue();
   </script>

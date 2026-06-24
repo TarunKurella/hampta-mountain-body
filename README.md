@@ -55,9 +55,9 @@ After the first successful load, the service worker caches the app shell so it c
 iOS notifications work only after the deployed HTTPS app is added to the Home Screen and opened from that icon.
 
 1. Open the Home Screen app.
-2. Go to **Progress** -> **Device & Backup**.
-3. Tap **Allow**.
-4. Tap **Test notification**.
+2. Choose **I am Tarun** or **I am Sudhanshu**.
+3. Use the notification sheet that appears: tap **Enable**, then **Test**.
+4. If the sheet was skipped, go to **Progress** -> **Device & Backup** and use **Allow** / **Test notification**.
 5. After permission is granted, completed workout and gear tick marks show a local notification where iOS allows it.
 
 The service worker also listens for real push payloads from the Supabase-backed push pipeline. iOS does not allow reliable notification behavior from a normal Safari tab.
