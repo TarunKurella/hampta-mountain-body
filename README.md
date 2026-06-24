@@ -4,7 +4,7 @@ A static, iPhone-friendly PWA for the Hampta Pass prep plan from June 24 to July
 
 Live deployment:
 
-https://sweet-marshmallow-bc96f0.netlify.app
+https://hampta-mountain-body.netlify.app
 
 ## Run locally
 
