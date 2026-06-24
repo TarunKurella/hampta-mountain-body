@@ -665,6 +665,11 @@
       font: inherit;
       transition: transform .18s ease, border-color .18s ease, background .18s ease;
     }
+    .check-card.is-locked {
+      opacity: .46;
+      filter: grayscale(.28);
+    }
+    .check-card.is-locked .check-box { color: var(--soft); background: rgba(255,255,255,.035); }
     .check-card:active, .gear-item:active, .mini-btn:active, .btn:active, .nav-btn:active { transform: scale(.985); }
     .check-card.just-checked, .gear-item.just-checked { animation: check-pop .32s cubic-bezier(.2,.9,.2,1); }
     .check-box {
@@ -773,7 +778,7 @@
       z-index: 30;
       width: min(540px, calc(100vw - 18px));
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 5px;
       padding: 7px;
       border: 1px solid var(--line);
@@ -1174,9 +1179,9 @@
 
     <section id="view-today" class="view active">
       <div class="stats">
-        <div class="stat"><b>85</b><span>kg now</span></div>
-        <div class="stat"><b>3.0k</b><span>current run base</span></div>
-        <div class="stat"><b>20 Jul</b><span>trek starts</span></div>
+        <div class="stat"><b id="daysLeftStat">26</b><span>days left</span></div>
+        <div class="stat"><b id="todayTypeStat">Stairs</b><span>today's stage</span></div>
+        <div class="stat"><b id="streakStat">0</b><span>stage streak</span></div>
       </div>
 
       <div class="panel">
@@ -1225,22 +1230,6 @@
       <div id="calendarList"></div>
     </section>
 
-    <section id="view-gear" class="view">
-      <div class="panel">
-        <h2>Loadout</h2>
-        <p>Fitness helps you move. Gear decides whether rain becomes adventure or misery.</p>
-        <div id="gearList"></div>
-      </div>
-      <div class="panel">
-        <h3>Proof by July 12</h3>
-        <div class="stats">
-          <div class="stat"><b>5-6 km</b><span>walk or jog</span></div>
-          <div class="stat"><b>35-45m</b><span>controlled stairs</span></div>
-          <div class="stat"><b>90m</b><span>backpack walk</span></div>
-        </div>
-      </div>
-    </section>
-
     <section id="view-body" class="view">
       <div class="panel signal-hero">
         <div class="signal-title-row">
@@ -1264,7 +1253,6 @@
           <div class="field"><label for="stairsMinutes">Stairs minutes</label><input id="stairsMinutes" inputmode="numeric" placeholder="20" /></div>
           <div class="field"><label for="runWalkMinutes">Run/walk minutes</label><input id="runWalkMinutes" inputmode="numeric" placeholder="30" /></div>
           <div class="field"><label for="sleepHours">Sleep hours</label><input id="sleepHours" inputmode="decimal" placeholder="7" /></div>
-          <div class="field"><label for="weightKg">Bodyweight</label><input id="weightKg" inputmode="decimal" placeholder="85.0" /></div>
           <div class="field"><label for="proteinGrams">Protein grams</label><input id="proteinGrams" inputmode="numeric" placeholder="150" /></div>
           <div class="field"><label for="waterLiters">Water liters</label><input id="waterLiters" inputmode="decimal" placeholder="3.0" /></div>
           <div class="field"><label for="kneePain">Knee pain</label><select id="kneePain"><option value="green">Green: none</option><option value="yellow">Yellow: tight/heavy</option><option value="red">Red: sharp/limping</option></select></div>
@@ -1374,10 +1362,6 @@
     <button class="nav-btn" data-tab="duel" type="button" aria-label="Duel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h10l2 5-7 11L5 9l2-5Z"/><path d="M5 9h14"/><path d="m9 4 3 5 3-5"/></svg>
       Duel
-    </button>
-    <button class="nav-btn" data-tab="gear" type="button" aria-label="Gear">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 14H5L6 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
-      Loadout
     </button>
     <button class="nav-btn" data-tab="body" type="button" aria-label="Readiness">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h17"/><path d="M8 16v-5M13 16V8M18 16v-9"/></svg>
@@ -1663,7 +1647,7 @@
       if (maxStairs >= 30) stamps.push("Stair Engine");
       if (maxRunWalk >= 60) stamps.push("Time on Feet");
       if (redFlags === 0 && playerSummarySafeClears(playerId) >= 3) stamps.push("Green Week");
-      if (gearDone >= Math.ceil(gear.length * .8)) stamps.push("Loadout Locked");
+      if (gearDone >= Math.ceil(gear.length * .8)) stamps.push("Gear Ready");
       return stamps.slice(-2);
     }
     function playerSummarySafeClears(playerId) {
@@ -1700,7 +1684,7 @@
         complete: false,
         readiness: "green",
         tasks: { stairs:false, runWalk:false, gym:false, dietProtein:false, hydration:false, sleep:false, body:false },
-        metrics: { stairsMinutes:"", runWalkMinutes:"", sleepHours:"", weightKg:"", proteinGrams:"", waterLiters:"" },
+        metrics: { stairsMinutes:"", runWalkMinutes:"", sleepHours:"", proteinGrams:"", waterLiters:"" },
         signals: { kneePain:"green", shinPain:"green", energy:"green", soreness:"green", notes:"" }
       };
     }
@@ -1775,6 +1759,11 @@
     function percent(value, goal) {
       if (!goal) return 0;
       return Math.max(0, Math.min(100, Math.round((value / goal) * 100)));
+    }
+    function dateDiffDays(from, to) {
+      const start = Date.parse(`${from}T00:00:00Z`);
+      const end = Date.parse(`${to}T00:00:00Z`);
+      return Math.ceil((end - start) / 86400000);
     }
     function statusClass(value) {
       if (value === "red") return "active-red";
@@ -1878,6 +1867,13 @@
       const coinText = planText(day, state.readiness);
       const week = currentWeek(data);
       const weekStats = summarizeDays(week.days);
+      const daysLeft = Math.max(0, dateDiffDays(todayISO(), TREK_START));
+      const daysLeftStat = document.getElementById("daysLeftStat");
+      const todayTypeStat = document.getElementById("todayTypeStat");
+      const streakStat = document.getElementById("streakStat");
+      if (daysLeftStat) daysLeftStat.textContent = String(daysLeft);
+      if (todayTypeStat) todayTypeStat.textContent = badge[0];
+      if (streakStat) streakStat.textContent = String(streakCount(data));
       document.getElementById("todayCard").innerHTML = `
         <div class="date-line">
           <span class="badge ${badge[1]}">${badge[0]}</span>
@@ -1908,6 +1904,7 @@
       });
       document.getElementById("startCoin").addEventListener("click", () => {
         saveDay(day.date, (entry) => { entry.started = true; });
+        renderAll();
         toast("Stage started");
       });
       document.getElementById("doneCoin").addEventListener("click", () => toggleStageComplete(day.date));
@@ -1915,14 +1912,23 @@
     }
     function renderQuickChecks(data, day, state) {
       const wrap = document.getElementById("quickChecks");
+      const locked = !state.started && !state.complete;
+      document.getElementById("quickLockNote")?.remove();
       wrap.innerHTML = quickChecks.map(([id, title, meta]) => `
-        <button class="check-card ${state.tasks[id] ? "is-done" : ""}" data-check="${id}" type="button">
-          <span class="check-box">${state.tasks[id] ? "OK" : ""}</span>
+        <button class="check-card ${state.tasks[id] ? "is-done" : ""} ${locked ? "is-locked" : ""}" data-check="${id}" type="button" ${locked ? "disabled" : ""}>
+          <span class="check-box">${state.tasks[id] ? "OK" : locked ? "—" : ""}</span>
           <span><span class="check-title">${title}</span><span class="check-meta">${meta}</span></span>
         </button>
       `).join("");
+      if (locked) {
+        wrap.insertAdjacentHTML("beforebegin", `<p class="small" id="quickLockNote">Start the stage first. Then the checklist unlocks.</p>`);
+      }
       wrap.querySelectorAll(".check-card").forEach((button) => {
         button.addEventListener("click", () => {
+          if (button.disabled) {
+            toast("Start stage first");
+            return;
+          }
           button.classList.add("just-checked");
           toggleQuick(day.date, button.dataset.check);
         });
@@ -2118,7 +2124,6 @@
       setValue("stairsMinutes", day.metrics.stairsMinutes);
       setValue("runWalkMinutes", day.metrics.runWalkMinutes);
       setValue("sleepHours", day.metrics.sleepHours);
-      setValue("weightKg", day.metrics.weightKg);
       setValue("proteinGrams", day.metrics.proteinGrams);
       setValue("waterLiters", day.metrics.waterLiters);
       setValue("kneePain", day.signals.kneePain);
@@ -2174,7 +2179,6 @@
         day.metrics.stairsMinutes = document.getElementById("stairsMinutes").value.trim();
         day.metrics.runWalkMinutes = document.getElementById("runWalkMinutes").value.trim();
         day.metrics.sleepHours = document.getElementById("sleepHours").value.trim();
-        day.metrics.weightKg = document.getElementById("weightKg").value.trim();
         day.metrics.proteinGrams = document.getElementById("proteinGrams").value.trim();
         day.metrics.waterLiters = document.getElementById("waterLiters").value.trim();
         day.signals.kneePain = document.getElementById("kneePain").value;
@@ -2849,7 +2853,6 @@
       renderToday();
       renderDuel();
       renderCalendar();
-      renderGear();
       renderBodyForm();
       renderProgress();
     }
@@ -2926,7 +2929,7 @@
     }
     function openInitialTab() {
       const tab = new URLSearchParams(location.search).get("tab");
-      if (["today", "duel", "calendar", "gear", "body", "backup"].includes(tab)) showTab(tab);
+      if (["today", "duel", "calendar", "body", "backup"].includes(tab)) showTab(tab);
     }
 
     setupRain();
