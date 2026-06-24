@@ -1185,6 +1185,7 @@
     const DUEL_CODE = "HAMPTA20";
     const SUPABASE_URL = "";
     const SUPABASE_ANON_KEY = "";
+    const VAPID_PUBLIC_KEY = "";
     let wakeLockSentinel = null;
     let wakeLockWanted = false;
 
@@ -2074,6 +2075,7 @@
       try {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
+          await registerPushSubscription();
           updateAppBadge(loadStore());
           toast("Notifications allowed");
         } else {
@@ -2083,6 +2085,47 @@
       } catch (err) {
         toast("Permission blocked");
       }
+    }
+    async function registerPushSubscription() {
+      const player = currentPlayer();
+      if (!player || !supabaseReady() || !VAPID_PUBLIC_KEY || !("serviceWorker" in navigator) || !("PushManager" in window)) return;
+      const registration = await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+      }
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/register-push`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "apikey": SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify({
+          duelCode: DUEL_CODE,
+          playerId: player.id,
+          subscription: subscription.toJSON(),
+          preferences: {
+            morning: true,
+            evening: true,
+            friendCleared: true,
+            rivalry: true,
+            safety: true
+          }
+        })
+      });
+      if (!response.ok) throw new Error("Push registration failed");
+    }
+    function urlBase64ToUint8Array(base64String) {
+      const padding = "=".repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+      const rawData = atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+      for (let i = 0; i < rawData.length; i += 1) outputArray[i] = rawData.charCodeAt(i);
+      return outputArray;
     }
     async function toggleWakeLock() {
       if (!("wakeLock" in navigator)) {

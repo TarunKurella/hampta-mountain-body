@@ -92,8 +92,8 @@ The app works without Supabase. To enable cross-device sync and future push noti
 
 1. Create a Supabase project.
 2. Run `supabase/schema.sql`.
-3. Implement the `duel-sync` Edge Function described in `supabase/README.md`.
-4. Fill `SUPABASE_URL` and `SUPABASE_ANON_KEY` constants in `index.html`.
+3. Deploy the `duel-sync` and `register-push` Edge Functions under `supabase/functions`.
+4. Fill `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `VAPID_PUBLIC_KEY` constants in `index.html`.
 
 The static client never uses a service-role key.
 
