@@ -50,7 +50,7 @@ After the first successful load, the service worker caches the app shell so it c
 
 ## Backup and restore
 
-Use the Backup tab:
+Use the Progress tab:
 
 - **Export JSON** downloads your progress.
 - **Import JSON** restores a previous export.

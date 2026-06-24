@@ -346,6 +346,20 @@
     }
     .ring b { position: relative; font-size: 25px; line-height: 1; }
     .ring span { position: relative; color: var(--muted); font-size: 11px; margin-left: 2px; }
+    .bar {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .bar-fill {
+      width: calc(var(--pct, 0) * 1%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      transition: width .25s ease;
+    }
 
     .readiness {
       display: grid;
@@ -630,7 +644,7 @@
 
     <section id="view-body" class="view">
       <div class="panel">
-        <h2>Body readiness</h2>
+        <h2>Readiness</h2>
         <p>Track only what changes the decision: green, yellow, or red.</p>
         <div class="fields" id="bodyFields">
           <div class="field"><label for="stairsMinutes">Stairs minutes</label><input id="stairsMinutes" inputmode="numeric" placeholder="20" /></div>
@@ -644,7 +658,7 @@
           <div class="field full"><label for="notes">Notes</label><textarea id="notes" placeholder="What felt hard? What should I adjust?"></textarea></div>
         </div>
         <div class="actions">
-          <button class="btn primary full" id="saveBody" type="button">Save body log</button>
+          <button class="btn primary full" id="saveBody" type="button">Save readiness</button>
         </div>
       </div>
 
@@ -666,6 +680,12 @@
     </section>
 
     <section id="view-backup" class="view">
+      <div class="panel">
+        <h2>Progress</h2>
+        <p id="progressSummary">Mountain coins and prep checks saved on this iPhone.</p>
+        <div class="bar" aria-hidden="true"><div class="bar-fill" id="progressBar" style="--pct:0"></div></div>
+      </div>
+
       <div class="panel">
         <h2>Backup</h2>
         <p>Progress is stored on this device with localStorage. Export before switching phones, clearing Safari data, or reinstalling.</p>
@@ -706,13 +726,13 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 14H5L6 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
       Gear
     </button>
-    <button class="nav-btn" data-tab="body" type="button" aria-label="Body">
+    <button class="nav-btn" data-tab="body" type="button" aria-label="Readiness">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h17"/><path d="M8 16v-5M13 16V8M18 16v-9"/></svg>
-      Body
+      Ready
     </button>
-    <button class="nav-btn" data-tab="backup" type="button" aria-label="Backup">
+    <button class="nav-btn" data-tab="backup" type="button" aria-label="Progress and backup">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-      Backup
+      Progress
     </button>
   </nav>
 
@@ -773,7 +793,7 @@
       ["gym", "Gym done", "no leg failure"],
       ["dietProtein", "Protein done", "140-160 g target"],
       ["sleep", "Sleep done", "recovery banked"],
-      ["body", "Body signals", "pain checked"]
+      ["body", "Readiness", "pain checked"]
     ];
 
     function blankStore() {
@@ -1063,7 +1083,7 @@
         day.tasks.body = true;
         updateReadinessFromSignals(day);
       });
-      toast("Body log saved");
+      toast("Readiness saved");
     }
     function updateReadinessFromSignals(day) {
       const values = [day.signals.kneePain, day.signals.shinPain, day.signals.energy, day.signals.soreness];
@@ -1081,6 +1101,10 @@
       const pct = Math.round(((dayDone + taskDone + gearDone) / total) * 100);
       document.getElementById("progressRing").style.setProperty("--pct", pct);
       document.getElementById("pctText").textContent = pct;
+      const progressBar = document.getElementById("progressBar");
+      const progressSummary = document.getElementById("progressSummary");
+      if (progressBar) progressBar.style.setProperty("--pct", pct);
+      if (progressSummary) progressSummary.textContent = `${dayDone}/${plan.length} mountain coins, ${gearDone}/${gear.length} gear checks, ${pct}% total prep saved.`;
     }
 
     function showTab(tab) {
