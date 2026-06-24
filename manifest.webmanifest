@@ -3,13 +3,40 @@
   "short_name": "Hampta",
   "description": "Daily Hampta Pass trek preparation tracker.",
   "id": "./",
-  "start_url": "./index.html",
+  "start_url": "./index.html?source=pwa",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#06100e",
   "theme_color": "#07110f",
+  "lang": "en-IN",
+  "dir": "ltr",
   "categories": ["health", "fitness", "productivity"],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Today",
+      "short_name": "Today",
+      "description": "Open today's mountain coin.",
+      "url": "./index.html?tab=today",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Readiness",
+      "short_name": "Ready",
+      "description": "Log pain, sleep, energy, and effort.",
+      "url": "./index.html?tab=body",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Progress",
+      "short_name": "Progress",
+      "description": "Review weekly trek-readiness signals.",
+      "url": "./index.html?tab=backup",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
   "icons": [
     {
       "src": "./icons/icon-192.png",

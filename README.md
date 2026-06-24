@@ -77,4 +77,5 @@ The app tracks only decision-changing trek-prep signals:
 - Progress is stored in Safari/Home Screen app storage on that device only.
 - Clearing Safari website data, using private browsing, or not using the app for a long time can remove local data.
 - Export JSON backups before switching phones, clearing browser data, or reinstalling.
-- Web Share, Clipboard, Home Screen display mode, and App Badge are feature-detected. iOS availability varies by Safari/PWA version, so the app always falls back to copy/download/export.
+- Web Share, Clipboard, Home Screen display mode, App Badge, Wake Lock, Storage persistence, service worker updates, online/offline state, and notification permission are feature-detected. iOS availability varies by Safari/PWA version, so the app always falls back to copy/download/export.
+- Web Push notifications on iOS require a Home Screen web app plus a real push backend. This app has no backend, so it does not pretend to schedule local reminders.

@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#07110f" />
+  <meta name="theme-color" content="#07110f" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f4f2ea" media="(prefers-color-scheme: light)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -12,28 +13,30 @@
   <meta name="description" content="Hampta Pass trek preparation tracker for stairs, running, gym, diet, sleep, gear, body readiness, and taper." />
   <title>Hampta Mountain Body</title>
   <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
   <style>
     :root {
       color-scheme: dark;
-      --bg: #06100e;
-      --bg-2: #0a1714;
-      --panel: rgba(255,255,255,.075);
-      --panel-2: rgba(255,255,255,.11);
-      --line: rgba(255,255,255,.15);
-      --text: #f1fbf6;
-      --muted: rgba(241,251,246,.72);
-      --soft: rgba(241,251,246,.52);
-      --green: #66f2a8;
-      --mint: #9df9ce;
+      --bg: #07110f;
+      --bg-2: #0d1714;
+      --sheet: rgba(20,31,28,.82);
+      --sheet-2: rgba(31,45,40,.74);
+      --panel: rgba(255,255,255,.07);
+      --panel-2: rgba(255,255,255,.1);
+      --line: rgba(255,255,255,.12);
+      --text: #f7fbf7;
+      --muted: rgba(247,251,247,.68);
+      --soft: rgba(247,251,247,.48);
+      --green: #5ee28f;
+      --mint: #a9f0c8;
       --gold: #ffd36e;
       --orange: #ff9d66;
       --red: #ff6475;
-      --blue: #8cc8ff;
-      --violet: #c7a7ff;
+      --blue: #7db7ff;
+      --steel: #9ba7a0;
       --ink: #03100c;
-      --radius: 22px;
-      --shadow: 0 22px 70px rgba(0,0,0,.38);
+      --radius: 18px;
+      --shadow: 0 18px 48px rgba(0,0,0,.34);
       --safe-top: env(safe-area-inset-top);
       --safe-bottom: env(safe-area-inset-bottom);
       --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, system-ui, sans-serif;
@@ -48,9 +51,8 @@
       font-family: var(--font);
       color: var(--text);
       background:
-        radial-gradient(circle at 18% 4%, rgba(102,242,168,.24), transparent 30%),
-        radial-gradient(circle at 86% 8%, rgba(140,200,255,.16), transparent 28%),
-        linear-gradient(180deg, #06100e 0%, #081612 46%, #030706 100%);
+        linear-gradient(180deg, rgba(95,116,102,.12), transparent 36%),
+        linear-gradient(180deg, #07110f 0%, #0b1512 52%, #030706 100%);
     }
     body::before {
       content: "";
@@ -58,10 +60,8 @@
       inset: 0;
       z-index: -3;
       pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-      background-size: 38px 38px;
+      background-image: linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 1px 7px;
       mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,.08));
     }
     .skyline {
@@ -70,11 +70,11 @@
       height: 48svh;
       z-index: -2;
       pointer-events: none;
-      opacity: .9;
+      opacity: .72;
       background:
-        linear-gradient(145deg, transparent 42%, rgba(102,242,168,.09) 43% 45%, transparent 46%) 0 38% / 54% 64% no-repeat,
-        linear-gradient(215deg, transparent 40%, rgba(140,200,255,.08) 41% 44%, transparent 45%) 100% 22% / 62% 78% no-repeat,
-        linear-gradient(155deg, transparent 36%, rgba(255,255,255,.08) 37% 38%, transparent 39%) 46% 48% / 72% 70% no-repeat,
+        linear-gradient(145deg, transparent 42%, rgba(94,226,143,.08) 43% 45%, transparent 46%) 0 38% / 54% 64% no-repeat,
+        linear-gradient(215deg, transparent 40%, rgba(125,183,255,.06) 41% 44%, transparent 45%) 100% 22% / 62% 78% no-repeat,
+        linear-gradient(155deg, transparent 36%, rgba(255,255,255,.07) 37% 38%, transparent 39%) 46% 48% / 72% 70% no-repeat,
         linear-gradient(180deg, transparent, rgba(0,0,0,.48));
     }
     .rain {
@@ -83,7 +83,7 @@
       z-index: -1;
       pointer-events: none;
       overflow: hidden;
-      opacity: .36;
+      opacity: .16;
     }
     .rain i {
       position: absolute;
@@ -99,9 +99,9 @@
     }
 
     .app {
-      width: min(100%, 560px);
+      width: min(100%, 520px);
       margin: 0 auto;
-      padding: calc(10px + var(--safe-top)) 14px calc(94px + var(--safe-bottom));
+      padding: calc(8px + var(--safe-top)) 12px calc(94px + var(--safe-bottom));
     }
     .topbar {
       position: sticky;
@@ -110,29 +110,31 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px;
+      padding: 8px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: rgba(3,7,6,.72);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 14px 45px rgba(0,0,0,.28);
+      background: rgba(9,16,14,.78);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 12px 34px rgba(0,0,0,.28);
     }
     .logo {
       flex: 0 0 auto;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: conic-gradient(from 210deg, var(--green), var(--blue), var(--violet), var(--gold), var(--green));
-      box-shadow: 0 0 28px rgba(102,242,168,.34);
+      width: 36px;
+      height: 36px;
+      border-radius: 13px;
+      background: linear-gradient(145deg, #20342e, #07110f);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), 0 10px 22px rgba(0,0,0,.28);
       position: relative;
     }
     .logo::after {
       content: "";
       position: absolute;
-      inset: 8px;
-      border-radius: 50%;
-      background: var(--bg);
-      box-shadow: inset 0 0 14px rgba(255,255,255,.1);
+      inset: 9px 8px 8px;
+      border-radius: 3px;
+      background:
+        linear-gradient(135deg, transparent 46%, rgba(94,226,143,.9) 47% 54%, transparent 55%),
+        linear-gradient(225deg, transparent 42%, rgba(247,251,247,.78) 43% 49%, transparent 50%);
+      box-shadow: none;
     }
     .head-text { min-width: 0; flex: 1; }
     .head-text h1 {
@@ -165,38 +167,37 @@
     }
 
     .mission {
-      margin: 16px 0 12px;
-      padding: 18px;
+      margin: 14px 0 12px;
+      padding: 18px 16px;
       overflow: hidden;
       position: relative;
-      border: 1px solid var(--line);
-      border-radius: 30px;
-      background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.055));
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(29,43,39,.9), rgba(12,22,19,.84));
       box-shadow: var(--shadow);
     }
     .mission::before {
       content: "";
       position: absolute;
-      inset: -20% -20% auto;
-      height: 160px;
-      background: radial-gradient(circle, rgba(102,242,168,.14), transparent 62%);
-      animation: glow 8s ease-in-out infinite alternate;
+      inset: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green), var(--gold), var(--blue));
+      opacity: .9;
     }
-    @keyframes glow { to { transform: translate3d(8%, 6%, 0) scale(1.04); } }
     .mission h2 {
       position: relative;
       margin: 0;
-      max-width: 12ch;
-      font-size: 34px;
-      line-height: .98;
+      max-width: 15ch;
+      font-size: 30px;
+      line-height: 1.02;
       letter-spacing: 0;
     }
     .mission p {
       position: relative;
-      margin: 12px 0 0;
+      margin: 10px 0 0;
       color: var(--muted);
-      font-size: 14px;
-      line-height: 1.45;
+      font-size: 13px;
+      line-height: 1.38;
     }
     .accent { color: var(--green); }
 
@@ -209,12 +210,12 @@
 
     .panel {
       margin: 12px 0;
-      padding: 15px;
+      padding: 14px;
       border: 1px solid var(--line);
-      border-radius: 26px;
-      background: var(--panel);
-      box-shadow: 0 14px 40px rgba(0,0,0,.2);
-      backdrop-filter: blur(12px);
+      border-radius: 22px;
+      background: var(--sheet);
+      box-shadow: 0 10px 28px rgba(0,0,0,.18);
+      backdrop-filter: blur(18px);
     }
     .panel.tight { padding: 12px; }
     .panel h3, .panel h2 {
@@ -222,13 +223,13 @@
       letter-spacing: 0;
       line-height: 1.12;
     }
-    .panel h2 { font-size: 24px; }
-    .panel h3 { font-size: 18px; }
+    .panel h2 { font-size: 21px; }
+    .panel h3 { font-size: 17px; }
     .panel p {
       margin: 8px 0;
       color: var(--muted);
-      font-size: 14px;
-      line-height: 1.48;
+      font-size: 13px;
+      line-height: 1.42;
     }
     .small { color: var(--soft); font-size: 12px; line-height: 1.35; }
     .divider { height: 1px; margin: 13px 0; background: rgba(255,255,255,.09); }
@@ -239,21 +240,21 @@
       margin: 12px 0;
     }
     .stat {
-      min-height: 78px;
+      min-height: 72px;
       border: 1px solid var(--line);
-      border-radius: 21px;
-      background: rgba(255,255,255,.07);
-      padding: 12px;
+      border-radius: 18px;
+      background: var(--sheet-2);
+      padding: 11px;
     }
     .stat b { display: block; font-size: 22px; line-height: 1; letter-spacing: 0; }
     .stat span { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.2; }
 
     .today-card {
-      border: 1px solid rgba(102,242,168,.3);
-      border-radius: 28px;
-      background: linear-gradient(145deg, rgba(102,242,168,.14), rgba(255,255,255,.06));
+      border: 1px solid rgba(94,226,143,.3);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(29,52,43,.94), rgba(12,23,20,.9));
       padding: 16px;
-      box-shadow: 0 18px 52px rgba(0,0,0,.26);
+      box-shadow: 0 14px 38px rgba(0,0,0,.28);
     }
     .date-line {
       display: flex;
@@ -264,20 +265,20 @@
       font-size: 12px;
       font-weight: 850;
       text-transform: uppercase;
-      letter-spacing: .08em;
+      letter-spacing: .06em;
     }
     .badge {
       display: inline-flex;
       align-items: center;
       min-height: 28px;
       border: 1px solid rgba(102,242,168,.26);
-      border-radius: 10px;
+      border-radius: 9px;
       background: rgba(102,242,168,.16);
       color: var(--green);
       padding: 5px 8px;
       font-size: 11px;
       font-weight: 850;
-      letter-spacing: .05em;
+      letter-spacing: .04em;
       text-transform: uppercase;
     }
     .badge.gold { border-color: rgba(255,211,110,.28); background: rgba(255,211,110,.14); color: var(--gold); }
@@ -285,7 +286,7 @@
     .badge.blue { border-color: rgba(140,200,255,.3); background: rgba(140,200,255,.13); color: var(--blue); }
     .coin-title {
       margin: 12px 0 6px;
-      font-size: 24px;
+      font-size: 23px;
       line-height: 1.08;
       letter-spacing: 0;
     }
@@ -301,21 +302,21 @@
       appearance: none;
       min-height: 48px;
       border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255,255,255,.08);
+      border-radius: 15px;
+      background: rgba(255,255,255,.07);
       color: var(--text);
       padding: 0 13px;
       font: inherit;
       font-size: 13px;
-      font-weight: 850;
+      font-weight: 760;
       cursor: pointer;
       touch-action: manipulation;
     }
     .btn.primary {
       border: 0;
       color: var(--ink);
-      background: linear-gradient(135deg, rgba(102,242,168,.96), rgba(140,200,255,.8));
-      box-shadow: 0 10px 28px rgba(102,242,168,.16);
+      background: linear-gradient(180deg, rgba(94,226,143,.98), rgba(82,196,129,.92));
+      box-shadow: 0 10px 24px rgba(94,226,143,.16);
     }
     .btn.warn { border-color: rgba(255,100,117,.42); background: rgba(255,100,117,.12); }
     .btn.full { grid-column: 1 / -1; }
@@ -481,6 +482,57 @@
       color: var(--muted);
     }
     .ios-api-list b { color: var(--text); }
+    .device-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .device-tile {
+      min-height: 74px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 11px;
+      background: var(--sheet-2);
+    }
+    .device-tile b {
+      display: block;
+      font-size: 14px;
+      line-height: 1.15;
+    }
+    .device-tile span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+    .system-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 58px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 11px 0;
+    }
+    .system-row:first-child { border-top: 0; padding-top: 0; }
+    .system-row:last-child { padding-bottom: 0; }
+    .system-row b { display: block; font-size: 14px; line-height: 1.2; }
+    .system-row span { display: block; margin-top: 3px; color: var(--soft); font-size: 11px; line-height: 1.25; }
+    .mini-btn {
+      min-width: 82px;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      padding: 0 12px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .mini-btn.primary { border: 0; color: var(--ink); background: var(--green); }
 
     .readiness {
       display: grid;
@@ -681,7 +733,7 @@
       .ring-wrap { grid-template-columns: 96px 1fr; }
       .ring { width: 96px; height: 96px; }
       .stats { grid-template-columns: 1fr 1fr; }
-      .quick-grid, .fields, .insight-grid { grid-template-columns: 1fr; }
+      .quick-grid, .fields, .insight-grid, .device-grid { grid-template-columns: 1fr; }
       .actions { grid-template-columns: 1fr; }
       .nav-btn { font-size: 9px; }
       .week-metrics { grid-template-columns: repeat(2, 1fr); }
@@ -707,8 +759,8 @@
     </header>
 
     <section class="mission">
-      <h2>Convert gym body into <span class="accent">mountain body.</span></h2>
-      <p>A precision 26-day conversion: stairs, time on feet, calm breathing, recovery, gear, and taper.</p>
+      <h2>Gym body to <span class="accent">mountain body.</span></h2>
+      <p>One coin today. Stairs, easy engine, recovery, gear, taper.</p>
     </section>
 
     <section id="view-today" class="view active">
@@ -723,7 +775,7 @@
           <div class="ring" id="progressRing" style="--pct:0"><b id="pctText">0</b><span>%</span></div>
           <div>
             <h3>Mountain coins</h3>
-            <p>Open app. Do today card. Mark done. No morning redesign, no catch-up debt.</p>
+            <p>Open. Decide Green, Yellow, or Red. Execute. Close.</p>
           </div>
         </div>
       </div>
@@ -850,9 +902,11 @@
       </div>
 
       <div class="panel">
-        <h2>Install on iPhone</h2>
-        <p>Open the deployed HTTPS link in Safari. Tap Share, then Add to Home Screen. Launch from the icon after first load for the app-like view.</p>
-        <p class="small">iOS supports offline PWAs after the first successful load. Safari may remove localStorage for sites you do not use for a long time, so keep JSON backups.</p>
+        <h2>Device</h2>
+        <p>Use what iOS gives a Home Screen web app. No fake native promises.</p>
+        <div class="device-grid" id="deviceGrid"></div>
+        <div class="divider"></div>
+        <div id="deviceActions"></div>
         <div class="ios-api-list" id="iosApiStatus"></div>
       </div>
 
@@ -897,6 +951,8 @@
     const TREK_START = "2026-07-20";
     const STORE_KEY = "hampta_mountain_body_v2";
     const LEGACY_KEY = "hampta_ios_pwa_v1";
+    let wakeLockSentinel = null;
+    let wakeLockWanted = false;
 
     const plan = [
       { date:"2026-06-24", dow:"Wed", label:"Day 1", type:"stairs", title:"Stair Coin A", workout:"20 min steady stairs. No backpack. Walk down slowly.", yellow:"10-12 min easy stairs or 20 min flat walk.", red:"Recovery only: 10 min easy walk, mobility, early sleep.", note:"Start calm. This is not catch-up debt." },
@@ -1380,7 +1436,7 @@
       renderTrainingSignal(data);
       renderProofGoals(data);
       renderWeekSummary(data);
-      renderIosApiStatus(data);
+      renderDeviceStatus(data);
       updateAppBadge(data);
     }
     function renderTrainingSignal(data) {
@@ -1445,18 +1501,158 @@
         `;
       }).join("");
     }
-    function renderIosApiStatus(data) {
+    async function renderDeviceStatus(data) {
+      renderDeviceActions();
       const wrap = document.getElementById("iosApiStatus");
+      const grid = document.getElementById("deviceGrid");
       if (!wrap) return;
       const standalone = window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+      const storage = await storageSummary();
+      const swControlled = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
+      if (grid) {
+        grid.innerHTML = [
+          ["Mode", standalone ? "Home Screen app" : "Safari tab"],
+          ["Network", navigator.onLine ? "Online" : "Offline-ready"],
+          ["Storage", storage],
+          ["Badge", navigator.setAppBadge ? "Available" : "Not exposed"]
+        ].map(([title, detail]) => `<div class="device-tile"><b>${escapeHtml(title)}</b><span>${escapeHtml(detail)}</span></div>`).join("");
+      }
       const items = [
-        ["Install state", standalone ? "Running as Home Screen app." : "Open in Safari, Share, Add to Home Screen."],
-        ["Offline shell", "Service worker caches the app after first HTTPS load."],
-        ["Share API", navigator.share ? "Available for coach report sharing." : "Not available here; copy/download still works."],
-        ["Clipboard", navigator.clipboard ? "Available for one-tap LLM report copy." : "Not available here; use Download report."],
-        ["App badge", navigator.setAppBadge ? "Supported by this browser; badge reflects days left." : "Not supported here; app still works."]
+        ["Install", standalone ? "Standalone shell active." : "Safari: Share -> Add to Home Screen."],
+        ["Offline", swControlled ? "Service worker controlling this launch." : "Service worker will control after reload/first HTTPS launch."],
+        ["Share", navigator.share ? "Native share sheet available." : "Share unavailable; download/copy works."],
+        ["Clipboard", navigator.clipboard ? "Copy report available." : "Clipboard blocked; download works."],
+        ["Notifications", "Notification permission: " + notificationState() + ". Push reminders need a backend, so this app does not fake them."],
+        ["Wake Lock", ("wakeLock" in navigator) ? "Workout screen can stay awake while app is open." : "Not available in this browser."],
+        ["Storage", navigator.storage && navigator.storage.persist ? "Persistent storage can be requested." : "Storage persistence API unavailable."]
       ];
       wrap.innerHTML = items.map(([title, detail]) => `<div><b>${escapeHtml(title)}:</b> ${escapeHtml(detail)}</div>`).join("");
+    }
+    function renderDeviceActions() {
+      const wrap = document.getElementById("deviceActions");
+      if (!wrap) return;
+      wrap.innerHTML = `
+        <div class="system-row">
+          <span><b>Notification permission</b><span>Allows iOS badge/push permission path after Home Screen install.</span></span>
+          <button class="mini-btn" id="requestNotify" type="button">Allow</button>
+        </div>
+        <div class="system-row">
+          <span><b>Workout wake lock</b><span>Keep screen awake while logging stairs or walking.</span></span>
+          <button class="mini-btn" id="toggleWakeLock" type="button">${wakeLockSentinel ? "On" : "Start"}</button>
+        </div>
+        <div class="system-row">
+          <span><b>Storage protection</b><span>Ask browser to avoid evicting local trek logs.</span></span>
+          <button class="mini-btn" id="persistStorage" type="button">Protect</button>
+        </div>
+        <div class="system-row">
+          <span><b>App badge</b><span>Set badge to days left, or clear it.</span></span>
+          <button class="mini-btn" id="clearBadge" type="button">Clear</button>
+        </div>
+        <div class="system-row">
+          <span><b>Fresh app shell</b><span>Ask service worker for latest deployed files.</span></span>
+          <button class="mini-btn primary" id="refreshApp" type="button">Update</button>
+        </div>
+      `;
+      bindDeviceAction("requestNotify", requestNotificationAccess);
+      bindDeviceAction("toggleWakeLock", toggleWakeLock);
+      bindDeviceAction("persistStorage", persistStorage);
+      bindDeviceAction("clearBadge", clearAppBadge);
+      bindDeviceAction("refreshApp", refreshAppShell);
+    }
+    function bindDeviceAction(id, handler) {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("click", handler);
+    }
+    function notificationState() {
+      return "Notification" in window ? Notification.permission : "unavailable";
+    }
+    async function storageSummary() {
+      if (!navigator.storage || !navigator.storage.estimate) return "Local only";
+      try {
+        const estimate = await navigator.storage.estimate();
+        const used = estimate.usage ? Math.round(estimate.usage / 1024) : 0;
+        const quota = estimate.quota ? Math.round(estimate.quota / 1024 / 1024) : 0;
+        return quota ? `${used} KB / ${quota} MB` : `${used} KB used`;
+      } catch (err) {
+        return "Local only";
+      }
+    }
+    async function requestNotificationAccess() {
+      if (!("Notification" in window)) {
+        toast("Notifications unavailable");
+        return;
+      }
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          updateAppBadge(loadStore());
+          toast("Notifications allowed");
+        } else {
+          toast("Notifications not allowed");
+        }
+        renderDeviceStatus(loadStore());
+      } catch (err) {
+        toast("Permission blocked");
+      }
+    }
+    async function toggleWakeLock() {
+      if (!("wakeLock" in navigator)) {
+        toast("Wake Lock unavailable");
+        return;
+      }
+      try {
+        if (wakeLockSentinel) {
+          wakeLockWanted = false;
+          await wakeLockSentinel.release();
+          wakeLockSentinel = null;
+          toast("Wake lock off");
+        } else {
+          wakeLockWanted = true;
+          wakeLockSentinel = await navigator.wakeLock.request("screen");
+          wakeLockSentinel.addEventListener("release", () => {
+            wakeLockSentinel = null;
+            renderDeviceStatus(loadStore());
+          });
+          toast("Screen will stay awake");
+        }
+        renderDeviceStatus(loadStore());
+      } catch (err) {
+        toast("Wake Lock blocked");
+      }
+    }
+    async function clearAppBadge() {
+      try {
+        if (navigator.clearAppBadge) await navigator.clearAppBadge();
+        else if (navigator.setAppBadge) await navigator.setAppBadge(0);
+        toast("Badge cleared");
+      } catch (err) {
+        toast("Badge unavailable");
+      }
+    }
+    async function persistStorage() {
+      if (!navigator.storage || !navigator.storage.persist) {
+        toast("Storage protection unavailable");
+        return;
+      }
+      try {
+        const granted = await navigator.storage.persist();
+        toast(granted ? "Storage protected" : "Browser declined");
+        renderDeviceStatus(loadStore());
+      } catch (err) {
+        toast("Storage request blocked");
+      }
+    }
+    async function refreshAppShell() {
+      try {
+        if (navigator.serviceWorker) {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration) await registration.update();
+        }
+        toast("Refreshing app");
+        setTimeout(() => location.reload(), 500);
+      } catch (err) {
+        location.reload();
+      }
     }
 
     function showTab(tab) {
@@ -1652,17 +1848,49 @@
       ["kneePain", "shinPain", "energy", "soreness"].forEach((id) => {
         document.getElementById(id).addEventListener("change", saveBodyLog);
       });
+      window.addEventListener("online", () => {
+        toast("Back online");
+        renderProgress();
+      });
+      window.addEventListener("offline", () => {
+        toast("Offline mode");
+        renderProgress();
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          updateAppBadge(loadStore());
+          if (wakeLockWanted && !wakeLockSentinel && "wakeLock" in navigator) {
+            navigator.wakeLock.request("screen")
+              .then((sentinel) => {
+                wakeLockSentinel = sentinel;
+                wakeLockSentinel.addEventListener("release", () => {
+                  wakeLockSentinel = null;
+                  renderDeviceStatus(loadStore());
+                });
+                renderDeviceStatus(loadStore());
+              })
+              .catch(() => {});
+          }
+        }
+      });
     }
     function registerServiceWorker() {
       if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+        navigator.serviceWorker.register("./service-worker.js")
+          .then((registration) => registration.update())
+          .catch(() => {});
       });
+    }
+    function openInitialTab() {
+      const tab = new URLSearchParams(location.search).get("tab");
+      if (["today", "calendar", "gear", "body", "backup"].includes(tab)) showTab(tab);
     }
 
     setupRain();
     bindEvents();
     renderAll();
+    openInitialTab();
     registerServiceWorker();
   </script>
 </body>
