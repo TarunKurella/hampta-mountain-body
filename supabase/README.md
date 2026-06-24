@@ -22,11 +22,13 @@ npx supabase db push
    - `duel-sync`
    - `register-push`
    - `send-reminders`
+   - `duel-event`
 
 ```sh
 npx supabase functions deploy duel-sync
 npx supabase functions deploy register-push
 npx supabase functions deploy send-reminders
+npx supabase functions deploy duel-event
 ```
 
 5. Set secrets for the Edge Functions:
@@ -135,3 +137,5 @@ The PWA can request permission and store a push subscription. `send-reminders` s
 - night summary: `22:00 Asia/Kolkata` / `16:30 UTC`
 
 Supabase Cron invokes `send-reminders` with `pg_cron` + `pg_net`. The cron migration reads `project_url` and `service_role_key` from Supabase Vault, so private keys are not committed. Keep `VAPID_PRIVATE_KEY`, `VAPID_PUBLIC_KEY`, and `VAPID_SUBJECT` as Edge Function secrets.
+
+`duel-event` sends peer notifications when a player completes a task, clears a stage, or locks gear. Example: `Tarun logged Stairs done` goes to Sudhanshu's enabled devices.

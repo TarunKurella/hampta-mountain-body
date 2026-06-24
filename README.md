@@ -66,6 +66,7 @@ Scheduled reminders, when the Supabase cron pipeline is enabled:
 
 - **06:00 IST**: morning stage reminder with days left.
 - **22:00 IST**: night progress summary and recovery closeout.
+- **On task/stage/gear completion**: the opponent gets a duel notification such as `Tarun logged Stairs done` when they have alerts enabled.
 
 ## Backup and restore
 

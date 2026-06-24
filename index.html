@@ -534,6 +534,22 @@
     .system-row:last-child { padding-bottom: 0; }
     .system-row b { display: block; font-size: 14px; line-height: 1.2; }
     .system-row span { display: block; margin-top: 3px; color: var(--soft); font-size: 11px; line-height: 1.25; }
+    .system-row .status-pill {
+      display: inline-grid;
+      place-items: center;
+      min-width: 74px;
+      min-height: 34px;
+      padding: 0 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .status-pill.on { border-color: rgba(94,226,143,.52); color: var(--green); background: rgba(94,226,143,.12); }
+    .status-pill.off { border-color: rgba(255,211,110,.42); color: var(--gold); background: rgba(255,211,110,.1); }
     .mini-btn {
       min-width: 82px;
       min-height: 38px;
@@ -605,8 +621,10 @@
       background: rgba(255,255,255,.06);
     }
     .is-done .check-box { border-color: var(--green); background: var(--green); }
+    .check-card > span:last-child { min-width: 0; display: grid; gap: 3px; }
+    .check-title, .check-meta { display: block; overflow-wrap: anywhere; }
     .check-title { font-size: 13px; font-weight: 850; line-height: 1.18; }
-    .check-meta { margin-top: 3px; color: var(--soft); font-size: 11px; line-height: 1.2; }
+    .check-meta { color: var(--soft); font-size: 11px; line-height: 1.2; }
 
     .fields {
       display: grid;
@@ -1776,7 +1794,7 @@
         <p class="small">${streakCount(data)} stage streak. This week: ${weekStats.coins}/${week.days.length} stages, ${Math.round(weekStats.stairs)}m stairs, ${Math.round(weekStats.runWalk)}m run/walk.</p>
         <div class="actions">
           <button class="btn ${state.started ? "" : "primary"}" id="startCoin" type="button">${state.started ? "Started" : "Start stage"}</button>
-          <button class="btn primary" id="doneCoin" type="button">${state.complete ? "Stage cleared" : "Clear stage"}</button>
+          <button class="btn primary" id="doneCoin" type="button">${state.complete ? "Reopen stage" : "Clear stage"}</button>
         </div>
       `;
       document.querySelectorAll(".ready-btn").forEach((button) => {
@@ -1786,7 +1804,7 @@
         saveDay(day.date, (entry) => { entry.started = true; });
         toast("Stage started");
       });
-      document.getElementById("doneCoin").addEventListener("click", () => markDayDone(day.date));
+      document.getElementById("doneCoin").addEventListener("click", () => toggleStageComplete(day.date));
       renderQuickChecks(data, day, state);
     }
     function renderQuickChecks(data, day, state) {
@@ -1813,7 +1831,10 @@
       });
       const label = quickChecks.find(([id]) => id === key)?.[1] || "Task";
       hapticTap();
-      if (checked) notifyTick(label, `${currentPlayer()?.name || "Player"} logged ${label.toLowerCase()} for ${formatDate(date)}.`);
+      if (checked) {
+        notifyTick(label, `${currentPlayer()?.name || "Player"} logged ${label.toLowerCase()} for ${formatDate(date)}.`);
+        notifyDuelEvent("task", label, date);
+      }
       toast(checked ? `${label} locked` : "Unchecked");
     }
     function setReadiness(value) {
@@ -1826,22 +1847,21 @@
       });
       toast(readinessLabel(value));
     }
-    function markDayDone(date) {
+    function toggleStageComplete(date) {
       const data = loadStore();
       const planDay = plan.find((item) => item.date === date) || activeDay();
       const day = getDay(data, date);
-      day.started = true;
-      day.complete = true;
-      day.tasks[taskForType(planDay.type)] = true;
-      day.tasks.dietProtein = true;
-      day.tasks.hydration = true;
-      day.tasks.sleep = true;
-      day.tasks.body = true;
+      const nextComplete = !day.complete;
+      day.started = nextComplete || day.started;
+      day.complete = nextComplete;
       saveStore(data);
       renderAll();
       hapticTap();
-      notifyTick("Stage cleared", `${currentPlayer()?.name || "Player"} cleared ${planDay.label}.`);
-      toast("Stage cleared");
+      if (nextComplete) {
+        notifyTick("Stage cleared", `${currentPlayer()?.name || "Player"} cleared ${planDay.label}.`);
+        notifyDuelEvent("stage", planDay.label, date);
+      }
+      toast(nextComplete ? "Stage cleared" : "Stage reopened");
     }
 
     function renderDuel() {
@@ -1937,14 +1957,14 @@
             <div class="note">${escapeHtml(day.note)}</div>
             <div class="day-foot">
               <button class="btn" data-jump-date="${day.date}" type="button">Open</button>
-              <button class="btn primary" data-done-date="${day.date}" type="button">${state.complete ? "Done" : "Mark done"}</button>
+              <button class="btn primary" data-done-date="${day.date}" type="button">${state.complete ? "Reopen" : "Clear stage"}</button>
             </div>
           </article>
         `;
       });
       document.getElementById("calendarList").innerHTML = html;
       document.querySelectorAll("[data-done-date]").forEach((button) => {
-        button.addEventListener("click", () => markDayDone(button.dataset.doneDate));
+        button.addEventListener("click", () => toggleStageComplete(button.dataset.doneDate));
       });
       document.querySelectorAll("[data-jump-date]").forEach((button) => {
         button.addEventListener("click", () => {
@@ -1973,7 +1993,10 @@
           renderAll();
           hapticTap();
           const title = gear.find(([id]) => id === gearId)?.[1] || "Gear";
-          if (checked) notifyTick("Gear locked", `${title} checked for Hampta.`);
+          if (checked) {
+            notifyTick("Gear locked", `${title} checked for Hampta.`);
+            notifyDuelEvent("gear", title, activeDay().date);
+          }
           toast(checked ? "Gear locked" : "Gear unchecked");
         });
       });
@@ -2138,14 +2161,17 @@
     function renderDeviceActions() {
       const wrap = document.getElementById("deviceActions");
       if (!wrap) return;
+      const notifyState = notificationState();
+      const notifyOn = notifyState === "granted";
+      const notifyDenied = notifyState === "denied";
       wrap.innerHTML = `
         <div class="system-row">
-          <span><b>Notification permission</b><span>Allows iOS badge/push permission path after Home Screen install.</span></span>
-          <button class="mini-btn" id="requestNotify" type="button">Allow</button>
+          <span><b>Notifications</b><span>${notificationActionCopy()}</span></span>
+          <span class="status-pill ${notifyOn ? "on" : "off"}">${notifyOn ? "On" : notifyDenied ? "Blocked" : "Off"}</span>
         </div>
         <div class="system-row">
-          <span><b>Test notification</b><span>Send one dummy alert now. Use this after installing to Home Screen.</span></span>
-          <button class="mini-btn primary" id="testNotify" type="button">Test</button>
+          <span><b>${notifyOn ? "Send test" : "Enable alerts"}</b><span>${notifyOn ? "Send one proof alert to this device." : "Ask iOS permission and register this device."}</span></span>
+          <button class="mini-btn ${notifyOn ? "" : "primary"}" id="${notifyOn ? "testNotify" : "requestNotify"}" type="button">${notifyOn ? "Test" : "Enable"}</button>
         </div>
         <div class="system-row">
           <span><b>Workout wake lock</b><span>Keep screen awake while logging stairs or walking.</span></span>
@@ -2191,6 +2217,13 @@
       return standalone
         ? "Ready to request. Tap Allow, then Test."
         : "Install to Home Screen first for reliable iPhone notifications.";
+    }
+    function notificationActionCopy() {
+      const state = notificationState();
+      if (state === "granted") return "Morning, night, test, and duel alerts are enabled on this device.";
+      if (state === "denied") return "Blocked in iOS Settings. Enable notifications for Hampta there.";
+      if (state === "unavailable") return "Open from the Home Screen app to enable iPhone alerts.";
+      return "Off. Enable once, then use Test to verify.";
     }
     async function storageSummary() {
       if (!navigator.storage || !navigator.storage.estimate) return "Local only";
@@ -2289,6 +2322,29 @@
       } catch (err) {
         console.warn("Notification failed", err);
         return false;
+      }
+    }
+    async function notifyDuelEvent(kind, label, date) {
+      const player = currentPlayer();
+      if (!player || !supabaseReady() || !navigator.onLine) return;
+      try {
+        await fetch(`${SUPABASE_URL}/functions/v1/duel-event`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+            "apikey": SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({
+            duelCode: DUEL_CODE,
+            playerId: player.id,
+            kind,
+            label,
+            date
+          })
+        });
+      } catch (err) {
+        console.warn("Duel event notification skipped", err);
       }
     }
     function hapticTap() {
@@ -2621,7 +2677,7 @@
       });
       document.querySelectorAll(".nav-btn").forEach((button) => button.addEventListener("click", () => showTab(button.dataset.tab)));
       document.getElementById("todayJump").addEventListener("click", () => showTab("today"));
-      document.getElementById("markTodayFromCalendar").addEventListener("click", () => markDayDone(activeDay().date));
+      document.getElementById("markTodayFromCalendar").addEventListener("click", () => toggleStageComplete(activeDay().date));
       document.getElementById("exportIcs").addEventListener("click", exportIcs);
       document.getElementById("saveBody").addEventListener("click", saveBodyLog);
       document.getElementById("openDeviceBackup").addEventListener("click", () => showTab("backup"));
