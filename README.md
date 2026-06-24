@@ -1,6 +1,6 @@
 # Hampta Mountain Body PWA
 
-A static, iPhone-friendly PWA for the Hampta Pass prep plan from June 24 to July 20. It stores progress locally with `localStorage`; there is no backend.
+A static, iPhone-friendly PWA for the Hampta Pass prep plan from June 24 to July 20. It stores progress locally with `localStorage`; Supabase is used only for optional Duel sync and push subscription registration.
 
 The current app also includes **Hampta Duel**: a trust-based two-player mode for Tarun vs Sudhanshu. First launch shows only two identity buttons: **I am Tarun** and **I am Sudhanshu**. No Gmail, no password, no magic link.
 
@@ -50,6 +50,18 @@ No build command is needed. The publish directory is the folder itself.
 
 After the first successful load, the service worker caches the app shell so it can open offline.
 
+## Notifications on iPhone
+
+iOS notifications work only after the deployed HTTPS app is added to the Home Screen and opened from that icon.
+
+1. Open the Home Screen app.
+2. Go to **Progress** -> **Device & Backup**.
+3. Tap **Allow**.
+4. Tap **Test notification**.
+5. After permission is granted, completed workout and gear tick marks show a local notification where iOS allows it.
+
+The service worker also listens for real push payloads from the Supabase-backed push pipeline. iOS does not allow reliable notification behavior from a normal Safari tab.
+
 ## Backup and restore
 
 Use the Progress tab:
@@ -88,12 +100,13 @@ Scoring is safety-capped: green days can score up to 100, yellow reduced-order d
 
 ## Supabase sync
 
-The app works without Supabase. To enable cross-device sync and future push notifications:
+The app works without Supabase. To enable cross-device sync and push registration:
 
 1. Create a Supabase project.
 2. Run `supabase/schema.sql`.
 3. Deploy the `duel-sync` and `register-push` Edge Functions under `supabase/functions`.
 4. Fill `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `VAPID_PUBLIC_KEY` constants in `index.html`.
+5. Configure VAPID private key and subject as Supabase function secrets.
 
 The static client never uses a service-role key.
 
@@ -105,4 +118,4 @@ The static client never uses a service-role key.
 - Clearing Safari website data, using private browsing, or not using the app for a long time can remove local data.
 - Export JSON backups before switching phones, clearing browser data, or reinstalling.
 - Web Share, Clipboard, Home Screen display mode, App Badge, Wake Lock, Storage persistence, service worker updates, online/offline state, and notification permission are feature-detected. iOS availability varies by Safari/PWA version, so the app always falls back to copy/download/export.
-- Web Push notifications on iOS require a Home Screen web app plus a real push backend. This app has no backend, so it does not pretend to schedule local reminders.
+- Web Push notifications on iOS require a Home Screen web app, explicit permission, and a push backend. Local tick notifications and the test notification work after permission where iOS permits them; scheduled remote reminders require the Supabase sender function to be extended with reminder jobs.

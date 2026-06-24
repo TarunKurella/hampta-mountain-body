@@ -14,6 +14,8 @@
   <title>Hampta Mountain Body</title>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+  <link rel="preload" href="./assets/duel/tarun-badge.png" as="image" />
+  <link rel="preload" href="./assets/duel/sudhanshu-badge.png" as="image" />
   <style>
     :root {
       color-scheme: dark;
@@ -43,13 +45,23 @@
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html { min-height: 100%; scroll-behavior: smooth; background: var(--bg); }
+    html {
+      min-height: 100%;
+      scroll-behavior: smooth;
+      background: var(--bg);
+      text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
     body {
       margin: 0;
       min-height: 100svh;
       overflow-x: hidden;
       font-family: var(--font);
       color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overscroll-behavior-y: none;
+      touch-action: manipulation;
       background:
         linear-gradient(180deg, rgba(95,116,102,.12), transparent 36%),
         linear-gradient(180deg, #07110f 0%, #0b1512 52%, #030706 100%);
@@ -114,6 +126,7 @@
       border: 1px solid var(--line);
       border-radius: 999px;
       background: rgba(9,16,14,.78);
+      -webkit-backdrop-filter: blur(22px);
       backdrop-filter: blur(22px);
       box-shadow: 0 12px 34px rgba(0,0,0,.28);
     }
@@ -574,7 +587,10 @@
       text-align: left;
       color: var(--text);
       font: inherit;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
     }
+    .check-card:active, .gear-item:active, .mini-btn:active, .btn:active, .nav-btn:active { transform: scale(.985); }
+    .check-card.just-checked, .gear-item.just-checked { animation: check-pop .32s cubic-bezier(.2,.9,.2,1); }
     .check-box {
       width: 30px;
       height: 30px;
@@ -609,7 +625,7 @@
       color: var(--text);
       padding: 10px 11px;
       font: inherit;
-      font-size: 14px;
+      font-size: 16px;
     }
     textarea { min-height: 78px; resize: vertical; }
     input:focus, select:focus, textarea:focus {
@@ -685,6 +701,7 @@
       border: 1px solid var(--line);
       border-radius: 24px;
       background: rgba(3,7,6,.8);
+      -webkit-backdrop-filter: blur(20px);
       backdrop-filter: blur(20px);
       box-shadow: 0 18px 55px rgba(0,0,0,.42);
     }
@@ -726,6 +743,12 @@
       box-shadow: 0 14px 45px rgba(0,0,0,.32);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @keyframes check-pop {
+      0% { transform: scale(.985); }
+      52% { transform: scale(1.018); border-color: rgba(94,226,143,.72); background: rgba(94,226,143,.13); }
+      100% { transform: scale(1); }
+    }
 
     .identity-gate {
       position: fixed;
@@ -936,6 +959,9 @@
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
       .rain { display: none; }
     }
+    @supports (content-visibility: auto) {
+      .panel, .day, .week-card, .science-card { content-visibility: auto; contain-intrinsic-size: 180px; }
+    }
   </style>
 </head>
 <body>
@@ -945,11 +971,11 @@
       <p>Two players. One Hampta route. Pick once and the app becomes your side of the duel.</p>
       <div class="identity-actions">
         <button class="identity-choice" data-player-choice="tarun" type="button">
-          <img src="./assets/duel/tarun-badge.png" alt="" />
+          <img src="./assets/duel/tarun-badge.png" alt="" loading="eager" decoding="async" />
           <span><b>I am Tarun</b><span>Engine Builder</span></span>
         </button>
         <button class="identity-choice" data-player-choice="sudhanshu" type="button">
-          <img src="./assets/duel/sudhanshu-badge.png" alt="" />
+          <img src="./assets/duel/sudhanshu-badge.png" alt="" loading="eager" decoding="async" />
           <span><b>I am Sudhanshu</b><span>Trail Contender</span></span>
         </button>
       </div>
@@ -1692,15 +1718,23 @@
         </button>
       `).join("");
       wrap.querySelectorAll(".check-card").forEach((button) => {
-        button.addEventListener("click", () => toggleQuick(day.date, button.dataset.check));
+        button.addEventListener("click", () => {
+          button.classList.add("just-checked");
+          toggleQuick(day.date, button.dataset.check);
+        });
       });
     }
     function toggleQuick(date, key) {
+      let checked = false;
       saveDay(date, (day) => {
         day.tasks[key] = !day.tasks[key];
+        checked = !!day.tasks[key];
         if (key === "body" && day.tasks.body) updateReadinessFromSignals(day);
       });
-      toast("Saved");
+      const label = quickChecks.find(([id]) => id === key)?.[1] || "Task";
+      hapticTap();
+      if (checked) notifyTick(label, `${currentPlayer()?.name || "Player"} logged ${label.toLowerCase()} for ${formatDate(date)}.`);
+      toast(checked ? `${label} locked` : "Unchecked");
     }
     function setReadiness(value) {
       const day = activeDay();
@@ -1725,6 +1759,8 @@
       day.tasks.body = true;
       saveStore(data);
       renderAll();
+      hapticTap();
+      notifyTick("Stage cleared", `${currentPlayer()?.name || "Player"} cleared ${planDay.label}.`);
       toast("Stage cleared");
     }
 
@@ -1848,11 +1884,17 @@
       `).join("");
       document.querySelectorAll("[data-gear]").forEach((button) => {
         button.addEventListener("click", () => {
+          button.classList.add("just-checked");
           const next = loadStore();
-          next.gear[button.dataset.gear] = !next.gear[button.dataset.gear];
+          const gearId = button.dataset.gear;
+          next.gear[gearId] = !next.gear[gearId];
+          const checked = !!next.gear[gearId];
           saveStore(next);
           renderAll();
-          toast("Gear saved");
+          hapticTap();
+          const title = gear.find(([id]) => id === gearId)?.[1] || "Gear";
+          if (checked) notifyTick("Gear locked", `${title} checked for Hampta.`);
+          toast(checked ? "Gear locked" : "Gear unchecked");
         });
       });
     }
@@ -2007,7 +2049,7 @@
         ["Offline", swControlled ? "Service worker controlling this launch." : "Service worker will control after reload/first HTTPS launch."],
         ["Share", navigator.share ? "Native share sheet available." : "Share unavailable; download/copy works."],
         ["Clipboard", navigator.clipboard ? "Copy report available." : "Clipboard blocked; download works."],
-        ["Notifications", "Notification permission: " + notificationState() + ". Push reminders need a backend, so this app does not fake them."],
+        ["Notifications", notificationCopy(standalone)],
         ["Wake Lock", ("wakeLock" in navigator) ? "Workout screen can stay awake while app is open." : "Not available in this browser."],
         ["Storage", navigator.storage && navigator.storage.persist ? "Persistent storage can be requested." : "Storage persistence API unavailable."]
       ];
@@ -2020,6 +2062,10 @@
         <div class="system-row">
           <span><b>Notification permission</b><span>Allows iOS badge/push permission path after Home Screen install.</span></span>
           <button class="mini-btn" id="requestNotify" type="button">Allow</button>
+        </div>
+        <div class="system-row">
+          <span><b>Test notification</b><span>Send one dummy alert now. Use this after installing to Home Screen.</span></span>
+          <button class="mini-btn primary" id="testNotify" type="button">Test</button>
         </div>
         <div class="system-row">
           <span><b>Workout wake lock</b><span>Keep screen awake while logging stairs or walking.</span></span>
@@ -2043,6 +2089,7 @@
         </div>
       `;
       bindDeviceAction("requestNotify", requestNotificationAccess);
+      bindDeviceAction("testNotify", testNotification);
       bindDeviceAction("toggleWakeLock", toggleWakeLock);
       bindDeviceAction("persistStorage", persistStorage);
       bindDeviceAction("clearBadge", clearAppBadge);
@@ -2055,6 +2102,15 @@
     }
     function notificationState() {
       return "Notification" in window ? Notification.permission : "unavailable";
+    }
+    function notificationCopy(standalone) {
+      const state = notificationState();
+      if (state === "unavailable") return "Unavailable in this browser.";
+      if (state === "granted") return "Allowed. Tick marks can show local alerts; push subscription is registered when supported.";
+      if (state === "denied") return "Blocked in iOS settings. Re-enable notifications for the Home Screen app.";
+      return standalone
+        ? "Ready to request. Tap Allow, then Test."
+        : "Install to Home Screen first for reliable iPhone notifications.";
     }
     async function storageSummary() {
       if (!navigator.storage || !navigator.storage.estimate) return "Local only";
@@ -2075,7 +2131,11 @@
       try {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
-          await registerPushSubscription();
+          try {
+            await registerPushSubscription();
+          } catch (err) {
+            console.warn("Push subscription unavailable", err);
+          }
           updateAppBadge(loadStore());
           toast("Notifications allowed");
         } else {
@@ -2085,6 +2145,74 @@
       } catch (err) {
         toast("Permission blocked");
       }
+    }
+    async function testNotification() {
+      const permission = await ensureNotificationPermission();
+      if (permission !== "granted") {
+        toast("Notifications not allowed");
+        renderDeviceStatus(loadStore());
+        return;
+      }
+      try {
+        await registerPushSubscription();
+      } catch (err) {
+        console.warn("Push subscription unavailable", err);
+      }
+      const sent = await showLocalNotification("Hampta test alert", {
+        body: "Notifications work on this device. Tick marks will alert after permission.",
+        tag: "hampta-test",
+        requireInteraction: false
+      });
+      toast(sent ? "Test sent" : "Notification blocked");
+      renderDeviceStatus(loadStore());
+    }
+    async function ensureNotificationPermission() {
+      if (!("Notification" in window)) return "unavailable";
+      if (Notification.permission === "default") {
+        try {
+          return await Notification.requestPermission();
+        } catch (err) {
+          return "denied";
+        }
+      }
+      return Notification.permission;
+    }
+    async function notifyTick(title, body) {
+      if (notificationState() !== "granted") return false;
+      return showLocalNotification(title, {
+        body,
+        tag: `hampta-${Date.now()}`,
+        silent: false,
+        requireInteraction: false
+      });
+    }
+    async function showLocalNotification(title, options = {}) {
+      if (!("Notification" in window) || Notification.permission !== "granted") return false;
+      const notificationOptions = {
+        body: options.body || "Hampta progress saved.",
+        icon: "./icons/icon-192.png",
+        badge: "./icons/maskable-512.png",
+        tag: options.tag || "hampta-progress",
+        renotify: true,
+        requireInteraction: !!options.requireInteraction,
+        silent: !!options.silent,
+        data: { url: "./index.html?tab=today" }
+      };
+      try {
+        if ("serviceWorker" in navigator && location.protocol !== "file:") {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification(title, notificationOptions);
+          return true;
+        }
+        new Notification(title, notificationOptions);
+        return true;
+      } catch (err) {
+        console.warn("Notification failed", err);
+        return false;
+      }
+    }
+    function hapticTap() {
+      if (navigator.vibrate) navigator.vibrate(12);
     }
     async function registerPushSubscription() {
       const player = currentPlayer();
@@ -2386,7 +2514,9 @@
     }
     function setupRain() {
       const wrap = document.getElementById("rain");
-      for (let i = 0; i < 28; i += 1) {
+      const compactPhone = window.matchMedia("(max-width: 430px)").matches;
+      const dropCount = compactPhone ? 12 : 22;
+      for (let i = 0; i < dropCount; i += 1) {
         const drop = document.createElement("i");
         drop.style.left = Math.random() * 120 + "vw";
         drop.style.top = Math.random() * 100 + "vh";
