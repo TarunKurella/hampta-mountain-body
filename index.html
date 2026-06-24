@@ -1936,6 +1936,11 @@
           <button class="btn" id="exportIcs" type="button">Export calendar</button>
         </div>
       </div>
+      <div class="panel">
+        <h2>Monsoon gear</h2>
+        <p>Pack once. Test before travel. Wet feet and missing forms are avoidable failures.</p>
+        <div id="gearList"></div>
+      </div>
       <div id="calendarList"></div>
     </section>
 
@@ -3254,7 +3259,7 @@
     function renderGear() {
       const data = loadStore();
       document.getElementById("gearList").innerHTML = gear.map(([id, title, detail]) => `
-        <button class="gear-item ${data.gear[id] ? "is-done" : ""}" data-gear="${id}" type="button">
+        <button class="gear-item ${data.gear[id] ? "is-done" : ""}" data-gear="${id}" type="button" aria-pressed="${data.gear[id] ? "true" : "false"}">
           <span class="check-box">${data.gear[id] ? "OK" : ""}</span>
           <span><strong>${escapeHtml(title)}</strong><small>${escapeHtml(detail)}</small></span>
         </button>
@@ -4211,6 +4216,7 @@
       renderToday();
       renderDuel();
       renderCalendar();
+      renderGear();
       renderBodyForm();
       renderProgress();
     }
