@@ -1,0 +1,61 @@
+# Hampta Mountain Body PWA
+
+A static, iPhone-friendly PWA for the Hampta Pass prep plan from June 24 to July 20. It stores progress locally with `localStorage`; there is no backend.
+
+## Run locally
+
+Open `index.html` directly in a browser to use the app without install/offline features.
+
+For full PWA testing, serve the folder:
+
+```sh
+cd hampta-pwa
+python3 -m http.server 4173
+```
+
+Then open `http://localhost:4173`.
+
+## Deploy to Netlify
+
+1. Go to Netlify and choose **Add new site**.
+2. Drag the `hampta-pwa` folder into the deploy drop zone.
+3. Open the generated HTTPS URL.
+4. Optional: set a custom site name in Netlify site settings.
+
+No build command is needed. The publish directory is the folder itself.
+
+## Deploy to Vercel
+
+1. Create a new Vercel project.
+2. Import the repository or upload/connect this folder.
+3. Use these settings:
+   - Framework preset: **Other**
+   - Build command: leave blank
+   - Output directory: `hampta-pwa` if deploying from the repo root, or `.` if the project root is this folder
+4. Deploy and open the generated HTTPS URL.
+
+## Add to iPhone Home Screen
+
+1. Open the deployed HTTPS link in Safari on the iPhone.
+2. Tap the Share button.
+3. Tap **Add to Home Screen**.
+4. Keep the name as `Hampta` or rename it.
+5. Launch from the Home Screen icon.
+
+After the first successful load, the service worker caches the app shell so it can open offline.
+
+## Backup and restore
+
+Use the Backup tab:
+
+- **Export JSON** downloads your progress.
+- **Import JSON** restores a previous export.
+- **Reset progress** clears local progress after confirmation.
+
+## iOS PWA and localStorage limitations
+
+- The app must be served over HTTPS for Home Screen install and service worker offline support.
+- Opening `index.html` directly works for tracking, but service workers do not run on `file://`.
+- Progress is stored in Safari/Home Screen app storage on that device only.
+- Clearing Safari website data, using private browsing, or not using the app for a long time can remove local data.
+- Export JSON backups before switching phones, clearing browser data, or reinstalling.
