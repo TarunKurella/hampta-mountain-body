@@ -73,7 +73,7 @@ Scheduled reminders, when the Supabase cron pipeline is enabled:
 Use the Progress tab:
 
 - **Export JSON** downloads your progress.
-- **Import JSON** restores a previous export into the active Tarun/Sudhanshu profile.
+- **Import JSON** restores a previous export into the active Tarun/Sudhanshu profile and normalizes it to the current app schema.
 - **Reset progress** clears only the active profile after confirmation.
 - **Copy report**, **Share report**, and **Download report** create an LLM-friendly coach summary with day-wise logs, week-wise totals, proof goals, gear status, and injury/readiness flags.
 

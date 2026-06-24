@@ -2252,11 +2252,39 @@
     function blankStore() {
       return { version: 2, createdAt: new Date().toISOString(), days: {}, gear: {} };
     }
+    function normalizeStore(raw) {
+      const source = raw && typeof raw === "object" ? raw : {};
+      const next = blankStore();
+      next.createdAt = typeof source.createdAt === "string" ? source.createdAt : next.createdAt;
+      if (typeof source.updatedAt === "string") next.updatedAt = source.updatedAt;
+      const sourceDays = source.days && typeof source.days === "object" ? source.days : {};
+      plan.forEach((planDay) => {
+        const incoming = sourceDays[planDay.date];
+        if (!incoming || typeof incoming !== "object") return;
+        const clean = defaultDay(planDay.date);
+        clean.started = !!incoming.started;
+        clean.complete = !!incoming.complete;
+        if (["green", "yellow", "red"].includes(incoming.readiness)) clean.readiness = incoming.readiness;
+        const incomingTasks = incoming.tasks && typeof incoming.tasks === "object" ? incoming.tasks : {};
+        Object.keys(clean.tasks).forEach((key) => { clean.tasks[key] = !!incomingTasks[key]; });
+        const incomingMetrics = incoming.metrics && typeof incoming.metrics === "object" ? incoming.metrics : {};
+        Object.keys(clean.metrics).forEach((key) => { clean.metrics[key] = String(incomingMetrics[key] || ""); });
+        const incomingSignals = incoming.signals && typeof incoming.signals === "object" ? incoming.signals : {};
+        ["kneePain", "shinPain", "energy", "soreness"].forEach((key) => {
+          if (["green", "yellow", "red"].includes(incomingSignals[key])) clean.signals[key] = incomingSignals[key];
+        });
+        clean.signals.notes = String(incomingSignals.notes || "");
+        next.days[planDay.date] = clean;
+      });
+      const sourceGear = source.gear && typeof source.gear === "object" ? source.gear : {};
+      gear.forEach(([id]) => { next.gear[id] = !!sourceGear[id]; });
+      return next;
+    }
     function loadStore() {
       migrateLegacy();
       try {
         const parsed = JSON.parse(localStorage.getItem(activeStoreKey()) || "null");
-        return parsed && parsed.version === 2 ? parsed : blankStore();
+        return parsed && parsed.version === 2 ? normalizeStore(parsed) : blankStore();
       } catch (err) {
         return blankStore();
       }
@@ -4165,7 +4193,7 @@
         try {
           const parsed = JSON.parse(await file.text());
           if (!parsed || parsed.version !== 2 || !parsed.days || !parsed.gear) throw new Error("Bad backup");
-          saveStore(parsed);
+          saveStore(normalizeStore(parsed));
           renderAll();
           toast("Backup imported");
         } catch (err) {
