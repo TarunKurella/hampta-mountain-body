@@ -1146,7 +1146,7 @@
     <div class="notify-sheet">
       <div class="notify-icon" aria-hidden="true">!</div>
       <h2 id="notifyTitle">Turn on Hampta alerts</h2>
-      <p>One permission. Then the app reminds you morning/night and sends duel updates when either player acts.</p>
+      <p>One permission. You get morning/night reminders and opponent updates when they log effort.</p>
       <div class="notify-steps">
         <div class="notify-step"><b>1</b><span>Tap Enable and accept the iOS prompt.</span></div>
         <div class="notify-step"><b>2</b><span>Tap Test once. If it arrives, you are set.</span></div>
@@ -1944,7 +1944,6 @@
       const label = quickChecks.find(([id]) => id === key)?.[1] || "Task";
       hapticTap();
       if (checked) {
-        notifyTick(label, `${currentPlayer()?.name || "Player"} logged ${label.toLowerCase()} for ${formatDate(date)}.`);
         notifyDuelEvent("task", label, date);
       }
       toast(checked ? `${label} locked` : "Unchecked");
@@ -1970,7 +1969,6 @@
       renderAll();
       hapticTap();
       if (nextComplete) {
-        notifyTick("Stage cleared", `${currentPlayer()?.name || "Player"} cleared ${planDay.label}.`);
         notifyDuelEvent("stage", planDay.label, date);
       }
       toast(nextComplete ? "Stage cleared" : "Stage reopened");
@@ -2106,7 +2104,6 @@
           hapticTap();
           const title = gear.find(([id]) => id === gearId)?.[1] || "Gear";
           if (checked) {
-            notifyTick("Gear locked", `${title} checked for Hampta.`);
             notifyDuelEvent("gear", title, activeDay().date);
           }
           toast(checked ? "Gear locked" : "Gear unchecked");
@@ -2363,7 +2360,7 @@
     function notificationCopy(standalone) {
       const state = notificationState();
       if (state === "unavailable") return "Unavailable in this browser.";
-      if (state === "granted") return "Allowed. Tick marks can show local alerts; push subscription is registered when supported.";
+      if (state === "granted") return "Allowed. This device receives reminders and opponent duel alerts.";
       if (state === "denied") return "Blocked in iOS settings. Re-enable notifications for the Home Screen app.";
       return standalone
         ? "Ready to request. Tap Allow, then Test."
@@ -2371,7 +2368,7 @@
     }
     function notificationActionCopy() {
       const state = notificationState();
-      if (state === "granted") return "Morning, night, test, and duel alerts are enabled on this device.";
+      if (state === "granted") return "Morning/night reminders and opponent alerts are enabled on this device.";
       if (state === "denied") return "Blocked in iOS Settings. Enable notifications for Hampta there.";
       if (state === "unavailable") return "Open from the Home Screen app to enable iPhone alerts.";
       return "Off. Enable once, then use Test to verify.";
@@ -2454,7 +2451,7 @@
         console.warn("Push subscription unavailable", err);
       }
       const sent = await showLocalNotification("Hampta test alert", {
-        body: "Notifications work on this device. Tick marks will alert after permission.",
+        body: "Notifications work on this device. Your own ticks stay quiet; opponent updates can alert.",
         tag: "hampta-test",
         requireInteraction: false
       });
@@ -2475,15 +2472,6 @@
         }
       }
       return Notification.permission;
-    }
-    async function notifyTick(title, body) {
-      if (notificationState() !== "granted") return false;
-      return showLocalNotification(title, {
-        body,
-        tag: `hampta-${Date.now()}`,
-        silent: false,
-        requireInteraction: false
-      });
     }
     async function showLocalNotification(title, options = {}) {
       if (!("Notification" in window) || Notification.permission !== "granted") return false;

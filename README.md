@@ -58,7 +58,7 @@ iOS notifications work only after the deployed HTTPS app is added to the Home Sc
 2. Choose **I am Tarun** or **I am Sudhanshu**.
 3. Use the notification sheet that appears: tap **Enable**, then **Test**.
 4. If the sheet was skipped, go to **Progress** -> **Device & Backup** and use **Allow** / **Test notification**.
-5. After permission is granted, completed workout and gear tick marks show a local notification where iOS allows it.
+5. After permission is granted, this device receives morning/night reminders and opponent duel alerts. Your own ticks stay quiet and show only in-app feedback.
 
 The service worker also listens for real push payloads from the Supabase-backed push pipeline. iOS does not allow reliable notification behavior from a normal Safari tab.
 
@@ -124,4 +124,4 @@ The static client never uses a service-role key.
 - Clearing Safari website data, using private browsing, or not using the app for a long time can remove local data.
 - Export JSON backups before switching phones, clearing browser data, or reinstalling.
 - Web Share, Clipboard, Home Screen display mode, App Badge, Wake Lock, Storage persistence, service worker updates, online/offline state, and notification permission are feature-detected. iOS availability varies by Safari/PWA version, so the app always falls back to copy/download/export.
-- Web Push notifications on iOS require a Home Screen web app, explicit permission, and a push backend. Local tick notifications and the test notification work after permission where iOS permits them; scheduled remote reminders require the Supabase sender function to be extended with reminder jobs.
+- Web Push notifications on iOS require a Home Screen web app, explicit permission, and a push backend. The test notification is local to your device; task/stage/gear ticks are sent to the opponent when they have alerts enabled.
