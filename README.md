@@ -97,6 +97,7 @@ The Duel tab compares Tarun and Sudhanshu as expedition profiles:
 
 - today stage score
 - weekly duel score
+- one-tap opponent nudge with local cooldown
 - streak
 - readiness index
 - loadout percentage

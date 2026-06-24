@@ -1333,6 +1333,15 @@
       text-align: right;
     }
     .trophy-score span { display: block; margin-top: 4px; color: var(--soft); font-size: 10px; font-weight: 850; }
+    .nudge-card {
+      border: 1px solid rgba(94,226,143,.22);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(20,37,31,.84), rgba(8,15,13,.9));
+      padding: 13px;
+    }
+    .nudge-card b { display: block; font-size: 16px; line-height: 1.18; }
+    .nudge-card span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.34; }
+    .nudge-card .actions { margin-top: 11px; }
     .coach-brief {
       display: grid;
       gap: 10px;
@@ -1523,6 +1532,8 @@
         <div class="duel-cards" id="duelProfiles"></div>
       </div>
 
+      <div class="panel" id="nudgePanel"></div>
+
       <div class="match-card" id="todayMatchup"></div>
 
       <div class="panel">
@@ -1701,6 +1712,7 @@
     const DUEL_KEY = "hampta_duel_snapshot_v1";
     const SYNC_QUEUE_KEY = "hampta_duel_sync_queue_v1";
     const NOTIFY_ONBOARD_KEY = "hampta_notify_onboard_v1";
+    const NUDGE_KEY = "hampta_nudge_last_v1";
     const DUEL_CODE = "HAMPTA20";
     const SUPABASE_URL = "https://spjpyeqxezijhobanclz.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwanB5ZXF4ZXppamhvYmFuY2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDI1NzQsImV4cCI6MjA5Nzg3ODU3NH0.TwE8BLeRC9CHoJKadrH56qh3RRQCX5Bg_lr5MuGc4i4";
@@ -2545,9 +2557,63 @@
           </article>
         `;
       }).join("");
+      renderNudgePanel(id);
       renderTodayMatchup(summaries);
       renderWeeklyTrophies(summaries);
       renderStageTrack();
+    }
+    function nudgeState() {
+      try {
+        return JSON.parse(localStorage.getItem(NUDGE_KEY) || "{}") || {};
+      } catch {
+        return {};
+      }
+    }
+    function setNudgeState(value) {
+      localStorage.setItem(NUDGE_KEY, JSON.stringify(value));
+    }
+    function nudgeCooldownMs(playerId) {
+      const last = Number(nudgeState()[playerId] || 0);
+      return Math.max(0, 30 * 60 * 1000 - (Date.now() - last));
+    }
+    function formatCooldown(ms) {
+      return `${Math.ceil(ms / 60000)}m`;
+    }
+    function renderNudgePanel(playerId) {
+      const wrap = document.getElementById("nudgePanel");
+      if (!wrap || !playerId) return;
+      const opponentId = playerId === "tarun" ? "sudhanshu" : "tarun";
+      const cooldown = nudgeCooldownMs(playerId);
+      const disabled = cooldown > 0;
+      wrap.innerHTML = `
+        <div class="nudge-card">
+          <b>Nudge ${escapeHtml(players[opponentId].name)}</b>
+          <span>Send one direct push. Use it when the day is slipping, not after every tick.</span>
+          <div class="actions">
+            <button class="btn primary" id="sendNudge" type="button" ${disabled ? "disabled" : ""}>${disabled ? `Ready in ${formatCooldown(cooldown)}` : "Send nudge"}</button>
+            <button class="btn" id="openTodayFromDuel" type="button">My next action</button>
+          </div>
+        </div>
+      `;
+      document.getElementById("sendNudge")?.addEventListener("click", sendOpponentNudge);
+      document.getElementById("openTodayFromDuel")?.addEventListener("click", () => showTab("today"));
+    }
+    async function sendOpponentNudge() {
+      const player = currentPlayer();
+      if (!player) return;
+      const cooldown = nudgeCooldownMs(player.id);
+      if (cooldown > 0) {
+        toast(`Nudge ready in ${formatCooldown(cooldown)}`);
+        return;
+      }
+      const opponentId = player.id === "tarun" ? "sudhanshu" : "tarun";
+      const state = nudgeState();
+      state[player.id] = Date.now();
+      setNudgeState(state);
+      hapticTap();
+      renderDuel();
+      await notifyDuelEvent("nudge", "One clean action. No catch-up debt.", activeDay().date);
+      toast(`Nudged ${players[opponentId].name}`);
     }
     function renderTodayMatchup(summaries) {
       const tarun = summaries.tarun;

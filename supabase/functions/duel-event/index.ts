@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const DUEL_CODE = "HAMPTA20";
 const PLAYERS = new Set(["tarun", "sudhanshu"]);
-const EVENT_KINDS = new Set(["task", "stage", "gear"]);
+const EVENT_KINDS = new Set(["task", "stage", "gear", "nudge"]);
 
 type PlayerId = "tarun" | "sudhanshu";
 
@@ -97,6 +97,15 @@ Deno.serve(async (request) => {
 
 function buildPayload(actor: PlayerId, kind: string, label: string, date?: string) {
   const actorName = actor === "tarun" ? "Tarun" : "Sudhanshu";
+  if (kind === "nudge") {
+    const sentence = /[.!?]$/.test(label) ? label : `${label}.`;
+    return {
+      title: `${actorName} nudged you`,
+      body: `${actorName}: ${sentence} Open Hampta and close one clean action.`,
+      tag: `hampta-duel-${date || "today"}-${actor}-nudge`,
+      url: "./index.html?tab=today",
+    };
+  }
   const noun = kind === "stage" ? "cleared" : kind === "gear" ? "locked gear" : "logged";
   return {
     title: `${actorName} ${noun}`,
