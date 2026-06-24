@@ -3587,6 +3587,7 @@
       const notifyState = notificationState();
       const notifyOn = notifyState === "granted";
       const notifyDenied = notifyState === "denied";
+      const pendingSync = syncQueueCount();
       wrap.innerHTML = `
         <div class="system-row">
           <span><b>Notifications</b><span>${notificationActionCopy()}</span></span>
@@ -3609,6 +3610,10 @@
           <button class="mini-btn" id="clearBadge" type="button">Clear</button>
         </div>
         <div class="system-row">
+          <span><b>Duel sync</b><span>${pendingSync ? `${pendingSync} local update${pendingSync === 1 ? "" : "s"} waiting.` : "Tarun vs Sudhanshu is synced on this device."}</span></span>
+          <button class="mini-btn ${pendingSync ? "primary" : ""}" id="syncDuelNow" type="button">${pendingSync ? "Sync" : "Synced"}</button>
+        </div>
+        <div class="system-row">
           <span><b>Switch player</b><span>Change between Tarun and Sudhanshu on this device.</span></span>
           <button class="mini-btn" id="switchPlayer" type="button">Switch</button>
         </div>
@@ -3622,6 +3627,7 @@
       bindDeviceAction("toggleWakeLock", toggleWakeLock);
       bindDeviceAction("persistStorage", persistStorage);
       bindDeviceAction("clearBadge", clearAppBadge);
+      bindDeviceAction("syncDuelNow", manualDuelSync);
       bindDeviceAction("switchPlayer", switchPlayer);
       bindDeviceAction("refreshApp", refreshAppShell);
     }
@@ -4031,6 +4037,28 @@
     }
     function supabaseReady() {
       return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+    }
+    function syncQueueCount() {
+      try {
+        const queue = JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || "[]");
+        return Array.isArray(queue) ? queue.length : 0;
+      } catch (err) {
+        return 0;
+      }
+    }
+    async function manualDuelSync() {
+      if (!supabaseReady()) {
+        toast("Sync unavailable");
+        return;
+      }
+      if (!navigator.onLine) {
+        toast("Offline. Sync later");
+        return;
+      }
+      saveStore(loadStore());
+      await flushSyncQueue();
+      renderDeviceStatus(loadStore());
+      toast(syncQueueCount() ? "Sync pending" : "Duel synced");
     }
     async function flushSyncQueue() {
       if (!supabaseReady() || !navigator.onLine) return;
