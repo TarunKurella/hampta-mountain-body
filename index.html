@@ -263,6 +263,130 @@
     .stat b { display: block; font-size: 22px; line-height: 1; letter-spacing: 0; }
     .stat span { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.2; }
 
+    .duel-pulse {
+      margin: 12px 0;
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(22,34,31,.9), rgba(8,15,13,.88)),
+        url("./assets/duel/stamp-sheet.png") center / cover;
+      background-blend-mode: multiply;
+      box-shadow: 0 14px 36px rgba(0,0,0,.22);
+      overflow: hidden;
+    }
+    .pulse-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 14px 10px;
+    }
+    .pulse-head span {
+      display: block;
+      color: var(--soft);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .pulse-head b {
+      display: block;
+      margin-top: 3px;
+      font-size: 16px;
+      line-height: 1.18;
+    }
+    .pulse-status {
+      flex: 0 0 auto;
+      min-height: 30px;
+      border: 1px solid rgba(94,226,143,.34);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--green);
+      background: rgba(94,226,143,.1);
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+    .pulse-scoreboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 0 14px 12px;
+    }
+    .pulse-player {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px;
+      background: rgba(255,255,255,.055);
+      padding: 10px;
+      min-width: 0;
+    }
+    .pulse-player.you { border-color: rgba(94,226,143,.45); background: rgba(94,226,143,.08); }
+    .pulse-name {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+    }
+    .pulse-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      object-fit: cover;
+      box-shadow: 0 8px 18px rgba(0,0,0,.25);
+    }
+    .pulse-score {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .pulse-score b { font-size: 28px; line-height: 1; }
+    .pulse-score span { color: var(--soft); font-size: 11px; font-weight: 850; }
+    .pulse-rail {
+      height: 8px;
+      margin-top: 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.09);
+      overflow: hidden;
+    }
+    .pulse-fill {
+      width: calc(var(--score, 0) * 1%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+    }
+    .next-move {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid rgba(255,255,255,.09);
+      padding: 12px 14px 14px;
+      background: rgba(0,0,0,.12);
+    }
+    .next-move b {
+      display: block;
+      font-size: 14px;
+      line-height: 1.18;
+    }
+    .next-move span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.28;
+    }
+    .next-move .mini-btn {
+      min-width: 104px;
+      background: var(--green);
+      border: 0;
+      color: var(--ink);
+    }
+
     .today-card {
       border: 1px solid rgba(94,226,143,.3);
       border-radius: 24px;
@@ -622,6 +746,12 @@
       font-weight: 800;
     }
     .mini-btn.primary { border: 0; color: var(--ink); background: var(--green); }
+    .mini-btn:disabled {
+      opacity: .55;
+      color: var(--muted);
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--line);
+    }
 
     .readiness {
       display: grid;
@@ -1110,6 +1240,8 @@
       .stats { grid-template-columns: 1fr 1fr; }
       .quick-grid, .fields, .insight-grid, .device-grid { grid-template-columns: 1fr; }
       .actions { grid-template-columns: 1fr; }
+      .pulse-scoreboard { grid-template-columns: 1fr; }
+      .next-move { grid-template-columns: 1fr; }
       .nav-btn { font-size: 9px; }
       .week-metrics { grid-template-columns: repeat(2, 1fr); }
       .duel-cards { grid-template-columns: 1fr; }
@@ -1183,6 +1315,8 @@
         <div class="stat"><b id="todayTypeStat">Stairs</b><span>today's stage</span></div>
         <div class="stat"><b id="streakStat">0</b><span>stage streak</span></div>
       </div>
+
+      <section class="duel-pulse" id="duelPulse" aria-live="polite"></section>
 
       <div class="panel">
         <div class="ring-wrap">
@@ -1858,6 +1992,90 @@
       if (goals.some((goal) => goal.status === "risk")) return "Green today: clear the stage, then close one proof-goal gap.";
       return "Green today: maintain rhythm. No extra hero work required.";
     }
+    function taskTitle(key) {
+      return quickChecks.find(([id]) => id === key)?.[1] || "Task";
+    }
+    function nextBestAction(planDay, state) {
+      if (state.complete) {
+        return {
+          kind: "done",
+          title: "Stage closed",
+          detail: "No catch-up work. Protect tomorrow by sleeping and hydrating.",
+          button: "Closed"
+        };
+      }
+      if (!state.started) {
+        return {
+          kind: "start",
+          title: "Start the stage",
+          detail: "This unlocks checks and commits you to one controlled session.",
+          button: "Start"
+        };
+      }
+      if (!state.tasks.body) {
+        return {
+          kind: "signal",
+          title: "Set body signal",
+          detail: "Green, yellow, or red decides the correct version before effort.",
+          button: "Signal"
+        };
+      }
+      const recoveryOrder = ["sleep", "hydration"];
+      if (state.readiness === "red") {
+        const recoveryTask = recoveryOrder.find((key) => !state.tasks[key]);
+        if (recoveryTask) {
+          return {
+            kind: "task",
+            task: recoveryTask,
+            title: `Mark ${taskTitle(recoveryTask).toLowerCase()}`,
+            detail: "Red day means recovery points count. No hero work.",
+            button: "Log"
+          };
+        }
+        return {
+          kind: "clear",
+          title: "Clear recovery stage",
+          detail: "A red-day win is stopping early and showing up tomorrow.",
+          button: "Clear"
+        };
+      }
+      const mainTask = taskForType(planDay.type);
+      if (mainTask !== "body" && !state.tasks[mainTask]) {
+        return {
+          kind: "task",
+          task: mainTask,
+          title: `Mark ${taskTitle(mainTask).toLowerCase()}`,
+          detail: state.readiness === "yellow" ? "Use the reduced version. Consistency beats chasing volume." : "Finish the planned stage, then stop while controlled.",
+          button: "Log"
+        };
+      }
+      const supportOrder = ["dietProtein", "hydration", "sleep"];
+      const supportTask = supportOrder.find((key) => !state.tasks[key]);
+      if (supportTask) {
+        return {
+          kind: "task",
+          task: supportTask,
+          title: `Mark ${taskTitle(supportTask).toLowerCase()}`,
+          detail: "Support work turns one workout into repeatable trekking fitness.",
+          button: "Log"
+        };
+      }
+      return {
+        kind: "clear",
+        title: "Clear today's stage",
+        detail: "You did enough. Close the loop and do not add extra debt.",
+        button: "Clear"
+      };
+    }
+    function duelPulseHeadline(you, opponent, youName, opponentName) {
+      if (!opponent.today.started && !opponent.today.complete && opponent.todayScore === 0) {
+        return `${opponentName} has not logged today yet. Set the pace.`;
+      }
+      if (you.todayScore === opponent.todayScore) return "Today is level. One clean action breaks the tie.";
+      const leader = you.todayScore > opponent.todayScore ? youName : opponentName;
+      const gap = Math.abs(you.todayScore - opponent.todayScore);
+      return `${leader} leads today by ${gap}.`;
+    }
 
     function renderToday() {
       const data = loadStore();
@@ -1874,6 +2092,7 @@
       if (daysLeftStat) daysLeftStat.textContent = String(daysLeft);
       if (todayTypeStat) todayTypeStat.textContent = badge[0];
       if (streakStat) streakStat.textContent = String(streakCount(data));
+      renderDuelPulse(data, day, state);
       document.getElementById("todayCard").innerHTML = `
         <div class="date-line">
           <span class="badge ${badge[1]}">${badge[0]}</span>
@@ -1909,6 +2128,75 @@
       });
       document.getElementById("doneCoin").addEventListener("click", () => toggleStageComplete(day.date));
       renderQuickChecks(data, day, state);
+    }
+    function renderDuelPulse(data, day, state) {
+      const playerId = selectedPlayerId();
+      const wrap = document.getElementById("duelPulse");
+      if (!wrap || !playerId) return;
+      const opponentId = playerId === "tarun" ? "sudhanshu" : "tarun";
+      const you = playerSummary(playerId);
+      const opponent = playerSummary(opponentId);
+      const action = nextBestAction(day, state);
+      const delta = you.todayScore - opponent.todayScore;
+      const status = delta === 0 ? "Level" : delta > 0 ? `+${delta}` : `${delta}`;
+      wrap.innerHTML = `
+        <div class="pulse-head">
+          <div>
+            <span>Today duel</span>
+            <b>${escapeHtml(duelPulseHeadline(you, opponent, players[playerId].name, players[opponentId].name))}</b>
+          </div>
+          <div class="pulse-status">${escapeHtml(status)}</div>
+        </div>
+        <div class="pulse-scoreboard">
+          ${[playerId, opponentId].map((id) => {
+            const summary = id === playerId ? you : opponent;
+            return `
+              <div class="pulse-player ${id === playerId ? "you" : ""}">
+                <div class="pulse-name"><img class="pulse-avatar" src="${players[id].badge}" alt="" />${escapeHtml(id === playerId ? "You" : players[id].name)}</div>
+                <div class="pulse-score"><b>${summary.todayScore}</b><span>/100</span></div>
+                <div class="pulse-rail" aria-hidden="true"><div class="pulse-fill" style="--score:${summary.todayScore}"></div></div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+        <div class="next-move">
+          <span><b>${escapeHtml(action.title)}</b><span>${escapeHtml(action.detail)}</span></span>
+          <button class="mini-btn" id="pulseAction" type="button" ${action.kind === "done" ? "disabled" : ""}>${escapeHtml(action.button)}</button>
+        </div>
+      `;
+      document.getElementById("pulseAction")?.addEventListener("click", () => runNextBestAction(action));
+    }
+    function runNextBestAction(action) {
+      const date = activeDay().date;
+      if (action.kind === "start") {
+        saveDay(date, (entry) => { entry.started = true; });
+        hapticTap();
+        toast("Stage started");
+        return;
+      }
+      if (action.kind === "signal") {
+        showTab("body");
+        toast("Pick today's signal");
+        return;
+      }
+      if (action.kind === "task" && action.task) {
+        const data = loadStore();
+        const day = getDay(data, date);
+        if (!day.started) day.started = true;
+        if (!day.tasks[action.task]) {
+          day.tasks[action.task] = true;
+          if (action.task === "body") updateReadinessFromSignals(day);
+          saveStore(data);
+          hapticTap();
+          notifyDuelEvent("task", taskTitle(action.task), date);
+          renderAll();
+          toast(`${taskTitle(action.task)} locked`);
+        }
+        return;
+      }
+      if (action.kind === "clear") {
+        toggleStageComplete(date);
+      }
     }
     function renderQuickChecks(data, day, state) {
       const wrap = document.getElementById("quickChecks");
