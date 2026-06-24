@@ -83,6 +83,7 @@ The app tracks only decision-changing trek-prep signals:
 
 - top-of-Today next action, so the first screen tells you exactly what to do now
 - Today shortcut to Progress & Backup for proof goals, exports, and device settings
+- Progress opens as a Today detail view with a clear return path
 - daily Stage completion and streak
 - post-stage recovery order with tonight actions and tomorrow preview
 - stairs minutes

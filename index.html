@@ -1238,7 +1238,7 @@
       z-index: 30;
       width: min(540px, calc(100vw - 18px));
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 5px;
       padding: 7px;
       border: 1px solid var(--line);
@@ -1265,6 +1265,15 @@
     }
     .nav-btn svg { width: 20px; height: 20px; }
     .nav-btn.active, .nav-btn[aria-selected="true"] { background: rgba(102,242,168,.15); color: var(--green); }
+
+    .back-row {
+      margin: 10px 0 12px;
+    }
+    .back-row .btn {
+      width: auto;
+      min-height: 44px;
+      padding: 0 14px;
+    }
 
     .toast {
       position: fixed;
@@ -2009,6 +2018,9 @@
       <div class="view-title">
         <h2>Progress</h2>
         <p>Coach brief, proof goals, backup, and device settings.</p>
+      </div>
+      <div class="back-row">
+        <button class="btn" id="backToTodayFromProgress" type="button">Back to Today</button>
       </div>
       <div class="panel">
         <h2>Progress</h2>
@@ -4032,8 +4044,9 @@
       if (!document.getElementById("view-" + tab)) tab = "today";
       localStorage.setItem(TAB_KEY, tab);
       document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === "view-" + tab));
+      const navTab = tab === "backup" ? "today" : tab;
       document.querySelectorAll(".nav-btn").forEach((button) => {
-        const selected = button.dataset.tab === tab;
+        const selected = button.dataset.tab === navTab;
         button.classList.toggle("active", selected);
         button.setAttribute("aria-selected", selected ? "true" : "false");
       });
@@ -4230,6 +4243,7 @@
       document.querySelectorAll(".nav-btn").forEach((button) => button.addEventListener("click", () => showTab(button.dataset.tab)));
       document.getElementById("todayJump").addEventListener("click", () => showTab("today"));
       document.getElementById("openProgressFromToday").addEventListener("click", () => showTab("backup"));
+      document.getElementById("backToTodayFromProgress").addEventListener("click", () => showTab("today"));
       document.getElementById("markTodayFromCalendar").addEventListener("click", () => toggleStageComplete(activeDay().date));
       document.getElementById("exportIcs").addEventListener("click", exportIcs);
       document.getElementById("saveBody").addEventListener("click", saveBodyLog);
