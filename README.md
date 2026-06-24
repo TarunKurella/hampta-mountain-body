@@ -49,6 +49,7 @@ No build command is needed. The publish directory is the folder itself.
 5. Launch from the Home Screen icon.
 
 After the first successful load, the service worker caches the app shell so it can open offline.
+Where supported, Home Screen shortcuts can open Today, Duel, Signal, or Progress & Backup directly.
 
 ## Notifications on iPhone
 
@@ -57,7 +58,7 @@ iOS notifications work only after the deployed HTTPS app is added to the Home Sc
 1. Open the Home Screen app.
 2. Choose **I am Tarun** or **I am Sudhanshu**.
 3. Use the notification sheet that appears: tap **Enable**, then **Test**.
-4. If the sheet was skipped, go to **Progress** -> **Device & Backup** and use **Allow** / **Test notification**.
+4. If the sheet was skipped, go to **Progress & Backup** and use **Allow** / **Test notification**.
 5. After permission is granted, this device receives morning/night reminders and opponent duel alerts. Your own ticks stay quiet and show only in-app feedback.
 
 The service worker also listens for real push payloads from the Supabase-backed push pipeline. iOS does not allow reliable notification behavior from a normal Safari tab.

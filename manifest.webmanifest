@@ -35,6 +35,13 @@
       "description": "Log pain, sleep, energy, and effort.",
       "url": "./index.html?tab=body",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Progress & Backup",
+      "short_name": "Progress",
+      "description": "Open proof goals, coach brief, backup, and device settings.",
+      "url": "./index.html?tab=backup",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ],
   "icons": [
