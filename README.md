@@ -98,6 +98,7 @@ The app tracks only decision-changing trek-prep signals:
 The Duel tab compares Tarun and Sudhanshu as expedition profiles:
 
 - today stage score
+- today task board for each checklist item, so the rivalry is concrete instead of abstract
 - weekly duel score
 - one-tap opponent nudge with local cooldown
 - dedicated Train tab with timer, Wake Lock, vibration feedback, and automatic minutes logging

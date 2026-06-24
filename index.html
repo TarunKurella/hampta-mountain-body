@@ -1478,6 +1478,61 @@
     .score-player b { display: block; font-size: 24px; line-height: 1; }
     .score-player span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
     .versus { color: var(--soft); font-size: 11px; font-weight: 950; }
+    .task-board {
+      display: grid;
+      gap: 7px;
+      margin-top: 12px;
+    }
+    .task-board-head, .task-row {
+      display: grid;
+      grid-template-columns: 1fr 46px 46px;
+      gap: 8px;
+      align-items: center;
+    }
+    .task-board-head {
+      color: var(--soft);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 0 8px;
+    }
+    .task-board-head span:not(:first-child) { text-align: center; }
+    .task-row {
+      min-height: 44px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 16px;
+      background: rgba(255,255,255,.045);
+      padding: 7px 8px;
+    }
+    .task-row b {
+      display: block;
+      font-size: 12px;
+      line-height: 1.15;
+    }
+    .task-row small {
+      display: block;
+      margin-top: 2px;
+      color: var(--soft);
+      font-size: 10px;
+      line-height: 1.15;
+    }
+    .task-dot {
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      font-size: 10px;
+      font-weight: 950;
+    }
+    .task-dot.done {
+      border-color: rgba(94,226,143,.45);
+      color: var(--ink);
+      background: var(--green);
+    }
     .stage-track {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -1722,12 +1777,13 @@
         <p>One stage. One checklist. No catch-up debt.</p>
       </div>
       <section class="command-card" id="nextActionCard" aria-live="polite"></section>
-      <article class="today-card" id="todayCard"></article>
 
       <div class="panel">
         <h3>Quick checks</h3>
         <div class="quick-grid" id="quickChecks"></div>
       </div>
+
+      <article class="today-card" id="todayCard"></article>
 
       <section id="riskGuard" aria-live="polite"></section>
       <section class="debrief-card" id="stageDebrief" aria-live="polite"></section>
@@ -2982,6 +3038,17 @@
         if (tarun.todayScore === sudhanshu.todayScore) result = "Stage draw.";
         else result = `${players[tarun.todayScore > sudhanshu.todayScore ? "tarun" : "sudhanshu"].name} leads today's stage.`;
       }
+      const taskRows = quickChecks.map(([key, title, meta]) => {
+        const tDone = !!tarun.today.tasks[key] || (key === taskForType(activeDay().type) && tarun.today.complete);
+        const sDone = !!sudhanshu.today.tasks[key] || (key === taskForType(activeDay().type) && sudhanshu.today.complete);
+        return `
+          <div class="task-row">
+            <span><b>${escapeHtml(title)}</b><small>${escapeHtml(meta)}</small></span>
+            <span class="task-dot ${tDone ? "done" : ""}" aria-label="Tarun ${tDone ? "done" : "open"}">${tDone ? "OK" : "--"}</span>
+            <span class="task-dot ${sDone ? "done" : ""}" aria-label="Sudhanshu ${sDone ? "done" : "open"}">${sDone ? "OK" : "--"}</span>
+          </div>
+        `;
+      }).join("");
       document.getElementById("todayMatchup").innerHTML = `
         <h2>Stage ${String(activePlanIndex() + 1).padStart(2, "0")} Matchup</h2>
         <p>${escapeHtml(activeDay().title)} - ${escapeHtml(result)}</p>
@@ -2989,6 +3056,10 @@
           <div class="score-player"><b>${tarun.todayScore}</b><span>Tarun</span></div>
           <div class="versus">VS</div>
           <div class="score-player"><b>${sudhanshu.todayScore}</b><span>Sudhanshu</span></div>
+        </div>
+        <div class="task-board" aria-label="Today task board">
+          <div class="task-board-head"><span>Today checks</span><span>T</span><span>S</span></div>
+          ${taskRows}
         </div>
       `;
     }
