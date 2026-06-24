@@ -336,6 +336,65 @@
     .btn.full { grid-column: 1 / -1; }
     .btn:active { transform: scale(.98); }
 
+    .signal-hero {
+      display: grid;
+      gap: 12px;
+    }
+    .signal-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .signal-title-row h2 { margin-bottom: 2px; }
+    .signal-date {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .signal-decision {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      background: rgba(255,255,255,.055);
+      padding: 13px;
+    }
+    .signal-decision b { display: block; font-size: 15px; line-height: 1.22; }
+    .signal-decision span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .signal-choices {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .signal-choice {
+      min-height: 74px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.055);
+      color: var(--muted);
+      font: inherit;
+      text-align: left;
+      padding: 10px;
+    }
+    .signal-choice b { display: block; color: var(--text); font-size: 15px; line-height: 1; }
+    .signal-choice span { display: block; margin-top: 6px; font-size: 10px; font-weight: 800; line-height: 1.2; }
+    .signal-choice.active[data-signal="green"] { border-color: rgba(94,226,143,.58); background: rgba(94,226,143,.13); }
+    .signal-choice.active[data-signal="yellow"] { border-color: rgba(255,211,110,.58); background: rgba(255,211,110,.12); }
+    .signal-choice.active[data-signal="red"] { border-color: rgba(255,100,117,.62); background: rgba(255,100,117,.12); }
+    .signal-section-title {
+      margin: 16px 0 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
     .ring-wrap {
       display: grid;
       grid-template-columns: 108px 1fr;
@@ -844,6 +903,34 @@
       padding: 16px;
       animation: sheet-rise .28s ease both;
     }
+    .notify-steps {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .notify-step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 9px;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 16px;
+      background: rgba(255,255,255,.055);
+      padding: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+    .notify-step b {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: rgba(94,226,143,.15);
+      color: var(--green);
+      font-size: 12px;
+    }
     .notify-icon {
       width: 46px;
       height: 46px;
@@ -1053,11 +1140,15 @@
   <div class="notify-primer" id="notifyPrimer" role="dialog" aria-modal="true" aria-labelledby="notifyTitle">
     <div class="notify-sheet">
       <div class="notify-icon" aria-hidden="true">!</div>
-      <h2 id="notifyTitle">Enable trek alerts?</h2>
-      <p>Get the test alert now, then tick-mark alerts when a stage, workout, or gear item is locked. Best on the Home Screen app.</p>
+      <h2 id="notifyTitle">Turn on Hampta alerts</h2>
+      <p>One permission. Then the app reminds you morning/night and sends duel updates when either player acts.</p>
+      <div class="notify-steps">
+        <div class="notify-step"><b>1</b><span>Tap Enable and accept the iOS prompt.</span></div>
+        <div class="notify-step"><b>2</b><span>Tap Test once. If it arrives, you are set.</span></div>
+      </div>
       <div class="notify-actions">
-        <button class="btn primary" id="notifyEnableNow" type="button">Enable</button>
-        <button class="btn" id="notifyTestNow" type="button">Test</button>
+        <button class="btn primary" id="notifyEnableNow" type="button">Enable alerts</button>
+        <button class="btn" id="notifyTestNow" type="button">Send test</button>
         <button class="btn wide" id="notifyLater" type="button">Not now</button>
       </div>
     </div>
@@ -1151,9 +1242,24 @@
     </section>
 
     <section id="view-body" class="view">
-      <div class="panel">
-        <h2>Signal</h2>
-        <p>Track only what changes the decision: green, yellow, or red.</p>
+      <div class="panel signal-hero">
+        <div class="signal-title-row">
+          <div>
+            <h2>Today's Signal</h2>
+            <p id="signalScope">This is only for today. It decides full plan, reduced plan, or recovery.</p>
+          </div>
+          <span class="signal-date" id="signalDate">Today</span>
+        </div>
+        <div class="signal-decision" id="signalDecision">
+          <b>Pick a body signal first.</b>
+          <span>No weekly score. No final verdict. Just today's training order.</span>
+        </div>
+        <div class="signal-choices" aria-label="Today body signal">
+          <button class="signal-choice" data-signal="green" type="button"><b>Green</b><span>Normal. Full plan.</span></button>
+          <button class="signal-choice" data-signal="yellow" type="button"><b>Yellow</b><span>Tight or low. Reduce.</span></button>
+          <button class="signal-choice" data-signal="red" type="button"><b>Red</b><span>Sharp pain. Recover.</span></button>
+        </div>
+        <div class="signal-section-title">Numbers if useful</div>
         <div class="fields" id="bodyFields">
           <div class="field"><label for="stairsMinutes">Stairs minutes</label><input id="stairsMinutes" inputmode="numeric" placeholder="20" /></div>
           <div class="field"><label for="runWalkMinutes">Run/walk minutes</label><input id="runWalkMinutes" inputmode="numeric" placeholder="30" /></div>
@@ -1168,7 +1274,7 @@
           <div class="field full"><label for="notes">Notes</label><textarea id="notes" placeholder="What felt hard? What should I adjust?"></textarea></div>
         </div>
         <div class="actions">
-          <button class="btn primary full" id="saveBody" type="button">Save readiness</button>
+          <button class="btn primary full" id="saveBody" type="button">Save today's signal</button>
           <button class="btn full" id="openDeviceBackup" type="button">Device & backup</button>
         </div>
       </div>
@@ -2004,7 +2110,11 @@
 
     function renderBodyForm() {
       const data = loadStore();
-      const day = getDay(data, activeDay().date);
+      const planDay = activeDay();
+      const day = getDay(data, planDay.date);
+      const signalDate = document.getElementById("signalDate");
+      if (signalDate) signalDate.textContent = `${planDay.dow} ${formatDate(planDay.date)}`;
+      renderSignalDecision(day);
       setValue("stairsMinutes", day.metrics.stairsMinutes);
       setValue("runWalkMinutes", day.metrics.runWalkMinutes);
       setValue("sleepHours", day.metrics.sleepHours);
@@ -2016,6 +2126,43 @@
       setValue("energy", day.signals.energy);
       setValue("soreness", day.signals.soreness);
       setValue("notes", day.signals.notes);
+    }
+    function renderSignalDecision(day) {
+      const decision = document.getElementById("signalDecision");
+      if (decision) {
+        const copy = {
+          green: ["Green: full plan today.", "No sharp pain. Execute the planned stage and stop there."],
+          yellow: ["Yellow: reduce today.", "Cut volume 30-50%. Bank consistency without chasing numbers."],
+          red: ["Red: recovery today.", "No heroics. Protect knees, shins, sleep, and hydration."]
+        }[day.readiness || "green"];
+        decision.innerHTML = `<b>${escapeHtml(copy[0])}</b><span>${escapeHtml(copy[1])}</span>`;
+      }
+      document.querySelectorAll("[data-signal]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.signal === day.readiness);
+      });
+    }
+    function setTodaySignal(value) {
+      const date = activeDay().date;
+      saveDay(date, (day) => {
+        day.readiness = value;
+        day.tasks.body = true;
+        if (value === "green") {
+          day.signals.kneePain = "green";
+          day.signals.shinPain = "green";
+          day.signals.energy = "green";
+          day.signals.soreness = "green";
+        } else if (value === "yellow") {
+          day.signals.energy = day.signals.energy === "red" ? "red" : "yellow";
+          day.signals.soreness = day.signals.soreness === "red" ? "red" : "yellow";
+        } else {
+          day.signals.energy = "red";
+          day.signals.soreness = "red";
+        }
+      });
+      hapticTap();
+      renderAll();
+      showTab("body");
+      toast(readinessLabel(value));
     }
     function setValue(id, value) {
       const el = document.getElementById(id);
@@ -2237,8 +2384,21 @@
       }
     }
     async function requestNotificationAccess() {
+      const active = document.activeElement;
+      const button = active && ["notifyEnableNow", "requestNotify"].includes(active.id)
+        ? active
+        : (document.getElementById("requestNotify") || document.getElementById("notifyEnableNow"));
+      const oldText = button?.textContent;
+      if (button) {
+        button.textContent = "Opening iOS...";
+        button.disabled = true;
+      }
       if (!("Notification" in window)) {
         toast("Open from Home Screen for alerts");
+        if (button) {
+          button.textContent = oldText || "Enable";
+          button.disabled = false;
+        }
         return;
       }
       try {
@@ -2257,13 +2417,31 @@
         renderDeviceStatus(loadStore());
       } catch (err) {
         toast("Permission blocked");
+      } finally {
+        if (button) {
+          button.textContent = notificationState() === "granted" ? "Enabled" : (oldText || "Enable");
+          button.disabled = false;
+        }
       }
     }
     async function testNotification() {
+      const active = document.activeElement;
+      const button = active && ["notifyTestNow", "testNotify"].includes(active.id)
+        ? active
+        : (document.getElementById("testNotify") || document.getElementById("notifyTestNow"));
+      const oldText = button?.textContent;
+      if (button) {
+        button.textContent = "Sending...";
+        button.disabled = true;
+      }
       const permission = await ensureNotificationPermission();
       if (permission !== "granted") {
         toast(permission === "unavailable" ? "Open from Home Screen for alerts" : "Notifications not allowed");
         renderDeviceStatus(loadStore());
+        if (button) {
+          button.textContent = oldText || "Test";
+          button.disabled = false;
+        }
         return;
       }
       try {
@@ -2278,6 +2456,10 @@
       });
       toast(sent ? "Test sent" : "Notification blocked");
       renderDeviceStatus(loadStore());
+      if (button) {
+        button.textContent = sent ? "Sent" : (oldText || "Test");
+        button.disabled = false;
+      }
     }
     async function ensureNotificationPermission() {
       if (!("Notification" in window)) return "unavailable";
@@ -2687,6 +2869,9 @@
       document.getElementById("copyCoachReport").addEventListener("click", copyCoachReport);
       document.getElementById("shareCoachReport").addEventListener("click", shareCoachReport);
       document.getElementById("downloadCoachReport").addEventListener("click", downloadCoachReport);
+      document.querySelectorAll("[data-signal]").forEach((button) => {
+        button.addEventListener("click", () => setTodaySignal(button.dataset.signal));
+      });
       document.getElementById("notifyEnableNow").addEventListener("click", async () => {
         await requestNotificationAccess();
         const state = notificationState();
