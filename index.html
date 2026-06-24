@@ -4060,7 +4060,8 @@
       const blob = new Blob([payload], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "hampta-progress-backup.json";
+      const player = currentPlayer();
+      a.download = `hampta-${player ? player.id : "progress"}-backup.json`;
       a.click();
       URL.revokeObjectURL(a.href);
       toast("Backup exported");
@@ -4164,7 +4165,7 @@
         try {
           const parsed = JSON.parse(await file.text());
           if (!parsed || parsed.version !== 2 || !parsed.days || !parsed.gear) throw new Error("Bad backup");
-          localStorage.setItem(STORE_KEY, JSON.stringify(parsed));
+          saveStore(parsed);
           renderAll();
           toast("Backup imported");
         } catch (err) {
@@ -4174,8 +4175,10 @@
       input.click();
     }
     function resetProgress() {
-      if (!confirm("Clear all Hampta progress on this browser? Export a backup first if you need it.")) return;
-      localStorage.removeItem(STORE_KEY);
+      const player = currentPlayer();
+      const name = player ? player.name : "this profile";
+      if (!confirm(`Clear Hampta progress for ${name}? Export a backup first if you need it.`)) return;
+      saveStore(blankStore());
       renderAll();
       toast("Progress reset");
     }
