@@ -62,6 +62,11 @@ iOS notifications work only after the deployed HTTPS app is added to the Home Sc
 
 The service worker also listens for real push payloads from the Supabase-backed push pipeline. iOS does not allow reliable notification behavior from a normal Safari tab.
 
+Scheduled reminders, when the Supabase cron pipeline is enabled:
+
+- **06:00 IST**: morning stage reminder with days left.
+- **22:00 IST**: night progress summary and recovery closeout.
+
 ## Backup and restore
 
 Use the Progress tab:
