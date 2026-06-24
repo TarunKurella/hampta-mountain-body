@@ -81,6 +81,7 @@ Use the Progress tab:
 
 The app tracks only decision-changing trek-prep signals:
 
+- top-of-Today next action, so the first screen tells you exactly what to do now
 - daily Stage completion and streak
 - stairs minutes
 - run/walk or long-walk minutes

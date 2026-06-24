@@ -185,12 +185,12 @@
     }
 
     .mission {
-      margin: 14px 0 12px;
-      padding: 20px 17px;
+      margin: 10px 0 8px;
+      padding: 12px 14px;
       overflow: hidden;
       position: relative;
       border: 1px solid rgba(255,255,255,.08);
-      border-radius: 26px;
+      border-radius: 22px;
       background: linear-gradient(180deg, rgba(32,46,41,.82), rgba(12,22,19,.72));
       box-shadow: var(--shadow-soft);
     }
@@ -205,16 +205,16 @@
     .mission h2 {
       position: relative;
       margin: 0;
-      max-width: 14ch;
-      font-size: 32px;
-      line-height: 1.02;
+      max-width: none;
+      font-size: clamp(23px, 6.4vw, 29px);
+      line-height: 1.04;
       letter-spacing: 0;
     }
     .mission p {
       position: relative;
-      margin: 10px 0 0;
+      margin: 6px 0 0;
       color: var(--muted);
-      font-size: clamp(13px, 3.4vw, 15px);
+      font-size: clamp(12px, 3.2vw, 14px);
       line-height: 1.38;
     }
     .accent { color: var(--green); }
@@ -597,6 +597,60 @@
       background: linear-gradient(180deg, rgba(29,52,43,.86), rgba(12,23,20,.82));
       padding: 16px;
       box-shadow: var(--shadow-soft);
+    }
+    .command-card {
+      margin: 10px 0 12px;
+      border: 1px solid rgba(94,226,143,.28);
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, rgba(39,64,54,.92), rgba(13,24,21,.9)),
+        radial-gradient(circle at 100% 0%, rgba(125,183,255,.18), transparent 34%);
+      box-shadow: 0 18px 42px rgba(0,0,0,.24);
+      padding: 15px;
+    }
+    .command-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .command-eyebrow {
+      color: var(--soft);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .command-state {
+      min-height: 28px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: 6px 9px;
+      color: var(--green);
+      background: rgba(94,226,143,.11);
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .command-card h3 {
+      margin: 9px 0 0;
+      font-size: clamp(24px, 7vw, 30px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+    .command-card p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: clamp(13px, 3.5vw, 15px);
+      line-height: 1.38;
+    }
+    .command-card .btn {
+      width: 100%;
+      margin-top: 14px;
+      min-height: 54px;
+      border-radius: 18px;
+      font-size: 15px;
     }
     .date-line {
       display: flex;
@@ -1631,10 +1685,10 @@
     <div class="notify-sheet">
       <div class="notify-icon" aria-hidden="true">!</div>
       <h2 id="notifyTitle">Turn on Hampta alerts</h2>
-      <p>One permission. You get morning/night reminders and opponent updates when they log effort.</p>
+      <p>One permission. Morning and night reminders come here. Your own ticks stay silent; opponent effort can alert you.</p>
       <div class="notify-steps">
-        <div class="notify-step"><b>1</b><span>Tap Enable and accept the iOS prompt.</span></div>
-        <div class="notify-step"><b>2</b><span>Tap Test once. If it arrives, you are set.</span></div>
+        <div class="notify-step"><b>1</b><span>Tap Enable and accept the iOS prompt after choosing your profile.</span></div>
+        <div class="notify-step"><b>2</b><span>Tap Test once. If it arrives, this iPhone is ready.</span></div>
       </div>
       <div class="notify-actions">
         <button class="btn primary" id="notifyEnableNow" type="button">Enable alerts</button>
@@ -1667,6 +1721,7 @@
         <h2>Today</h2>
         <p>One stage. One checklist. No catch-up debt.</p>
       </div>
+      <section class="command-card" id="nextActionCard" aria-live="polite"></section>
       <article class="today-card" id="todayCard"></article>
 
       <div class="panel">
@@ -2522,6 +2577,36 @@
         button: "Clear"
       };
     }
+    function actionStateLabel(action, state) {
+      if (action.kind === "done") return "Closed";
+      if (!state.started) return "Locked";
+      if (state.readiness === "red") return "Recovery";
+      if (state.readiness === "yellow") return "Reduced";
+      return "Ready";
+    }
+    function renderNextAction(data, planDay, state) {
+      const wrap = document.getElementById("nextActionCard");
+      if (!wrap) return;
+      const action = nextBestAction(planDay, state);
+      const label = actionStateLabel(action, state);
+      const playerId = selectedPlayerId();
+      const opponent = playerId ? players[opponentId(playerId)].name : "opponent";
+      const subcopy = action.kind === "done"
+        ? "Close the app. Sleep, hydrate, and let the work absorb."
+        : action.kind === "task"
+          ? `${action.detail} ${opponent} only gets alerted when you log the check.`
+          : action.detail;
+      wrap.innerHTML = `
+        <div class="command-top">
+          <span class="command-eyebrow">Do next</span>
+          <span class="command-state">${escapeHtml(label)}</span>
+        </div>
+        <h3>${escapeHtml(action.title)}</h3>
+        <p>${escapeHtml(subcopy)}</p>
+        <button class="btn primary" id="nextActionButton" type="button" ${action.kind === "done" ? "disabled" : ""}>${escapeHtml(action.button)}</button>
+      `;
+      document.getElementById("nextActionButton")?.addEventListener("click", () => runNextBestAction(action));
+    }
     function duelPulseHeadline(you, opponent, youName, opponentName) {
       if (!opponent.today.started && !opponent.today.complete && opponent.todayScore === 0) {
         return `${opponentName} has not logged today yet. Set the pace.`;
@@ -2612,6 +2697,7 @@
       if (daysLeftStat) daysLeftStat.textContent = String(daysLeft);
       if (todayTypeStat) todayTypeStat.textContent = badge[0];
       if (streakStat) streakStat.textContent = String(streakCount(data));
+      renderNextAction(data, day, state);
       renderDuelPulse(data, day, state);
       renderStageDebrief(data, day, state);
       renderRiskGuard(day, state);
