@@ -1333,6 +1333,81 @@
       text-align: right;
     }
     .trophy-score span { display: block; margin-top: 4px; color: var(--soft); font-size: 10px; font-weight: 850; }
+    .coach-brief {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .brief-hero {
+      border: 1px solid rgba(125,183,255,.24);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(22,34,39,.84), rgba(9,15,14,.9));
+      padding: 13px;
+    }
+    .brief-hero span {
+      display: block;
+      color: var(--soft);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .brief-hero b {
+      display: block;
+      margin-top: 5px;
+      font-size: 18px;
+      line-height: 1.18;
+    }
+    .brief-hero p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .brief-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .brief-tile {
+      min-height: 72px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.055);
+      padding: 10px;
+    }
+    .brief-tile b { display: block; font-size: 18px; line-height: 1; }
+    .brief-tile span { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.25; }
+    .brief-list {
+      display: grid;
+      gap: 7px;
+    }
+    .brief-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 9px;
+      align-items: start;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 17px;
+      background: rgba(255,255,255,.045);
+      padding: 9px;
+    }
+    .brief-item i {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background: var(--green);
+      font-style: normal;
+      font-size: 11px;
+      font-weight: 950;
+    }
+    .brief-item.warn i { background: var(--gold); }
+    .brief-item.risk i { background: var(--red); color: var(--text); }
+    .brief-item b { display: block; font-size: 13px; line-height: 1.2; }
+    .brief-item span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 1.28; }
 
     @media (max-width: 390px) {
       .app { padding-left: 10px; padding-right: 10px; }
@@ -1345,6 +1420,7 @@
       .pulse-scoreboard { grid-template-columns: 1fr; }
       .next-move { grid-template-columns: 1fr; }
       .debrief-grid { grid-template-columns: 1fr; }
+      .brief-grid { grid-template-columns: 1fr; }
       .nav-btn { font-size: 9px; }
       .week-metrics { grid-template-columns: repeat(2, 1fr); }
       .duel-cards { grid-template-columns: 1fr; }
@@ -1555,8 +1631,9 @@
       </div>
 
       <div class="panel">
-        <h2>Coach export</h2>
-        <p>LLM-friendly summary: goals, week totals, daily logs, injury flags, and next action.</p>
+        <h2>Coach brief</h2>
+        <p>Readable now, exportable for LLM review later.</p>
+        <div class="coach-brief" id="coachBrief"></div>
         <div class="actions">
           <button class="btn primary" id="copyCoachReport" type="button">Copy report</button>
           <button class="btn" id="shareCoachReport" type="button">Share report</button>
@@ -2707,6 +2784,7 @@
       renderTrainingSignal(data);
       renderProofGoals(data);
       renderWeekSummary(data);
+      renderCoachBrief(data);
       renderDeviceStatus(data);
       updateAppBadge(data);
     }
@@ -2771,6 +2849,59 @@
           </article>
         `;
       }).join("");
+    }
+    function buildCoachBriefData(data) {
+      const active = activeDay();
+      const today = getDay(data, active.date);
+      const summaries = {
+        tarun: playerSummary("tarun"),
+        sudhanshu: playerSummary("sudhanshu")
+      };
+      const currentId = selectedPlayerId() || "tarun";
+      const opponentId = currentId === "tarun" ? "sudhanshu" : "tarun";
+      const you = summaries[currentId];
+      const opponent = summaries[opponentId];
+      const goals = proofGoalData(data);
+      const priority = goals.find((goal) => goal.status === "risk") || goals.find((goal) => goal.status === "watch") || goals[0];
+      const lead = you.weekTotal === opponent.weekTotal
+        ? "Weekly duel is level."
+        : `${players[you.weekTotal > opponent.weekTotal ? currentId : opponentId].name} leads the week by ${Math.abs(you.weekTotal - opponent.weekTotal)}.`;
+      const recommendation = today.readiness === "red"
+        ? "Recovery is the assignment today. Sleep, hydrate, and do not test pain."
+        : today.readiness === "yellow"
+          ? "Reduce the stage 30-50%. Keep the streak, avoid injury debt."
+          : `Execute ${active.title}. Then close ${priority.title.toLowerCase()}.`;
+      const riskTone = goals.some((goal) => goal.status === "risk") ? "risk" : goals.some((goal) => goal.status === "watch") ? "warn" : "done";
+      return { active, today, currentId, opponentId, you, opponent, goals, priority, lead, recommendation, riskTone };
+    }
+    function renderCoachBrief(data) {
+      const wrap = document.getElementById("coachBrief");
+      if (!wrap) return;
+      const brief = buildCoachBriefData(data);
+      const doneGoals = brief.goals.filter((goal) => goal.status === "done").length;
+      wrap.innerHTML = `
+        <div class="brief-hero">
+          <span>Coach call</span>
+          <b>${escapeHtml(brief.recommendation)}</b>
+          <p>${escapeHtml(brief.lead)} ${escapeHtml(players[brief.currentId].name)} readiness: ${brief.you.readinessIndex}%. ${escapeHtml(players[brief.opponentId].name)} readiness: ${brief.opponent.readinessIndex}%.</p>
+        </div>
+        <div class="brief-grid">
+          <div class="brief-tile"><b>${brief.you.weekTotal}</b><span>Your weekly points</span></div>
+          <div class="brief-tile"><b>${brief.opponent.weekTotal}</b><span>${escapeHtml(players[brief.opponentId].name)} weekly points</span></div>
+          <div class="brief-tile"><b>${doneGoals}/${brief.goals.length}</b><span>Proof goals locked</span></div>
+          <div class="brief-tile"><b>${brief.you.redFlags}</b><span>Your red signal days</span></div>
+        </div>
+        <div class="brief-list">
+          <div class="brief-item ${brief.riskTone === "done" ? "" : brief.riskTone}">
+            <i>${brief.riskTone === "done" ? "OK" : brief.riskTone === "warn" ? "!" : "X"}</i>
+            <span><b>${escapeHtml(brief.priority.title)}</b><span>${escapeHtml(brief.priority.detail)}</span></span>
+          </div>
+          <div class="brief-item">
+            <i>VS</i>
+            <span><b>Competition rule</b><span>Win by safe consistency. Extra volume does not beat knee/shin discipline.</span></span>
+          </div>
+        </div>
+      `;
     }
     async function renderDeviceStatus(data) {
       renderDeviceActions();
@@ -3176,6 +3307,7 @@
     function buildCoachReport() {
       const data = loadStore();
       const goals = proofGoalData(data);
+      const brief = buildCoachBriefData(data);
       const active = activeDay();
       const today = getDay(data, active.date);
       const lines = [
@@ -3192,6 +3324,10 @@
         `Readiness: ${today.readiness}`,
         `Adjusted task: ${planText(active, today.readiness)}`,
         `Coach decision: ${coachDecision(data)}`,
+        `Coach brief: ${brief.recommendation}`,
+        `Duel status: ${brief.lead}`,
+        `Readiness: ${players[brief.currentId].name} ${brief.you.readinessIndex}%, ${players[brief.opponentId].name} ${brief.opponent.readinessIndex}%`,
+        `Priority gap: ${brief.priority.title} - ${brief.priority.detail}`,
         "",
         "## Proof Goals",
         ...goals.map((goal) => `- [${goal.status.toUpperCase()}] ${goal.title}: ${goal.detail}`),

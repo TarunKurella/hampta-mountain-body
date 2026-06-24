@@ -85,10 +85,11 @@ The app tracks only decision-changing trek-prep signals:
 - stairs minutes
 - run/walk or long-walk minutes
 - gym, protein, hydration, sleep, and readiness checks
-- sleep hours, protein grams, water liters, and bodyweight
+- sleep hours, protein grams, and water liters
 - knee pain, shin pain, energy, soreness, and notes
 - monsoon gear checklist
 - week-wise totals and July 12 proof goals
+- on-screen Coach Brief and LLM-friendly Markdown report
 
 ## Hampta Duel
 
