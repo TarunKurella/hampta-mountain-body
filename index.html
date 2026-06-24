@@ -727,6 +727,199 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    .identity-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: calc(18px + var(--safe-top)) 18px calc(18px + var(--safe-bottom));
+      background:
+        radial-gradient(circle at 30% 12%, rgba(94,226,143,.18), transparent 30%),
+        linear-gradient(180deg, #07110f, #020504);
+    }
+    .identity-gate.active { display: flex; }
+    .identity-card {
+      width: min(100%, 430px);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(15,25,22,.9);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .identity-card h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+    .identity-card p { color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .identity-actions { display: grid; gap: 10px; margin-top: 18px; }
+    .identity-choice {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      align-items: center;
+      gap: 12px;
+      min-height: 82px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.065);
+      color: var(--text);
+      padding: 10px;
+      font: inherit;
+      text-align: left;
+    }
+    .identity-choice img {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      object-fit: cover;
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
+    }
+    .identity-choice b { display: block; font-size: 17px; line-height: 1.15; }
+    .identity-choice span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+
+    .duel-hero {
+      margin: 14px 0;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 26px;
+      padding: 16px;
+      background:
+        linear-gradient(180deg, rgba(23,36,32,.92), rgba(8,14,12,.92)),
+        url("./assets/duel/stamp-sheet.png") center / cover;
+      background-blend-mode: multiply;
+      box-shadow: var(--shadow);
+    }
+    .duel-hero h2 {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1.05;
+    }
+    .duel-hero p { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
+    .duel-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 14px;
+    }
+    .duel-profile {
+      position: relative;
+      overflow: hidden;
+      min-height: 242px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 12px;
+      background: rgba(255,255,255,.065);
+    }
+    .duel-profile.is-you { border-color: rgba(94,226,143,.45); box-shadow: inset 0 0 0 1px rgba(94,226,143,.12); }
+    .duel-profile img {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      object-fit: cover;
+      box-shadow: 0 12px 30px rgba(0,0,0,.32);
+    }
+    .duel-profile h3 {
+      margin: 10px 0 2px;
+      font-size: 20px;
+      line-height: 1.05;
+    }
+    .duel-profile p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.25; }
+    .signal-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      margin-top: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .signal-pill.green { color: var(--green); background: rgba(94,226,143,.12); border-color: rgba(94,226,143,.36); }
+    .signal-pill.yellow { color: var(--gold); background: rgba(255,211,110,.12); border-color: rgba(255,211,110,.36); }
+    .signal-pill.red { color: var(--red); background: rgba(255,100,117,.12); border-color: rgba(255,100,117,.42); }
+    .duel-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .duel-stats span {
+      min-height: 48px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.16);
+      padding: 8px;
+      color: var(--soft);
+      font-size: 10px;
+      line-height: 1.1;
+    }
+    .duel-stats b { display: block; color: var(--text); font-size: 17px; line-height: 1.05; }
+    .stamp-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .stamp {
+      min-height: 25px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      color: var(--muted);
+      padding: 5px 8px;
+      font-size: 10px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .match-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--sheet);
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .scoreline {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .score-player {
+      border-radius: 18px;
+      background: rgba(255,255,255,.06);
+      padding: 10px;
+    }
+    .score-player:last-child { text-align: right; }
+    .score-player b { display: block; font-size: 24px; line-height: 1; }
+    .score-player span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+    .versus { color: var(--soft); font-size: 11px; font-weight: 950; }
+    .stage-track {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .stage-token {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.055);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 950;
+    }
+    .stage-token.tarun { color: var(--green); border-color: rgba(94,226,143,.35); }
+    .stage-token.sudhanshu { color: var(--blue); border-color: rgba(125,183,255,.35); }
+    .stage-token.draw { color: var(--gold); border-color: rgba(255,211,110,.35); }
+
     @media (max-width: 390px) {
       .app { padding-left: 10px; padding-right: 10px; }
       .mission h2 { font-size: 31px; }
@@ -737,6 +930,7 @@
       .actions { grid-template-columns: 1fr; }
       .nav-btn { font-size: 9px; }
       .week-metrics { grid-template-columns: repeat(2, 1fr); }
+      .duel-cards { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -745,6 +939,23 @@
   </style>
 </head>
 <body>
+  <div class="identity-gate" id="identityGate" role="dialog" aria-modal="true" aria-labelledby="identityTitle">
+    <div class="identity-card">
+      <h1 id="identityTitle">Choose your expedition profile.</h1>
+      <p>Two players. One Hampta route. Pick once and the app becomes your side of the duel.</p>
+      <div class="identity-actions">
+        <button class="identity-choice" data-player-choice="tarun" type="button">
+          <img src="./assets/duel/tarun-badge.png" alt="" />
+          <span><b>I am Tarun</b><span>Engine Builder</span></span>
+        </button>
+        <button class="identity-choice" data-player-choice="sudhanshu" type="button">
+          <img src="./assets/duel/sudhanshu-badge.png" alt="" />
+          <span><b>I am Sudhanshu</b><span>Trail Contender</span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="skyline" aria-hidden="true"></div>
   <div class="rain" id="rain" aria-hidden="true"></div>
 
@@ -760,7 +971,7 @@
 
     <section class="mission">
       <h2>Gym body to <span class="accent">mountain body.</span></h2>
-      <p>One coin today. Stairs, easy engine, recovery, gear, taper.</p>
+      <p>Clear today’s stage. Beat the route, not your knees.</p>
     </section>
 
     <section id="view-today" class="view active">
@@ -774,8 +985,8 @@
         <div class="ring-wrap">
           <div class="ring" id="progressRing" style="--pct:0"><b id="pctText">0</b><span>%</span></div>
           <div>
-            <h3>Mountain coins</h3>
-            <p>Open. Decide Green, Yellow, or Red. Execute. Close.</p>
+            <h3>Stage progress</h3>
+            <p>Open. Set signal. Execute the right order. Close.</p>
           </div>
         </div>
       </div>
@@ -788,9 +999,25 @@
       </div>
     </section>
 
+    <section id="view-duel" class="view">
+      <div class="duel-hero">
+        <h2>Tarun vs Sudhanshu</h2>
+        <p id="duelHeadline">Hampta Duel is loading.</p>
+        <div class="duel-cards" id="duelProfiles"></div>
+      </div>
+
+      <div class="match-card" id="todayMatchup"></div>
+
+      <div class="panel">
+        <h2>Last 7 stages</h2>
+        <p>Stage wins reward clean execution. Recovery orders count when the signal is red.</p>
+        <div class="stage-track" id="stageTrack"></div>
+      </div>
+    </section>
+
     <section id="view-calendar" class="view">
       <div class="panel">
-        <h2>Daily calendar</h2>
+        <h2>Route</h2>
         <p>June 24 to July 20. Taper and travel are marked so the plan stays easy to scan.</p>
         <div class="actions">
           <button class="btn primary" id="markTodayFromCalendar" type="button">Mark today done</button>
@@ -802,7 +1029,7 @@
 
     <section id="view-gear" class="view">
       <div class="panel">
-        <h2>Monsoon gear</h2>
+        <h2>Loadout</h2>
         <p>Fitness helps you move. Gear decides whether rain becomes adventure or misery.</p>
         <div id="gearList"></div>
       </div>
@@ -818,7 +1045,7 @@
 
     <section id="view-body" class="view">
       <div class="panel">
-        <h2>Readiness</h2>
+        <h2>Signal</h2>
         <p>Track only what changes the decision: green, yellow, or red.</p>
         <div class="fields" id="bodyFields">
           <div class="field"><label for="stairsMinutes">Stairs minutes</label><input id="stairsMinutes" inputmode="numeric" placeholder="20" /></div>
@@ -835,6 +1062,7 @@
         </div>
         <div class="actions">
           <button class="btn primary full" id="saveBody" type="button">Save readiness</button>
+          <button class="btn full" id="openDeviceBackup" type="button">Device & backup</button>
         </div>
       </div>
 
@@ -858,7 +1086,7 @@
     <section id="view-backup" class="view">
       <div class="panel">
         <h2>Progress</h2>
-        <p id="progressSummary">Mountain coins and prep checks saved on this iPhone.</p>
+        <p id="progressSummary">Stages and prep checks saved on this iPhone.</p>
         <div class="bar" aria-hidden="true"><div class="bar-fill" id="progressBar" style="--pct:0"></div></div>
       </div>
 
@@ -916,7 +1144,7 @@
         <p>2. Never repay missed days.</p>
         <p>3. Move sessions, do not stack punishment.</p>
         <p>4. Main quest beats perfect plan.</p>
-        <p>5. One mountain coin per day is the identity.</p>
+        <p>5. One clean stage per day is the identity.</p>
       </div>
     </section>
   </main>
@@ -928,19 +1156,19 @@
     </button>
     <button class="nav-btn" data-tab="calendar" type="button" aria-label="Calendar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v5M16 2v5M3 10h18"/></svg>
-      Plan
+      Route
+    </button>
+    <button class="nav-btn" data-tab="duel" type="button" aria-label="Duel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h10l2 5-7 11L5 9l2-5Z"/><path d="M5 9h14"/><path d="m9 4 3 5 3-5"/></svg>
+      Duel
     </button>
     <button class="nav-btn" data-tab="gear" type="button" aria-label="Gear">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1 14H5L6 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
-      Gear
+      Loadout
     </button>
     <button class="nav-btn" data-tab="body" type="button" aria-label="Readiness">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h17"/><path d="M8 16v-5M13 16V8M18 16v-9"/></svg>
-      Ready
-    </button>
-    <button class="nav-btn" data-tab="backup" type="button" aria-label="Progress and backup">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-      Progress
+      Signal
     </button>
   </nav>
 
@@ -951,11 +1179,36 @@
     const TREK_START = "2026-07-20";
     const STORE_KEY = "hampta_mountain_body_v2";
     const LEGACY_KEY = "hampta_ios_pwa_v1";
+    const PLAYER_KEY = "hampta_duel_player_v1";
+    const DUEL_KEY = "hampta_duel_snapshot_v1";
+    const SYNC_QUEUE_KEY = "hampta_duel_sync_queue_v1";
+    const DUEL_CODE = "HAMPTA20";
+    const SUPABASE_URL = "";
+    const SUPABASE_ANON_KEY = "";
     let wakeLockSentinel = null;
     let wakeLockWanted = false;
 
+    const players = {
+      tarun: {
+        id: "tarun",
+        name: "Tarun",
+        short: "T",
+        role: "Engine Builder",
+        badge: "./assets/duel/tarun-badge.png",
+        color: "green"
+      },
+      sudhanshu: {
+        id: "sudhanshu",
+        name: "Sudhanshu",
+        short: "S",
+        role: "Trail Contender",
+        badge: "./assets/duel/sudhanshu-badge.png",
+        color: "blue"
+      }
+    };
+
     const plan = [
-      { date:"2026-06-24", dow:"Wed", label:"Day 1", type:"stairs", title:"Stair Coin A", workout:"20 min steady stairs. No backpack. Walk down slowly.", yellow:"10-12 min easy stairs or 20 min flat walk.", red:"Recovery only: 10 min easy walk, mobility, early sleep.", note:"Start calm. This is not catch-up debt." },
+      { date:"2026-06-24", dow:"Wed", label:"Day 1", type:"stairs", title:"Stair Stage A", workout:"20 min steady stairs. No backpack. Walk down slowly.", yellow:"10-12 min easy stairs or 20 min flat walk.", red:"Recovery only: 10 min easy walk, mobility, early sleep.", note:"Start calm. This is not catch-up debt." },
       { date:"2026-06-25", dow:"Thu", label:"Easy engine", type:"run", title:"Easy engine", workout:"30 min easy run/walk. Slow enough to finish fresh.", yellow:"20 min brisk walk with 4 short jogs if legs allow.", red:"Recovery only: nasal-breathing walk and mobility.", note:"Gym okay, but no extra leg destruction." },
       { date:"2026-06-26", dow:"Fri", label:"Recovery gym", type:"mobility", title:"Recovery gym", workout:"Gym routine plus 10 min ankles, calves, and hips.", yellow:"Mobility only plus upper body. Skip leg fatigue.", red:"Recovery only: stretch calves and hips, no gym load.", note:"If legs are heavy, choose mobility over ego." },
       { date:"2026-06-27", dow:"Sat", label:"Time on feet", type:"walk", title:"Time on feet", workout:"60-75 min long walk. Trek shoes if available.", yellow:"40 min flat walk. Stop if hotspots appear.", red:"Recovery only: 10-15 min easy walk or rest.", note:"Observe feet, socks, hot spots." },
@@ -1007,13 +1260,42 @@
       ["body", "Readiness", "pain checked"]
     ];
 
+    function selectedPlayerId() {
+      const id = localStorage.getItem(PLAYER_KEY);
+      return players[id] ? id : "";
+    }
+    function currentPlayer() {
+      return players[selectedPlayerId()] || null;
+    }
+    function opponentId(id = selectedPlayerId()) {
+      return id === "tarun" ? "sudhanshu" : "tarun";
+    }
+    function activeStoreKey() {
+      const id = selectedPlayerId();
+      return id ? `${STORE_KEY}_${id}` : STORE_KEY;
+    }
+    function choosePlayer(id) {
+      if (!players[id]) return;
+      localStorage.setItem(PLAYER_KEY, id);
+      if (!localStorage.getItem(activeStoreKey()) && localStorage.getItem(STORE_KEY)) {
+        localStorage.setItem(activeStoreKey(), localStorage.getItem(STORE_KEY));
+      }
+      publishLocalDuelData(loadStore());
+      renderAll();
+      toast(`${players[id].name} profile active`);
+    }
+    function renderIdentityGate() {
+      const gate = document.getElementById("identityGate");
+      if (!gate) return;
+      gate.classList.toggle("active", !selectedPlayerId());
+    }
     function blankStore() {
       return { version: 2, createdAt: new Date().toISOString(), days: {}, gear: {} };
     }
     function loadStore() {
       migrateLegacy();
       try {
-        const parsed = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+        const parsed = JSON.parse(localStorage.getItem(activeStoreKey()) || "null");
         return parsed && parsed.version === 2 ? parsed : blankStore();
       } catch (err) {
         return blankStore();
@@ -1021,7 +1303,140 @@
     }
     function saveStore(data) {
       data.updatedAt = new Date().toISOString();
-      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+      localStorage.setItem(activeStoreKey(), JSON.stringify(data));
+      publishLocalDuelData(data);
+      queueSync(data);
+    }
+    function blankDuelSnapshot() {
+      return { version: 1, duelCode: DUEL_CODE, updatedAt: "", players: {} };
+    }
+    function loadDuelSnapshot() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(DUEL_KEY) || "null");
+        return parsed && parsed.version === 1 ? parsed : blankDuelSnapshot();
+      } catch (err) {
+        return blankDuelSnapshot();
+      }
+    }
+    function saveDuelSnapshot(snapshot) {
+      snapshot.updatedAt = new Date().toISOString();
+      localStorage.setItem(DUEL_KEY, JSON.stringify(snapshot));
+    }
+    function publishLocalDuelData(data) {
+      const id = selectedPlayerId();
+      if (!id) return;
+      const snapshot = loadDuelSnapshot();
+      snapshot.players[id] = {
+        profile: players[id],
+        days: data.days || {},
+        gear: data.gear || {},
+        updatedAt: new Date().toISOString()
+      };
+      saveDuelSnapshot(snapshot);
+    }
+    function queueSync(data) {
+      const id = selectedPlayerId();
+      if (!id) return;
+      try {
+        const queue = JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || "[]");
+        queue.push({ playerId: id, duelCode: DUEL_CODE, data, updatedAt: new Date().toISOString() });
+        localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(queue.slice(-30)));
+      } catch (err) {}
+    }
+    function playerStoreFromSnapshot(playerId) {
+      const snapshot = loadDuelSnapshot();
+      const entry = snapshot.players[playerId];
+      if (!entry) return { days: {}, gear: {} };
+      return { days: entry.days || {}, gear: entry.gear || {} };
+    }
+    function dayForPlayer(playerId, date) {
+      const store = playerId === selectedPlayerId() ? loadStore() : playerStoreFromSnapshot(playerId);
+      return store.days[date] || defaultDay(date);
+    }
+    function gearForPlayer(playerId) {
+      const store = playerId === selectedPlayerId() ? loadStore() : playerStoreFromSnapshot(playerId);
+      return store.gear || {};
+    }
+    function stageScore(planDay, state) {
+      const mainTask = taskForType(planDay.type);
+      const mainDone = !!state.complete || !!state.tasks[mainTask];
+      const signalDone = !!state.tasks.body;
+      const recoveryDone = !!state.tasks.sleep || toNumber(state.metrics.sleepHours) >= 6.5 || state.readiness === "red";
+      const nutritionDone = !!state.tasks.dietProtein || toNumber(state.metrics.proteinGrams) >= 120;
+      const hydrationDone = !!state.tasks.hydration || toNumber(state.metrics.waterLiters) >= 2.5;
+      const notesDone = !!(state.signals.notes || "").trim() || !!state.tasks.gym || planDay.type === "gear" || planDay.type === "mobility";
+      let score = 0;
+      if (mainDone) score += 35;
+      if (signalDone) score += 20;
+      if (recoveryDone) score += 20;
+      if (nutritionDone) score += 8;
+      if (hydrationDone) score += 7;
+      if (notesDone) score += 10;
+      const cap = state.readiness === "red" ? 70 : state.readiness === "yellow" ? 95 : 100;
+      return Math.min(cap, score);
+    }
+    function playerSummary(playerId) {
+      const currentIndex = activePlanIndex();
+      const week = weekLabel(activeDay().date);
+      let total = 0;
+      let weekTotal = 0;
+      let cleared = 0;
+      let redFlags = 0;
+      let maxStairs = 0;
+      let maxRunWalk = 0;
+      plan.forEach((planDay) => {
+        const state = dayForPlayer(playerId, planDay.date);
+        const score = stageScore(planDay, state);
+        total += score;
+        if (weekLabel(planDay.date) === week) weekTotal += score;
+        if (state.complete) cleared += 1;
+        if (isBadSignal(state)) redFlags += 1;
+        maxStairs = Math.max(maxStairs, toNumber(state.metrics.stairsMinutes));
+        maxRunWalk = Math.max(maxRunWalk, toNumber(state.metrics.runWalkMinutes));
+      });
+      const gearDone = gear.filter(([id]) => gearForPlayer(playerId)[id]).length;
+      const readinessIndex = Math.max(0, Math.min(100,
+        Math.round(
+          percent(cleared, plan.length) * .30 +
+          percent(maxStairs, 45) * .25 +
+          percent(maxRunWalk, 90) * .20 +
+          (100 - Math.min(100, redFlags * 18)) * .15 +
+          percent(gearDone, gear.length) * .10
+        )
+      ));
+      return {
+        total,
+        weekTotal,
+        cleared,
+        streak: streakCountForPlayer(playerId),
+        readinessIndex,
+        gearPct: percent(gearDone, gear.length),
+        redFlags,
+        today: dayForPlayer(playerId, activeDay().date),
+        todayScore: stageScore(activeDay(), dayForPlayer(playerId, activeDay().date)),
+        stamps: stampsForPlayer(playerId, maxStairs, maxRunWalk, gearDone, redFlags)
+      };
+    }
+    function streakCountForPlayer(playerId) {
+      let count = 0;
+      const todayIndex = activePlanIndex();
+      for (let i = todayIndex; i >= 0; i -= 1) {
+        if (!dayForPlayer(playerId, plan[i].date).complete) break;
+        count += 1;
+      }
+      return count;
+    }
+    function stampsForPlayer(playerId, maxStairs, maxRunWalk, gearDone, redFlags) {
+      const stamps = [];
+      if (streakCountForPlayer(playerId) >= 3) stamps.push("Steady");
+      if (maxStairs >= 30) stamps.push("Stair Engine");
+      if (maxRunWalk >= 60) stamps.push("Time on Feet");
+      if (redFlags === 0 && playerSummarySafeClears(playerId) >= 3) stamps.push("Green Week");
+      if (gearDone >= Math.ceil(gear.length * .8)) stamps.push("Loadout Locked");
+      return stamps.slice(-2);
+    }
+    function playerSummarySafeClears(playerId) {
+      return plan.filter((planDay) => dayForPlayer(playerId, planDay.date).complete && !isBadSignal(dayForPlayer(playerId, planDay.date))).length;
     }
     function migrateLegacy() {
       if (localStorage.getItem(STORE_KEY) || !localStorage.getItem(LEGACY_KEY)) return;
@@ -1220,7 +1635,7 @@
       const goals = proofGoalData(data);
       if (today.readiness === "red") return "Red today: recovery-only. Protect knees, shins, sleep, and hydration.";
       if (today.readiness === "yellow") return "Yellow today: do the reduced version. Bank consistency without adding injury risk.";
-      if (goals.some((goal) => goal.status === "risk")) return "Green today: execute the coin, then close one proof-goal gap.";
+      if (goals.some((goal) => goal.status === "risk")) return "Green today: clear the stage, then close one proof-goal gap.";
       return "Green today: maintain rhythm. No extra hero work required.";
     }
 
@@ -1237,7 +1652,7 @@
           <span class="badge ${badge[1]}">${badge[0]}</span>
           <span>${day.dow} ${formatDate(day.date)} - ${day.label}</span>
         </div>
-        <h2 class="coin-title">Today's Mountain Coin</h2>
+        <h2 class="coin-title">Today's Stage</h2>
         <p class="coin-note"><b>${escapeHtml(day.title)}:</b> ${escapeHtml(coinText)}</p>
         <p class="coin-note">${escapeHtml(day.note)}</p>
         <div class="readiness" aria-label="Readiness check">
@@ -1251,10 +1666,10 @@
           <span class="${state.readiness === "yellow" ? "active-yellow" : ""}">Reduce 30-50%</span>
           <span class="${state.readiness === "red" ? "active-red" : ""}">Recovery only</span>
         </div>
-        <p class="small">${streakCount(data)} day streak. This week: ${weekStats.coins}/${week.days.length} coins, ${Math.round(weekStats.stairs)}m stairs, ${Math.round(weekStats.runWalk)}m run/walk.</p>
+        <p class="small">${streakCount(data)} stage streak. This week: ${weekStats.coins}/${week.days.length} stages, ${Math.round(weekStats.stairs)}m stairs, ${Math.round(weekStats.runWalk)}m run/walk.</p>
         <div class="actions">
-          <button class="btn ${state.started ? "" : "primary"}" id="startCoin" type="button">${state.started ? "Started" : "Start coin"}</button>
-          <button class="btn primary" id="doneCoin" type="button">${state.complete ? "Done saved" : "Mark done"}</button>
+          <button class="btn ${state.started ? "" : "primary"}" id="startCoin" type="button">${state.started ? "Started" : "Start stage"}</button>
+          <button class="btn primary" id="doneCoin" type="button">${state.complete ? "Stage cleared" : "Clear stage"}</button>
         </div>
       `;
       document.querySelectorAll(".ready-btn").forEach((button) => {
@@ -1262,7 +1677,7 @@
       });
       document.getElementById("startCoin").addEventListener("click", () => {
         saveDay(day.date, (entry) => { entry.started = true; });
-        toast("Coin started");
+        toast("Stage started");
       });
       document.getElementById("doneCoin").addEventListener("click", () => markDayDone(day.date));
       renderQuickChecks(data, day, state);
@@ -1309,7 +1724,76 @@
       day.tasks.body = true;
       saveStore(data);
       renderAll();
-      toast("Mountain coin banked");
+      toast("Stage cleared");
+    }
+
+    function renderDuel() {
+      const id = selectedPlayerId();
+      if (!id) return;
+      publishLocalDuelData(loadStore());
+      const ids = ["tarun", "sudhanshu"];
+      const summaries = Object.fromEntries(ids.map((playerId) => [playerId, playerSummary(playerId)]));
+      const lead = summaries.tarun.weekTotal === summaries.sudhanshu.weekTotal
+        ? "Weekly duel is level."
+        : `${players[summaries.tarun.weekTotal > summaries.sudhanshu.weekTotal ? "tarun" : "sudhanshu"].name} leads this week by ${Math.abs(summaries.tarun.weekTotal - summaries.sudhanshu.weekTotal)}.`;
+      document.getElementById("duelHeadline").textContent = lead;
+      document.getElementById("duelProfiles").innerHTML = ids.map((playerId) => {
+        const player = players[playerId];
+        const summary = summaries[playerId];
+        const todayStatus = summary.today.complete ? "Cleared" : summary.today.started ? "Started" : summary.today.readiness === "red" ? "Recovery" : "Pending";
+        return `
+          <article class="duel-profile ${playerId === id ? "is-you" : ""}">
+            <img src="${player.badge}" alt="" />
+            <h3>${escapeHtml(player.name)}</h3>
+            <p>${escapeHtml(player.role)}</p>
+            <span class="signal-pill ${summary.today.readiness}">${todayStatus} - ${summary.today.readiness}</span>
+            <div class="duel-stats">
+              <span><b>${summary.weekTotal}</b>week</span>
+              <span><b>${summary.streak}</b>streak</span>
+              <span><b>${summary.readinessIndex}%</b>ready</span>
+              <span><b>${summary.gearPct}%</b>loadout</span>
+            </div>
+            <div class="stamp-row">${(summary.stamps.length ? summary.stamps : ["Basecamp"]).map((stamp) => `<span class="stamp">${escapeHtml(stamp)}</span>`).join("")}</div>
+          </article>
+        `;
+      }).join("");
+      renderTodayMatchup(summaries);
+      renderStageTrack();
+    }
+    function renderTodayMatchup(summaries) {
+      const tarun = summaries.tarun;
+      const sudhanshu = summaries.sudhanshu;
+      let result = "Awaiting both players.";
+      if (tarun.today.complete || sudhanshu.today.complete) {
+        if (tarun.todayScore === sudhanshu.todayScore) result = "Stage draw.";
+        else result = `${players[tarun.todayScore > sudhanshu.todayScore ? "tarun" : "sudhanshu"].name} leads today's stage.`;
+      }
+      document.getElementById("todayMatchup").innerHTML = `
+        <h2>Stage ${String(activePlanIndex() + 1).padStart(2, "0")} Matchup</h2>
+        <p>${escapeHtml(activeDay().title)} - ${escapeHtml(result)}</p>
+        <div class="scoreline">
+          <div class="score-player"><b>${tarun.todayScore}</b><span>Tarun</span></div>
+          <div class="versus">VS</div>
+          <div class="score-player"><b>${sudhanshu.todayScore}</b><span>Sudhanshu</span></div>
+        </div>
+      `;
+    }
+    function renderStageTrack() {
+      const recent = plan.slice(Math.max(0, activePlanIndex() - 6), activePlanIndex() + 1);
+      document.getElementById("stageTrack").innerHTML = recent.map((planDay) => {
+        const t = stageScore(planDay, dayForPlayer("tarun", planDay.date));
+        const s = stageScore(planDay, dayForPlayer("sudhanshu", planDay.date));
+        const tDone = dayForPlayer("tarun", planDay.date).complete;
+        const sDone = dayForPlayer("sudhanshu", planDay.date).complete;
+        let label = "-";
+        let cls = "";
+        if (tDone || sDone) {
+          if (t === s) { label = "D"; cls = "draw"; }
+          else if (t > s) { label = "T"; cls = "tarun"; }
+          else { label = "S"; cls = "sudhanshu"; }
+        }
+        return `<span class="stage-token ${cls}" title="${escapeHtml(planDay.date)}">${label}</span>`;
+      }).join("");
     }
 
     function renderCalendar() {
@@ -1432,7 +1916,7 @@
       const progressBar = document.getElementById("progressBar");
       const progressSummary = document.getElementById("progressSummary");
       if (progressBar) progressBar.style.setProperty("--pct", pct);
-      if (progressSummary) progressSummary.textContent = `${dayDone}/${plan.length} mountain coins, ${gearDone}/${gear.length} gear checks, ${pct}% total prep saved.`;
+      if (progressSummary) progressSummary.textContent = `${dayDone}/${plan.length} stages, ${gearDone}/${gear.length} loadout checks, ${pct}% prep saved.`;
       renderTrainingSignal(data);
       renderProofGoals(data);
       renderWeekSummary(data);
@@ -1451,7 +1935,7 @@
       if (coachSignal) coachSignal.textContent = coachDecision(data);
       if (insightWrap) {
         insightWrap.innerHTML = [
-          [`${stats.coins}/${week.days.length}`, "coins this week", "Consistency is the primary metric."],
+          [`${stats.coins}/${week.days.length}`, "stages this week", "Consistency is the primary metric."],
           [`${Math.round(stats.stairs)}m`, "stairs this week", `${Math.round(maxStairs)}m best day. Goal: 35-45m.`],
           [`${Math.round(stats.runWalk)}m`, "run/walk this week", `${Math.round(maxRunWalk)}m best day. Goal: 75-100m.`],
           [stats.sleepAvg ? `${stats.sleepAvg.toFixed(1)}h` : "-", "avg sleep logged", `${stats.redFlags} red signal day${stats.redFlags === 1 ? "" : "s"}.`]
@@ -1491,7 +1975,7 @@
           <article class="week-card">
             <h3>${escapeHtml(group.label)}</h3>
             <div class="week-metrics">
-              <span><b>${stats.coins}/${group.days.length}</b>coins</span>
+              <span><b>${stats.coins}/${group.days.length}</b>stages</span>
               <span><b>${Math.round(stats.stairs)}m</b>stairs</span>
               <span><b>${Math.round(stats.runWalk)}m</b>run/walk</span>
               <span><b>${stats.redFlags}</b>red flags</span>
@@ -1549,6 +2033,10 @@
           <button class="mini-btn" id="clearBadge" type="button">Clear</button>
         </div>
         <div class="system-row">
+          <span><b>Switch player</b><span>Change between Tarun and Sudhanshu on this device.</span></span>
+          <button class="mini-btn" id="switchPlayer" type="button">Switch</button>
+        </div>
+        <div class="system-row">
           <span><b>Fresh app shell</b><span>Ask service worker for latest deployed files.</span></span>
           <button class="mini-btn primary" id="refreshApp" type="button">Update</button>
         </div>
@@ -1557,6 +2045,7 @@
       bindDeviceAction("toggleWakeLock", toggleWakeLock);
       bindDeviceAction("persistStorage", persistStorage);
       bindDeviceAction("clearBadge", clearAppBadge);
+      bindDeviceAction("switchPlayer", switchPlayer);
       bindDeviceAction("refreshApp", refreshAppShell);
     }
     function bindDeviceAction(id, handler) {
@@ -1654,6 +2143,44 @@
         location.reload();
       }
     }
+    function supabaseReady() {
+      return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+    }
+    async function flushSyncQueue() {
+      if (!supabaseReady() || !navigator.onLine) return;
+      let queue = [];
+      try {
+        queue = JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || "[]");
+      } catch (err) {
+        queue = [];
+      }
+      if (!queue.length) return;
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/duel-sync`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+            "apikey": SUPABASE_ANON_KEY
+          },
+          body: JSON.stringify({ duelCode: DUEL_CODE, events: queue })
+        });
+        if (!response.ok) throw new Error("Sync failed");
+        const payload = await response.json();
+        if (payload && payload.snapshot) saveDuelSnapshot(payload.snapshot);
+        localStorage.setItem(SYNC_QUEUE_KEY, "[]");
+        renderAll();
+      } catch (err) {
+        toast("Sync pending");
+      }
+    }
+    function switchPlayer() {
+      const active = currentPlayer();
+      if (active && !confirm(`Switch away from ${active.name}?`)) return;
+      localStorage.removeItem(PLAYER_KEY);
+      renderIdentityGate();
+      toast("Choose player");
+    }
 
     function showTab(tab) {
       document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === "view-" + tab));
@@ -1687,7 +2214,7 @@
         "",
         "## Today",
         `Date: ${active.date} (${active.dow})`,
-        `Mountain Coin: ${active.title}`,
+        `Stage: ${active.title}`,
         `Readiness: ${today.readiness}`,
         `Adjusted task: ${planText(active, today.readiness)}`,
         `Coach decision: ${coachDecision(data)}`,
@@ -1699,13 +2226,13 @@
       ];
       weekGroups(data).forEach((group) => {
         const stats = summarizeDays(group.days);
-        lines.push(`- ${group.label}: ${stats.coins}/${group.days.length} coins, ${Math.round(stats.stairs)} min stairs, ${Math.round(stats.runWalk)} min run/walk, ${stats.sleepAvg ? stats.sleepAvg.toFixed(1) : "-"}h avg sleep, ${stats.proteinDays} protein days, ${stats.hydrationDays} hydration days, ${stats.redFlags} red signal days.`);
+        lines.push(`- ${group.label}: ${stats.coins}/${group.days.length} stages, ${Math.round(stats.stairs)} min stairs, ${Math.round(stats.runWalk)} min run/walk, ${stats.sleepAvg ? stats.sleepAvg.toFixed(1) : "-"}h avg sleep, ${stats.proteinDays} protein days, ${stats.hydrationDays} hydration days, ${stats.redFlags} red signal days.`);
       });
       lines.push("", "## Day Logs");
       allLoggedDays(data).forEach(({ planDay, state }) => {
         const checks = quickChecks.filter(([id]) => state.tasks[id]).map(([, title]) => title).join(", ") || "none";
         const notes = state.signals.notes ? ` Notes: ${state.signals.notes}` : "";
-        lines.push(`- ${planDay.date} ${planDay.label}: coin=${state.complete ? "done" : "open"}, readiness=${state.readiness}, stairs=${toNumber(state.metrics.stairsMinutes)}m, runWalk=${toNumber(state.metrics.runWalkMinutes)}m, sleep=${toNumber(state.metrics.sleepHours) || "-"}h, protein=${toNumber(state.metrics.proteinGrams) || "-"}g, water=${toNumber(state.metrics.waterLiters) || "-"}L, knee=${state.signals.kneePain}, shin=${state.signals.shinPain}, energy=${state.signals.energy}, soreness=${state.signals.soreness}, checks=${checks}.${notes}`);
+        lines.push(`- ${planDay.date} ${planDay.label}: stage=${state.complete ? "cleared" : "open"}, readiness=${state.readiness}, stairs=${toNumber(state.metrics.stairsMinutes)}m, runWalk=${toNumber(state.metrics.runWalkMinutes)}m, sleep=${toNumber(state.metrics.sleepHours) || "-"}h, protein=${toNumber(state.metrics.proteinGrams) || "-"}g, water=${toNumber(state.metrics.waterLiters) || "-"}L, knee=${state.signals.kneePain}, shin=${state.signals.shinPain}, energy=${state.signals.energy}, soreness=${state.signals.soreness}, checks=${checks}.${notes}`);
       });
       lines.push("", "## Gear");
       gear.forEach(([id, title]) => {
@@ -1787,7 +2314,7 @@
         ics += "UID:hampta-" + day.date + "@mountain-body\n";
         ics += "DTSTAMP:20260624T000000Z\n";
         ics += "DTSTART;VALUE=DATE:" + day.date.replaceAll("-", "") + "\n";
-        ics += "SUMMARY:" + escapeIcs("Mountain Coin: " + day.label) + "\n";
+        ics += "SUMMARY:" + escapeIcs("Hampta Stage: " + day.label) + "\n";
         ics += "DESCRIPTION:" + escapeIcs(day.workout + " | " + day.note) + "\n";
         ics += "END:VEVENT\n";
       });
@@ -1827,18 +2354,24 @@
       }
     }
     function renderAll() {
+      renderIdentityGate();
       renderToday();
+      renderDuel();
       renderCalendar();
       renderGear();
       renderBodyForm();
       renderProgress();
     }
     function bindEvents() {
+      document.querySelectorAll("[data-player-choice]").forEach((button) => {
+        button.addEventListener("click", () => choosePlayer(button.dataset.playerChoice));
+      });
       document.querySelectorAll(".nav-btn").forEach((button) => button.addEventListener("click", () => showTab(button.dataset.tab)));
       document.getElementById("todayJump").addEventListener("click", () => showTab("today"));
       document.getElementById("markTodayFromCalendar").addEventListener("click", () => markDayDone(activeDay().date));
       document.getElementById("exportIcs").addEventListener("click", exportIcs);
       document.getElementById("saveBody").addEventListener("click", saveBodyLog);
+      document.getElementById("openDeviceBackup").addEventListener("click", () => showTab("backup"));
       document.getElementById("exportBackup").addEventListener("click", exportProgress);
       document.getElementById("importBackup").addEventListener("click", importProgress);
       document.getElementById("resetProgress").addEventListener("click", resetProgress);
@@ -1850,6 +2383,7 @@
       });
       window.addEventListener("online", () => {
         toast("Back online");
+        flushSyncQueue();
         renderProgress();
       });
       window.addEventListener("offline", () => {
@@ -1884,7 +2418,7 @@
     }
     function openInitialTab() {
       const tab = new URLSearchParams(location.search).get("tab");
-      if (["today", "calendar", "gear", "body", "backup"].includes(tab)) showTab(tab);
+      if (["today", "duel", "calendar", "gear", "body", "backup"].includes(tab)) showTab(tab);
     }
 
     setupRain();
@@ -1892,6 +2426,7 @@
     renderAll();
     openInitialTab();
     registerServiceWorker();
+    flushSyncQueue();
   </script>
 </body>
 </html>

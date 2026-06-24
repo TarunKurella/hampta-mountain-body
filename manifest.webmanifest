@@ -18,22 +18,22 @@
     {
       "name": "Today",
       "short_name": "Today",
-      "description": "Open today's mountain coin.",
+      "description": "Open today's Hampta stage.",
       "url": "./index.html?tab=today",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
-      "name": "Readiness",
-      "short_name": "Ready",
-      "description": "Log pain, sleep, energy, and effort.",
-      "url": "./index.html?tab=body",
+      "name": "Duel",
+      "short_name": "Duel",
+      "description": "Open Tarun vs Sudhanshu matchup.",
+      "url": "./index.html?tab=duel",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
-      "name": "Progress",
-      "short_name": "Progress",
-      "description": "Review weekly trek-readiness signals.",
-      "url": "./index.html?tab=backup",
+      "name": "Signal",
+      "short_name": "Signal",
+      "description": "Log pain, sleep, energy, and effort.",
+      "url": "./index.html?tab=body",
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ],

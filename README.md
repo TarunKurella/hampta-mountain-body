@@ -2,6 +2,8 @@
 
 A static, iPhone-friendly PWA for the Hampta Pass prep plan from June 24 to July 20. It stores progress locally with `localStorage`; there is no backend.
 
+The current app also includes **Hampta Duel**: a trust-based two-player mode for Tarun vs Sudhanshu. First launch shows only two identity buttons: **I am Tarun** and **I am Sudhanshu**. No Gmail, no password, no magic link.
+
 Live deployment:
 
 https://hampta-mountain-body.netlify.app
@@ -61,7 +63,7 @@ Use the Progress tab:
 
 The app tracks only decision-changing trek-prep signals:
 
-- daily Mountain Coin completion and streak
+- daily Stage completion and streak
 - stairs minutes
 - run/walk or long-walk minutes
 - gym, protein, hydration, sleep, and readiness checks
@@ -69,6 +71,31 @@ The app tracks only decision-changing trek-prep signals:
 - knee pain, shin pain, energy, soreness, and notes
 - monsoon gear checklist
 - week-wise totals and July 12 proof goals
+
+## Hampta Duel
+
+The Duel tab compares Tarun and Sudhanshu as expedition profiles:
+
+- today stage score
+- weekly duel score
+- streak
+- readiness index
+- loadout percentage
+- last seven stage winners
+- expedition stamps
+
+Scoring is safety-capped: green days can score up to 100, yellow reduced-order days up to 95, and red recovery-order days up to 70. Extra volume does not create bonus points.
+
+## Supabase sync
+
+The app works without Supabase. To enable cross-device sync and future push notifications:
+
+1. Create a Supabase project.
+2. Run `supabase/schema.sql`.
+3. Implement the `duel-sync` Edge Function described in `supabase/README.md`.
+4. Fill `SUPABASE_URL` and `SUPABASE_ANON_KEY` constants in `index.html`.
+
+The static client never uses a service-role key.
 
 ## iOS PWA and localStorage limitations
 
