@@ -5,15 +5,39 @@ This PWA works offline/local-first without Supabase credentials. Supabase is onl
 ## Setup
 
 1. Create a Supabase project.
-2. Run `schema.sql` in the SQL editor.
-3. Deploy Edge Functions:
+2. Login and link this folder:
+
+```sh
+npx supabase login
+npx supabase link --project-ref YOUR_PROJECT_REF
+```
+
+3. Push the database migration:
+
+```sh
+npx supabase db push
+```
+
+4. Deploy Edge Functions:
    - `duel-sync`
    - `register-push`
-4. Set secrets for the Edge Functions:
+
+```sh
+npx supabase functions deploy duel-sync
+npx supabase functions deploy register-push
+```
+
+5. Set secrets for the Edge Functions:
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
-5. Generate VAPID keys for Web Push and keep the private key server-side for the future send function.
-6. Fill these constants in `index.html` for the static client:
+
+```sh
+npx supabase secrets set SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"
+npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY="YOUR_SERVICE_ROLE_KEY"
+```
+
+6. Generate VAPID keys for Web Push and keep the private key server-side for the future send function.
+7. Fill these constants in `index.html` for the static client:
    - `SUPABASE_URL`
    - `SUPABASE_ANON_KEY`
    - `VAPID_PUBLIC_KEY`
