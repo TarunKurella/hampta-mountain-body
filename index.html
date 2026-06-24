@@ -663,6 +663,15 @@
     .btn.warn { border-color: rgba(255,100,117,.42); background: rgba(255,100,117,.12); }
     .btn.full { grid-column: 1 / -1; }
     .btn:active { transform: scale(.98); }
+    .btn:disabled, .mode-btn:disabled, .ready-btn:disabled, .nav-btn:disabled {
+      opacity: .48;
+      cursor: default;
+      transform: none;
+    }
+    .btn:focus-visible, .mini-btn:focus-visible, .nav-btn:focus-visible, .ready-btn:focus-visible, .mode-btn:focus-visible, .check-card:focus-visible, .gear-item:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(125,183,255,.9);
+      outline-offset: 3px;
+    }
 
     .signal-hero {
       display: grid;
@@ -939,7 +948,7 @@
     .status-pill.off { border-color: rgba(255,211,110,.42); color: var(--gold); background: rgba(255,211,110,.1); }
     .mini-btn {
       min-width: 82px;
-      min-height: 38px;
+      min-height: 44px;
       border: 1px solid var(--line);
       border-radius: 999px;
       background: rgba(255,255,255,.08);
@@ -1138,7 +1147,7 @@
       gap: 3px;
     }
     .nav-btn svg { width: 20px; height: 20px; }
-    .nav-btn.active { background: rgba(102,242,168,.15); color: var(--green); }
+    .nav-btn.active, .nav-btn[aria-selected="true"] { background: rgba(102,242,168,.15); color: var(--green); }
 
     .toast {
       position: fixed;
@@ -1698,8 +1707,8 @@
           <p>Use during stairs or walks. Saves minutes straight into today.</p>
         </div>
         <div class="timer-mode" aria-label="Timer mode">
-          <button class="mode-btn active" data-timer-mode="stairs" type="button">Stairs</button>
-          <button class="mode-btn" data-timer-mode="runWalk" type="button">Run/walk</button>
+          <button class="mode-btn active" data-timer-mode="stairs" type="button" aria-pressed="true">Stairs</button>
+          <button class="mode-btn" data-timer-mode="runWalk" type="button" aria-pressed="false">Run/walk</button>
         </div>
         <div class="timer-face">
           <div><b id="timerReadout">00:00</b><span id="timerStatus">Ready. Screen wake lock starts with timer when available.</span></div>
@@ -1774,9 +1783,9 @@
           <span>No weekly score. No final verdict. Just today's training order.</span>
         </div>
         <div class="signal-choices" aria-label="Today body signal">
-          <button class="signal-choice" data-signal="green" type="button"><b>Green</b><span>Normal. Full plan.</span></button>
-          <button class="signal-choice" data-signal="yellow" type="button"><b>Yellow</b><span>Tight or low. Reduce.</span></button>
-          <button class="signal-choice" data-signal="red" type="button"><b>Red</b><span>Sharp pain. Recover.</span></button>
+          <button class="signal-choice" data-signal="green" type="button" aria-pressed="true"><b>Green</b><span>Normal. Full plan.</span></button>
+          <button class="signal-choice" data-signal="yellow" type="button" aria-pressed="false"><b>Yellow</b><span>Tight or low. Reduce.</span></button>
+          <button class="signal-choice" data-signal="red" type="button" aria-pressed="false"><b>Red</b><span>Sharp pain. Recover.</span></button>
         </div>
         <div class="signal-section-title">Numbers if useful</div>
         <div class="fields" id="bodyFields">
@@ -1885,24 +1894,24 @@
     </section>
   </main>
 
-  <nav class="bottom-nav" aria-label="Primary">
-    <button class="nav-btn active" data-tab="today" type="button" aria-label="Today">
+  <nav class="bottom-nav" aria-label="Primary" role="tablist">
+    <button class="nav-btn active" data-tab="today" type="button" role="tab" aria-selected="true" aria-controls="view-today" aria-label="Today">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V21H5V10"/><path d="M9 21v-6h6v6"/></svg>
       Today
     </button>
-    <button class="nav-btn" data-tab="calendar" type="button" aria-label="Calendar">
+    <button class="nav-btn" data-tab="calendar" type="button" role="tab" aria-selected="false" aria-controls="view-calendar" aria-label="Calendar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v5M16 2v5M3 10h18"/></svg>
       Route
     </button>
-    <button class="nav-btn" data-tab="train" type="button" aria-label="Train">
+    <button class="nav-btn" data-tab="train" type="button" role="tab" aria-selected="false" aria-controls="view-train" aria-label="Train">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
       Train
     </button>
-    <button class="nav-btn" data-tab="duel" type="button" aria-label="Duel">
+    <button class="nav-btn" data-tab="duel" type="button" role="tab" aria-selected="false" aria-controls="view-duel" aria-label="Duel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h10l2 5-7 11L5 9l2-5Z"/><path d="M5 9h14"/><path d="m9 4 3 5 3-5"/></svg>
       Duel
     </button>
-    <button class="nav-btn" data-tab="body" type="button" aria-label="Readiness">
+    <button class="nav-btn" data-tab="body" type="button" role="tab" aria-selected="false" aria-controls="view-body" aria-label="Readiness">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h17"/><path d="M8 16v-5M13 16V8M18 16v-9"/></svg>
       Signal
     </button>
@@ -2616,9 +2625,9 @@
         <p class="coin-note"><b>${escapeHtml(day.title)}:</b> ${escapeHtml(coinText)}</p>
         <p class="coin-note">${escapeHtml(day.note)}</p>
         <div class="readiness" aria-label="Readiness check">
-          <button class="ready-btn ${state.readiness === "green" ? "active" : ""}" data-readiness="green" type="button">Green</button>
-          <button class="ready-btn ${state.readiness === "yellow" ? "active" : ""}" data-readiness="yellow" type="button">Yellow</button>
-          <button class="ready-btn ${state.readiness === "red" ? "active" : ""}" data-readiness="red" type="button">Red</button>
+          <button class="ready-btn ${state.readiness === "green" ? "active" : ""}" data-readiness="green" type="button" aria-pressed="${state.readiness === "green" ? "true" : "false"}">Green</button>
+          <button class="ready-btn ${state.readiness === "yellow" ? "active" : ""}" data-readiness="yellow" type="button" aria-pressed="${state.readiness === "yellow" ? "true" : "false"}">Yellow</button>
+          <button class="ready-btn ${state.readiness === "red" ? "active" : ""}" data-readiness="red" type="button" aria-pressed="${state.readiness === "red" ? "true" : "false"}">Red</button>
         </div>
         <p class="small">${readinessLabel(state.readiness)}</p>
         <div class="decision-strip" aria-label="Today decision">
@@ -2732,7 +2741,7 @@
       const locked = !state.started && !state.complete;
       document.getElementById("quickLockNote")?.remove();
       wrap.innerHTML = quickChecks.map(([id, title, meta]) => `
-        <button class="check-card ${state.tasks[id] ? "is-done" : ""} ${locked ? "is-locked" : ""}" data-check="${id}" type="button" ${locked ? "disabled" : ""}>
+        <button class="check-card ${state.tasks[id] ? "is-done" : ""} ${locked ? "is-locked" : ""}" data-check="${id}" type="button" aria-pressed="${state.tasks[id] ? "true" : "false"}" ${locked ? "disabled" : ""}>
           <span class="check-box">${state.tasks[id] ? "OK" : locked ? "—" : ""}</span>
           <span><span class="check-title">${title}</span><span class="check-meta">${meta}</span></span>
         </button>
@@ -3041,6 +3050,7 @@
       }
       document.querySelectorAll("[data-signal]").forEach((button) => {
         button.classList.toggle("active", button.dataset.signal === day.readiness);
+        button.setAttribute("aria-pressed", button.dataset.signal === day.readiness ? "true" : "false");
       });
     }
     function setTodaySignal(value) {
@@ -3527,6 +3537,7 @@
       if (toggle) toggle.textContent = timer.startedAt ? "Pause timer" : elapsed > 0 ? "Resume timer" : "Start timer";
       document.querySelectorAll("[data-timer-mode]").forEach((button) => {
         button.classList.toggle("active", button.dataset.timerMode === timer.mode);
+        button.setAttribute("aria-pressed", button.dataset.timerMode === timer.mode ? "true" : "false");
       });
       if (panel) panel.classList.toggle("running", !!timer.startedAt);
     }
@@ -3755,7 +3766,11 @@
       if (!document.getElementById("view-" + tab)) tab = "today";
       localStorage.setItem(TAB_KEY, tab);
       document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === "view-" + tab));
-      document.querySelectorAll(".nav-btn").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
+      document.querySelectorAll(".nav-btn").forEach((button) => {
+        const selected = button.dataset.tab === tab;
+        button.classList.toggle("active", selected);
+        button.setAttribute("aria-selected", selected ? "true" : "false");
+      });
       window.scrollTo({ top: 0, behavior: "smooth" });
       if (tab === "body") renderBodyForm();
       if (tab === "train") renderTimer();

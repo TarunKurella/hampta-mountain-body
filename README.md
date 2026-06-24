@@ -100,6 +100,7 @@ The Duel tab compares Tarun and Sudhanshu as expedition profiles:
 - weekly duel score
 - one-tap opponent nudge with local cooldown
 - dedicated Train tab with timer, Wake Lock, vibration feedback, and automatic minutes logging
+- HIG-inspired PWA accessibility: 44px+ controls, tab state, pressed state, visible focus, reduced motion, and contrast preferences
 - streak
 - readiness index
 - loadout percentage
