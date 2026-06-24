@@ -99,6 +99,7 @@ The Duel tab compares Tarun and Sudhanshu as expedition profiles:
 - today stage score
 - weekly duel score
 - one-tap opponent nudge with local cooldown
+- dedicated Train tab with timer, Wake Lock, vibration feedback, and automatic minutes logging
 - streak
 - readiness index
 - loadout percentage

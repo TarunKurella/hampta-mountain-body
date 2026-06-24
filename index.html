@@ -24,6 +24,8 @@
       --bg-2: #0d1714;
       --sheet: rgba(20,31,28,.82);
       --sheet-2: rgba(31,45,40,.74);
+      --material: rgba(26,38,34,.72);
+      --material-strong: rgba(34,48,43,.82);
       --panel: rgba(255,255,255,.07);
       --panel-2: rgba(255,255,255,.1);
       --line: rgba(255,255,255,.12);
@@ -40,6 +42,7 @@
       --ink: #03100c;
       --radius: 18px;
       --shadow: 0 18px 48px rgba(0,0,0,.34);
+      --shadow-soft: 0 8px 24px rgba(0,0,0,.18);
       --safe-top: env(safe-area-inset-top);
       --safe-bottom: env(safe-area-inset-bottom);
       --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, system-ui, sans-serif;
@@ -64,7 +67,8 @@
       overscroll-behavior-y: none;
       touch-action: manipulation;
       background:
-        linear-gradient(180deg, rgba(95,116,102,.12), transparent 36%),
+        radial-gradient(circle at 50% -12%, rgba(94,226,143,.16), transparent 34%),
+        linear-gradient(180deg, rgba(95,116,102,.08), transparent 36%),
         linear-gradient(180deg, #07110f 0%, #0b1512 52%, #030706 100%);
     }
     body::before {
@@ -96,7 +100,7 @@
       z-index: -1;
       pointer-events: none;
       overflow: hidden;
-      opacity: .16;
+      opacity: .08;
     }
     .rain i {
       position: absolute;
@@ -112,9 +116,9 @@
     }
 
     .app {
-      width: min(100%, 520px);
+      width: min(100%, 500px);
       margin: 0 auto;
-      padding: calc(8px + var(--safe-top)) 12px calc(94px + var(--safe-bottom));
+      padding: calc(6px + var(--safe-top)) 14px calc(96px + var(--safe-bottom));
     }
     .topbar {
       position: sticky;
@@ -123,13 +127,13 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 8px;
-      border: 1px solid var(--line);
+      padding: 7px;
+      border: 1px solid rgba(255,255,255,.1);
       border-radius: 999px;
-      background: rgba(9,16,14,.78);
-      -webkit-backdrop-filter: blur(22px);
-      backdrop-filter: blur(22px);
-      box-shadow: 0 12px 34px rgba(0,0,0,.28);
+      background: rgba(10,18,16,.66);
+      -webkit-backdrop-filter: blur(28px) saturate(1.4);
+      backdrop-filter: blur(28px) saturate(1.4);
+      box-shadow: var(--shadow-soft);
     }
     .logo {
       flex: 0 0 auto;
@@ -153,7 +157,7 @@
     .head-text { min-width: 0; flex: 1; }
     .head-text h1 {
       margin: 0;
-      font-size: 15px;
+      font-size: clamp(15px, 4vw, 17px);
       line-height: 1.1;
       white-space: nowrap;
       overflow: hidden;
@@ -162,33 +166,33 @@
     .head-text p {
       margin: 2px 0 0;
       color: var(--muted);
-      font-size: 11px;
+      font-size: clamp(11px, 3vw, 13px);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .pill {
-      min-height: 42px;
-      border: 1px solid var(--line);
+      min-height: 40px;
+      border: 1px solid rgba(255,255,255,.1);
       border-radius: 999px;
-      background: rgba(255,255,255,.08);
+      background: rgba(255,255,255,.07);
       color: var(--text);
       padding: 0 12px;
       font: inherit;
-      font-size: 12px;
+      font-size: clamp(12px, 3.2vw, 14px);
       font-weight: 850;
       white-space: nowrap;
     }
 
     .mission {
       margin: 14px 0 12px;
-      padding: 18px 16px;
+      padding: 20px 17px;
       overflow: hidden;
       position: relative;
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(29,43,39,.9), rgba(12,22,19,.84));
-      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(32,46,41,.82), rgba(12,22,19,.72));
+      box-shadow: var(--shadow-soft);
     }
     .mission::before {
       content: "";
@@ -201,8 +205,8 @@
     .mission h2 {
       position: relative;
       margin: 0;
-      max-width: 15ch;
-      font-size: 30px;
+      max-width: 14ch;
+      font-size: 32px;
       line-height: 1.02;
       letter-spacing: 0;
     }
@@ -210,13 +214,28 @@
       position: relative;
       margin: 10px 0 0;
       color: var(--muted);
-      font-size: 13px;
+      font-size: clamp(13px, 3.4vw, 15px);
       line-height: 1.38;
     }
     .accent { color: var(--green); }
 
     .view { display: none; }
     .view.active { display: block; animation: slide-in .24s ease both; }
+    .view-title {
+      margin: 14px 2px 10px;
+    }
+    .view-title h2 {
+      margin: 0;
+      font-size: clamp(28px, 8vw, 34px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+    .view-title p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: clamp(13px, 3.5vw, 15px);
+      line-height: 1.35;
+    }
     @keyframes slide-in {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: none; }
@@ -224,12 +243,13 @@
 
     .panel {
       margin: 12px 0;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: var(--sheet);
-      box-shadow: 0 10px 28px rgba(0,0,0,.18);
-      backdrop-filter: blur(18px);
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 24px;
+      background: var(--material);
+      box-shadow: var(--shadow-soft);
+      -webkit-backdrop-filter: blur(22px) saturate(1.35);
+      backdrop-filter: blur(22px) saturate(1.35);
     }
     .panel.tight { padding: 12px; }
     .panel h3, .panel h2 {
@@ -237,15 +257,15 @@
       letter-spacing: 0;
       line-height: 1.12;
     }
-    .panel h2 { font-size: 21px; }
-    .panel h3 { font-size: 17px; }
+    .panel h2 { font-size: clamp(21px, 5.6vw, 25px); }
+    .panel h3 { font-size: clamp(17px, 4.6vw, 20px); }
     .panel p {
       margin: 8px 0;
       color: var(--muted);
-      font-size: 13px;
+      font-size: clamp(13px, 3.5vw, 15px);
       line-height: 1.42;
     }
-    .small { color: var(--soft); font-size: 12px; line-height: 1.35; }
+    .small { color: var(--soft); font-size: clamp(12px, 3.2vw, 14px); line-height: 1.35; }
     .divider { height: 1px; margin: 13px 0; background: rgba(255,255,255,.09); }
     .stats {
       display: grid;
@@ -255,13 +275,13 @@
     }
     .stat {
       min-height: 72px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--sheet-2);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      background: rgba(255,255,255,.055);
       padding: 11px;
     }
-    .stat b { display: block; font-size: 22px; line-height: 1; letter-spacing: 0; }
-    .stat span { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.2; }
+    .stat b { display: block; font-size: clamp(22px, 6vw, 26px); line-height: 1; letter-spacing: 0; }
+    .stat span { display: block; margin-top: 5px; color: var(--muted); font-size: clamp(11px, 3vw, 13px); line-height: 1.2; }
 
     .duel-pulse {
       margin: 12px 0;
@@ -497,13 +517,86 @@
       font-size: 10px;
       font-weight: 850;
     }
+    .trail-timer {
+      display: grid;
+      gap: 12px;
+    }
+    .trail-timer.running {
+      border-color: rgba(94,226,143,.34);
+      background: rgba(20,42,32,.78);
+    }
+    .timer-face {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 22px;
+      background: rgba(0,0,0,.16);
+      padding: 13px;
+    }
+    .timer-face b {
+      display: block;
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .timer-face span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+    .timer-mode {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .mode-btn {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255,255,255,.055);
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .mode-btn.active {
+      color: var(--green);
+      border-color: rgba(94,226,143,.52);
+      background: rgba(94,226,143,.12);
+    }
+    .timer-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .timer-chip {
+      min-height: 35px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 10px;
+      color: var(--soft);
+      background: rgba(255,255,255,.045);
+      font-size: 11px;
+      font-weight: 850;
+      text-align: center;
+    }
+    .trail-timer.running .timer-chip {
+      border-color: rgba(94,226,143,.32);
+      color: var(--green);
+      background: rgba(94,226,143,.1);
+    }
 
     .today-card {
-      border: 1px solid rgba(94,226,143,.3);
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(29,52,43,.94), rgba(12,23,20,.9));
+      border: 1px solid rgba(94,226,143,.24);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(29,52,43,.86), rgba(12,23,20,.82));
       padding: 16px;
-      box-shadow: 0 14px 38px rgba(0,0,0,.28);
+      box-shadow: var(--shadow-soft);
     }
     .date-line {
       display: flex;
@@ -551,7 +644,7 @@
       appearance: none;
       min-height: 48px;
       border: 1px solid var(--line);
-      border-radius: 15px;
+      border-radius: 16px;
       background: rgba(255,255,255,.07);
       color: var(--text);
       padding: 0 13px;
@@ -742,7 +835,7 @@
     .week-card h3 { font-size: 15px; margin-bottom: 8px; }
     .week-metrics {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 6px;
     }
     .week-metrics span {
@@ -1024,9 +1117,9 @@
       padding: 7px;
       border: 1px solid var(--line);
       border-radius: 24px;
-      background: rgba(3,7,6,.8);
-      -webkit-backdrop-filter: blur(20px);
-      backdrop-filter: blur(20px);
+      background: rgba(3,7,6,.72);
+      -webkit-backdrop-filter: blur(28px) saturate(1.35);
+      backdrop-filter: blur(28px) saturate(1.35);
       box-shadow: 0 18px 55px rgba(0,0,0,.42);
     }
     .nav-btn {
@@ -1477,6 +1570,8 @@
       .pulse-scoreboard { grid-template-columns: 1fr; }
       .next-move { grid-template-columns: 1fr; }
       .debrief-grid { grid-template-columns: 1fr; }
+      .timer-face { grid-template-columns: 1fr; }
+      .timer-actions { grid-template-columns: 1fr; }
       .brief-grid { grid-template-columns: 1fr; }
       .nav-btn { font-size: 9px; }
       .week-metrics { grid-template-columns: repeat(2, 1fr); }
@@ -1486,6 +1581,19 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
       .rain { display: none; }
+    }
+    @media (prefers-contrast: more) {
+      :root {
+        --line: rgba(255,255,255,.26);
+        --muted: rgba(247,251,247,.82);
+        --soft: rgba(247,251,247,.72);
+      }
+      .panel, .today-card, .duel-pulse, .risk-guard, .debrief-card, .bottom-nav, .topbar {
+        border-color: rgba(255,255,255,.24);
+      }
+      .btn, .mini-btn, .nav-btn, .ready-btn, .mode-btn, input, select, textarea {
+        border-color: rgba(255,255,255,.28);
+      }
     }
     @supports (content-visibility: auto) {
       .panel, .day, .week-card, .science-card { content-visibility: auto; contain-intrinsic-size: 180px; }
@@ -1546,6 +1654,20 @@
     </section>
 
     <section id="view-today" class="view active">
+      <div class="view-title">
+        <h2>Today</h2>
+        <p>One stage. One checklist. No catch-up debt.</p>
+      </div>
+      <article class="today-card" id="todayCard"></article>
+
+      <div class="panel">
+        <h3>Quick checks</h3>
+        <div class="quick-grid" id="quickChecks"></div>
+      </div>
+
+      <section id="riskGuard" aria-live="polite"></section>
+      <section class="debrief-card" id="stageDebrief" aria-live="polite"></section>
+
       <div class="stats">
         <div class="stat"><b id="daysLeftStat">26</b><span>days left</span></div>
         <div class="stat"><b id="todayTypeStat">Stairs</b><span>today's stage</span></div>
@@ -1553,8 +1675,6 @@
       </div>
 
       <section class="duel-pulse" id="duelPulse" aria-live="polite"></section>
-      <section class="debrief-card" id="stageDebrief" aria-live="polite"></section>
-      <section id="riskGuard" aria-live="polite"></section>
 
       <div class="panel">
         <div class="ring-wrap">
@@ -1565,16 +1685,38 @@
           </div>
         </div>
       </div>
+    </section>
 
-      <article class="today-card" id="todayCard"></article>
-
-      <div class="panel">
-        <h3>Quick checks</h3>
-        <div class="quick-grid" id="quickChecks"></div>
+    <section id="view-train" class="view">
+      <div class="view-title">
+        <h2>Train</h2>
+        <p>Time stairs or walks, then save minutes into today.</p>
+      </div>
+      <div class="panel trail-timer">
+        <div>
+          <h2>Trail timer</h2>
+          <p>Use during stairs or walks. Saves minutes straight into today.</p>
+        </div>
+        <div class="timer-mode" aria-label="Timer mode">
+          <button class="mode-btn active" data-timer-mode="stairs" type="button">Stairs</button>
+          <button class="mode-btn" data-timer-mode="runWalk" type="button">Run/walk</button>
+        </div>
+        <div class="timer-face">
+          <div><b id="timerReadout">00:00</b><span id="timerStatus">Ready. Screen wake lock starts with timer when available.</span></div>
+          <div class="timer-chip" id="timerSavedToday">0m saved today</div>
+        </div>
+        <div class="timer-actions">
+          <button class="btn primary" id="timerToggle" type="button">Start timer</button>
+          <button class="btn" id="timerSave" type="button">Save minutes</button>
+        </div>
       </div>
     </section>
 
     <section id="view-duel" class="view">
+      <div class="view-title">
+        <h2>Duel</h2>
+        <p>Compete on safe consistency, not reckless volume.</p>
+      </div>
       <div class="duel-hero">
         <h2>Tarun vs Sudhanshu</h2>
         <p id="duelHeadline">Hampta Duel is loading.</p>
@@ -1599,6 +1741,10 @@
     </section>
 
     <section id="view-calendar" class="view">
+      <div class="view-title">
+        <h2>Route</h2>
+        <p>Every day from prep start to Hampta Day 1.</p>
+      </div>
       <div class="panel">
         <h2>Route</h2>
         <p>June 24 to July 20. Taper and travel are marked so the plan stays easy to scan.</p>
@@ -1611,6 +1757,10 @@
     </section>
 
     <section id="view-body" class="view">
+      <div class="view-title">
+        <h2>Signal</h2>
+        <p>Decide full plan, reduced plan, or recovery.</p>
+      </div>
       <div class="panel signal-hero">
         <div class="signal-title-row">
           <div>
@@ -1665,6 +1815,10 @@
     </section>
 
     <section id="view-backup" class="view">
+      <div class="view-title">
+        <h2>Progress</h2>
+        <p>Coach brief, proof goals, backup, and device settings.</p>
+      </div>
       <div class="panel">
         <h2>Progress</h2>
         <p id="progressSummary">Stages and prep checks saved on this iPhone.</p>
@@ -1740,6 +1894,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v5M16 2v5M3 10h18"/></svg>
       Route
     </button>
+    <button class="nav-btn" data-tab="train" type="button" aria-label="Train">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+      Train
+    </button>
     <button class="nav-btn" data-tab="duel" type="button" aria-label="Duel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h10l2 5-7 11L5 9l2-5Z"/><path d="M5 9h14"/><path d="m9 4 3 5 3-5"/></svg>
       Duel
@@ -1762,12 +1920,14 @@
     const SYNC_QUEUE_KEY = "hampta_duel_sync_queue_v1";
     const NOTIFY_ONBOARD_KEY = "hampta_notify_onboard_v1";
     const NUDGE_KEY = "hampta_nudge_last_v1";
+    const TAB_KEY = "hampta_active_tab_v1";
     const DUEL_CODE = "HAMPTA20";
     const SUPABASE_URL = "https://spjpyeqxezijhobanclz.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwanB5ZXF4ZXppamhvYmFuY2x6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDI1NzQsImV4cCI6MjA5Nzg3ODU3NH0.TwE8BLeRC9CHoJKadrH56qh3RRQCX5Bg_lr5MuGc4i4";
     const VAPID_PUBLIC_KEY = "BIG7vVz08ruXOXJscpV3BJwdyGpnnvKIZyVeqlhz7bSOb5puFYvClIQTP0HtT5bdGMjgvEUZal3GVcD6z7hptss";
     let wakeLockSentinel = null;
     let wakeLockWanted = false;
+    const timer = { mode: "stairs", startedAt: 0, elapsedMs: 0, interval: 0, wakeLockOwned: false };
 
     const players = {
       tarun: {
@@ -2446,6 +2606,7 @@
       renderDuelPulse(data, day, state);
       renderStageDebrief(data, day, state);
       renderRiskGuard(day, state);
+      renderTimer();
       document.getElementById("todayCard").innerHTML = `
         <div class="date-line">
           <span class="badge ${badge[1]}">${badge[0]}</span>
@@ -3319,8 +3480,137 @@
         console.warn("Duel event notification skipped", err);
       }
     }
+    function vibratePattern(pattern) {
+      if (navigator.vibrate) navigator.vibrate(pattern);
+    }
     function hapticTap() {
-      if (navigator.vibrate) navigator.vibrate(12);
+      vibratePattern(12);
+    }
+    function hapticStart() {
+      vibratePattern([12, 36, 12]);
+    }
+    function hapticStop() {
+      vibratePattern([24, 40, 12]);
+    }
+    function hapticSave() {
+      vibratePattern([18, 28, 18, 28, 30]);
+    }
+    function timerElapsedMs() {
+      return timer.elapsedMs + (timer.startedAt ? Date.now() - timer.startedAt : 0);
+    }
+    function formatTimer(ms) {
+      const total = Math.floor(ms / 1000);
+      const minutes = Math.floor(total / 60);
+      const seconds = total % 60;
+      return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+    function timerMetricKey() {
+      return timer.mode === "stairs" ? "stairsMinutes" : "runWalkMinutes";
+    }
+    function renderTimer() {
+      const data = loadStore();
+      const day = getDay(data, activeDay().date);
+      const elapsed = timerElapsedMs();
+      const saved = toNumber(day.metrics[timerMetricKey()]);
+      const readout = document.getElementById("timerReadout");
+      const status = document.getElementById("timerStatus");
+      const savedEl = document.getElementById("timerSavedToday");
+      const toggle = document.getElementById("timerToggle");
+      const panel = document.querySelector(".trail-timer");
+      if (readout) readout.textContent = formatTimer(elapsed);
+      if (status) status.textContent = timer.startedAt
+        ? `${timer.mode === "stairs" ? "Stairs" : "Run/walk"} running. Keep it calm.`
+        : elapsed > 0
+          ? "Paused. Save minutes or continue."
+          : "Ready. Screen wake lock starts with timer when available.";
+      if (savedEl) savedEl.textContent = `${Math.round(saved)}m saved today`;
+      if (toggle) toggle.textContent = timer.startedAt ? "Pause timer" : elapsed > 0 ? "Resume timer" : "Start timer";
+      document.querySelectorAll("[data-timer-mode]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.timerMode === timer.mode);
+      });
+      if (panel) panel.classList.toggle("running", !!timer.startedAt);
+    }
+    async function startTimerWakeLock() {
+      if (!("wakeLock" in navigator) || wakeLockSentinel) return;
+      try {
+        wakeLockSentinel = await navigator.wakeLock.request("screen");
+        timer.wakeLockOwned = true;
+        wakeLockSentinel.addEventListener("release", () => {
+          wakeLockSentinel = null;
+          timer.wakeLockOwned = false;
+          renderDeviceStatus(loadStore());
+        });
+        renderDeviceStatus(loadStore());
+      } catch (err) {
+        timer.wakeLockOwned = false;
+      }
+    }
+    async function stopTimerWakeLock() {
+      if (!timer.wakeLockOwned || !wakeLockSentinel) return;
+      try {
+        await wakeLockSentinel.release();
+      } catch (err) {}
+      wakeLockSentinel = null;
+      timer.wakeLockOwned = false;
+      renderDeviceStatus(loadStore());
+    }
+    async function toggleTrailTimer() {
+      if (timer.startedAt) {
+        timer.elapsedMs = timerElapsedMs();
+        timer.startedAt = 0;
+        clearInterval(timer.interval);
+        timer.interval = 0;
+        await stopTimerWakeLock();
+        hapticStop();
+        renderTimer();
+        toast("Timer paused");
+        return;
+      }
+      timer.startedAt = Date.now();
+      timer.interval = window.setInterval(renderTimer, 1000);
+      await startTimerWakeLock();
+      hapticStart();
+      renderTimer();
+      toast("Timer started");
+    }
+    async function saveTrailTimer() {
+      const elapsed = timerElapsedMs();
+      const minutes = Math.max(1, Math.round(elapsed / 60000));
+      if (elapsed < 1000) {
+        hapticTap();
+        toast("Start timer first");
+        return;
+      }
+      const date = activeDay().date;
+      const taskKey = timer.mode === "stairs" ? "stairs" : "runWalk";
+      const metricKey = timerMetricKey();
+      saveDay(date, (day) => {
+        const previous = toNumber(day.metrics[metricKey]);
+        day.started = true;
+        day.metrics[metricKey] = String(previous + minutes);
+        day.tasks[taskKey] = true;
+      });
+      await stopTimerWakeLock();
+      clearInterval(timer.interval);
+      timer.interval = 0;
+      timer.startedAt = 0;
+      timer.elapsedMs = 0;
+      hapticSave();
+      notifyDuelEvent("task", taskTitle(taskKey), date);
+      renderTimer();
+      toast(`${minutes}m saved`);
+    }
+    function setTimerMode(mode) {
+      if (!["stairs", "runWalk"].includes(mode)) return;
+      if (timer.startedAt) {
+        toast("Pause timer first");
+        hapticTap();
+        return;
+      }
+      timer.mode = mode;
+      timer.elapsedMs = 0;
+      hapticTap();
+      renderTimer();
     }
     async function registerPushSubscription() {
       const player = currentPlayer();
@@ -3462,10 +3752,13 @@
     }
 
     function showTab(tab) {
+      if (!document.getElementById("view-" + tab)) tab = "today";
+      localStorage.setItem(TAB_KEY, tab);
       document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === "view-" + tab));
       document.querySelectorAll(".nav-btn").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
       window.scrollTo({ top: 0, behavior: "smooth" });
       if (tab === "body") renderBodyForm();
+      if (tab === "train") renderTimer();
     }
 
     function exportProgress() {
@@ -3664,6 +3957,11 @@
       document.getElementById("copyCoachReport").addEventListener("click", copyCoachReport);
       document.getElementById("shareCoachReport").addEventListener("click", shareCoachReport);
       document.getElementById("downloadCoachReport").addEventListener("click", downloadCoachReport);
+      document.getElementById("timerToggle").addEventListener("click", toggleTrailTimer);
+      document.getElementById("timerSave").addEventListener("click", saveTrailTimer);
+      document.querySelectorAll("[data-timer-mode]").forEach((button) => {
+        button.addEventListener("click", () => setTimerMode(button.dataset.timerMode));
+      });
       document.querySelectorAll("[data-signal]").forEach((button) => {
         button.addEventListener("click", () => setTodaySignal(button.dataset.signal));
       });
@@ -3694,6 +3992,14 @@
         renderProgress();
       });
       document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden" && timer.startedAt) {
+          timer.elapsedMs = timerElapsedMs();
+          timer.startedAt = 0;
+          clearInterval(timer.interval);
+          timer.interval = 0;
+          stopTimerWakeLock();
+          renderTimer();
+        }
         if (document.visibilityState === "visible") {
           updateAppBadge(loadStore());
           if (wakeLockWanted && !wakeLockSentinel && "wakeLock" in navigator) {
@@ -3721,7 +4027,10 @@
     }
     function openInitialTab() {
       const tab = new URLSearchParams(location.search).get("tab");
-      if (["today", "duel", "calendar", "body", "backup"].includes(tab)) showTab(tab);
+      const saved = localStorage.getItem(TAB_KEY);
+      const allowed = ["today", "train", "duel", "calendar", "body", "backup"];
+      if (allowed.includes(tab)) showTab(tab);
+      else if (allowed.includes(saved)) showTab(saved);
     }
 
     setupRain();
