@@ -469,6 +469,69 @@
       font-size: 12px;
       line-height: 1.36;
     }
+    .recovery-order {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.09);
+      padding-top: 12px;
+    }
+    .recovery-order h3 {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+    .recovery-order ul {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .recovery-order li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 8px;
+      align-items: center;
+      min-height: 38px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      background: rgba(0,0,0,.13);
+      padding: 6px 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+    .recovery-order li b {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background: var(--gold);
+      font-size: 10px;
+      font-weight: 950;
+    }
+    .tomorrow-preview {
+      border: 1px solid rgba(125,183,255,.18);
+      border-radius: 16px;
+      background: rgba(125,183,255,.07);
+      padding: 10px;
+    }
+    .tomorrow-preview b {
+      display: block;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+    .tomorrow-preview span {
+      display: block;
+      margin-top: 4px;
+      color: var(--soft);
+      font-size: 11px;
+      line-height: 1.28;
+    }
     .risk-guard {
       margin: 12px 0;
       border: 1px solid rgba(255,255,255,.11);
@@ -2376,6 +2439,10 @@
     function activeDay() {
       return plan[activePlanIndex()];
     }
+    function dayAfter(date) {
+      const index = plan.findIndex((day) => day.date === date);
+      return index >= 0 && index < plan.length - 1 ? plan[index + 1] : null;
+    }
     function formatDate(iso) {
       return new Date(iso + "T00:00:00").toLocaleDateString("en-IN", { day:"numeric", month:"short" });
     }
@@ -2707,6 +2774,31 @@
         proof: "Repeat"
       };
     }
+    function recoveryOrder(planDay, state) {
+      const tomorrow = dayAfter(planDay.date);
+      const orders = [];
+      if (!state.tasks.hydration && toNumber(state.metrics.waterLiters) < 2.5) {
+        orders.push("Finish hydration. Add electrolytes if you sweated.");
+      } else {
+        orders.push("Hydration handled. Do not chase more training tonight.");
+      }
+      if (!state.tasks.dietProtein && toNumber(state.metrics.proteinGrams) < 120) {
+        orders.push("Protein meal before sleep. Recovery is part of the score.");
+      } else {
+        orders.push("Protein banked. Keep dinner normal, not heroic.");
+      }
+      if (state.readiness !== "green" || isBadSignal(state)) {
+        orders.push("Check knees and shins before bed. If pain is sharp tomorrow, choose red.");
+      } else {
+        orders.push("Quick knee/shin scan before bed. Green only if tomorrow still feels clean.");
+      }
+      orders.push("Sleep is tomorrow's training. No catch-up session after this.");
+      return {
+        orders,
+        tomorrowTitle: tomorrow ? `${formatDate(tomorrow.date)} - ${tomorrow.title}` : "Trek day",
+        tomorrowDetail: tomorrow ? planText(tomorrow, state.readiness === "red" ? "yellow" : "green") : "Start slow, eat early, sip water."
+      };
+    }
     function renderStageDebrief(data, planDay, state) {
       const wrap = document.getElementById("stageDebrief");
       if (!wrap) return;
@@ -2721,6 +2813,7 @@
       const opponentScore = playerId ? stageScore(planDay, dayForPlayer(opponentId, planDay.date)) : 0;
       const delta = playerId ? score - opponentScore : 0;
       const copy = debriefCopy(planDay, state, score);
+      const recovery = recoveryOrder(planDay, state);
       const week = currentWeek(data);
       const weekStats = summarizeDays(week.days);
       wrap.classList.add("active");
@@ -2735,6 +2828,14 @@
           <div class="debrief-metric"><b>${weekStats.coins}/${week.days.length}</b><span>week stages</span></div>
         </div>
         <p class="debrief-copy">${escapeHtml(copy.detail)}</p>
+        <div class="recovery-order">
+          <h3>Tonight's order</h3>
+          <ul>${recovery.orders.map((item, index) => `<li><b>${index + 1}</b><span>${escapeHtml(item)}</span></li>`).join("")}</ul>
+          <div class="tomorrow-preview">
+            <b>Tomorrow: ${escapeHtml(recovery.tomorrowTitle)}</b>
+            <span>${escapeHtml(recovery.tomorrowDetail)}</span>
+          </div>
+        </div>
       `;
     }
 

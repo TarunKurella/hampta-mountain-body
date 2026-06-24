@@ -83,6 +83,7 @@ The app tracks only decision-changing trek-prep signals:
 
 - top-of-Today next action, so the first screen tells you exactly what to do now
 - daily Stage completion and streak
+- post-stage recovery order with tonight actions and tomorrow preview
 - stairs minutes
 - run/walk or long-walk minutes
 - gym, protein, hydration, sleep, and readiness checks
