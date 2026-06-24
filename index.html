@@ -449,6 +449,54 @@
       font-size: 12px;
       line-height: 1.36;
     }
+    .risk-guard {
+      margin: 12px 0;
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 22px;
+      background: rgba(255,255,255,.055);
+      padding: 13px;
+    }
+    .risk-guard.green { border-color: rgba(94,226,143,.28); background: rgba(94,226,143,.07); }
+    .risk-guard.yellow { border-color: rgba(255,211,110,.34); background: rgba(255,211,110,.08); }
+    .risk-guard.red { border-color: rgba(255,100,117,.38); background: rgba(255,100,117,.08); }
+    .risk-guard-top {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+    .risk-dot {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background: var(--green);
+      font-size: 12px;
+      font-weight: 950;
+    }
+    .risk-guard.yellow .risk-dot { background: var(--gold); }
+    .risk-guard.red .risk-dot { background: var(--red); color: var(--text); }
+    .risk-guard b { display: block; font-size: 15px; line-height: 1.18; }
+    .risk-guard span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.3; }
+    .risk-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .risk-list em {
+      min-height: 25px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 999px;
+      padding: 5px 8px;
+      color: var(--muted);
+      background: rgba(0,0,0,.12);
+      font-style: normal;
+      font-size: 10px;
+      font-weight: 850;
+    }
 
     .today-card {
       border: 1px solid rgba(94,226,143,.3);
@@ -1506,6 +1554,7 @@
 
       <section class="duel-pulse" id="duelPulse" aria-live="polite"></section>
       <section class="debrief-card" id="stageDebrief" aria-live="polite"></section>
+      <section id="riskGuard" aria-live="polite"></section>
 
       <div class="panel">
         <div class="ring-wrap">
@@ -2106,6 +2155,44 @@
     function isBadSignal(day) {
       return ["kneePain", "shinPain", "energy", "soreness"].some((key) => day.signals[key] === "red");
     }
+    function riskGuardForDay(planDay, day) {
+      const reasons = [];
+      const sleep = toNumber(day.metrics.sleepHours);
+      if (day.signals.kneePain === "red") reasons.push("sharp knee pain");
+      if (day.signals.shinPain === "red") reasons.push("sharp shin pain");
+      if (day.signals.soreness === "red") reasons.push("painful soreness");
+      if (day.signals.energy === "red") reasons.push("very low energy");
+      if (reasons.length) {
+        return {
+          level: "red",
+          title: "Recovery lock",
+          detail: "No stairs, no intervals, no catch-up. Protect the trek by stopping early today.",
+          reasons
+        };
+      }
+      if (day.signals.kneePain === "yellow") reasons.push("knee tight");
+      if (day.signals.shinPain === "yellow") reasons.push("shin tight");
+      if (day.signals.soreness === "yellow") reasons.push("heavy legs");
+      if (day.signals.energy === "yellow") reasons.push("low energy");
+      if (sleep && sleep < 6) reasons.push(`${sleep}h sleep`);
+      if ((planDay.type === "stairs" || planDay.type === "test") && reasons.length) {
+        reasons.push("high-load stage");
+      }
+      if (reasons.length) {
+        return {
+          level: "yellow",
+          title: "Reduce today",
+          detail: "Do the shorter version. You keep the habit without buying knee or shin debt.",
+          reasons
+        };
+      }
+      return {
+        level: "green",
+        title: "Clear to execute",
+        detail: "No risk flag logged. Do the planned stage, then stop there.",
+        reasons: ["no red flags"]
+      };
+    }
     function weekGroups(data) {
       const groups = [];
       plan.forEach((planDay) => {
@@ -2358,6 +2445,7 @@
       if (streakStat) streakStat.textContent = String(streakCount(data));
       renderDuelPulse(data, day, state);
       renderStageDebrief(data, day, state);
+      renderRiskGuard(day, state);
       document.getElementById("todayCard").innerHTML = `
         <div class="date-line">
           <span class="badge ${badge[1]}">${badge[0]}</span>
@@ -2393,6 +2481,21 @@
       });
       document.getElementById("doneCoin").addEventListener("click", () => toggleStageComplete(day.date));
       renderQuickChecks(data, day, state);
+    }
+    function renderRiskGuard(planDay, state) {
+      const wrap = document.getElementById("riskGuard");
+      if (!wrap) return;
+      const guard = riskGuardForDay(planDay, state);
+      const dot = guard.level === "red" ? "RED" : guard.level === "yellow" ? "YEL" : "OK";
+      wrap.innerHTML = `
+        <div class="risk-guard ${guard.level}">
+          <div class="risk-guard-top">
+            <div class="risk-dot">${dot}</div>
+            <div><b>${escapeHtml(guard.title)}</b><span>${escapeHtml(guard.detail)}</span></div>
+          </div>
+          <div class="risk-list">${guard.reasons.map((reason) => `<em>${escapeHtml(reason)}</em>`).join("")}</div>
+        </div>
+      `;
     }
     function renderDuelPulse(data, day, state) {
       const playerId = selectedPlayerId();
@@ -2923,6 +3026,7 @@
         tarun: playerSummary("tarun"),
         sudhanshu: playerSummary("sudhanshu")
       };
+      const guard = riskGuardForDay(active, today);
       const currentId = selectedPlayerId() || "tarun";
       const opponentId = currentId === "tarun" ? "sudhanshu" : "tarun";
       const you = summaries[currentId];
@@ -2932,13 +3036,13 @@
       const lead = you.weekTotal === opponent.weekTotal
         ? "Weekly duel is level."
         : `${players[you.weekTotal > opponent.weekTotal ? currentId : opponentId].name} leads the week by ${Math.abs(you.weekTotal - opponent.weekTotal)}.`;
-      const recommendation = today.readiness === "red"
-        ? "Recovery is the assignment today. Sleep, hydrate, and do not test pain."
-        : today.readiness === "yellow"
-          ? "Reduce the stage 30-50%. Keep the streak, avoid injury debt."
+      const recommendation = guard.level === "red"
+        ? `Recovery is the assignment: ${guard.reasons.join(", ")}.`
+        : guard.level === "yellow"
+          ? `Reduce today: ${guard.reasons.join(", ")}.`
           : `Execute ${active.title}. Then close ${priority.title.toLowerCase()}.`;
       const riskTone = goals.some((goal) => goal.status === "risk") ? "risk" : goals.some((goal) => goal.status === "watch") ? "warn" : "done";
-      return { active, today, currentId, opponentId, you, opponent, goals, priority, lead, recommendation, riskTone };
+      return { active, today, currentId, opponentId, you, opponent, goals, priority, lead, recommendation, riskTone, guard };
     }
     function renderCoachBrief(data) {
       const wrap = document.getElementById("coachBrief");
@@ -2965,6 +3069,10 @@
           <div class="brief-item">
             <i>VS</i>
             <span><b>Competition rule</b><span>Win by safe consistency. Extra volume does not beat knee/shin discipline.</span></span>
+          </div>
+          <div class="brief-item ${brief.guard.level === "green" ? "" : brief.guard.level === "yellow" ? "warn" : "risk"}">
+            <i>${brief.guard.level === "green" ? "OK" : brief.guard.level === "yellow" ? "Y" : "R"}</i>
+            <span><b>Risk guard</b><span>${escapeHtml(brief.guard.title)}: ${escapeHtml(brief.guard.reasons.join(", "))}</span></span>
           </div>
         </div>
       `;
@@ -3394,6 +3502,7 @@
         `Duel status: ${brief.lead}`,
         `Readiness: ${players[brief.currentId].name} ${brief.you.readinessIndex}%, ${players[brief.opponentId].name} ${brief.opponent.readinessIndex}%`,
         `Priority gap: ${brief.priority.title} - ${brief.priority.detail}`,
+        `Risk guard: ${brief.guard.title} (${brief.guard.reasons.join(", ")})`,
         "",
         "## Proof Goals",
         ...goals.map((goal) => `- [${goal.status.toUpperCase()}] ${goal.title}: ${goal.detail}`),

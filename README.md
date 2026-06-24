@@ -87,6 +87,7 @@ The app tracks only decision-changing trek-prep signals:
 - gym, protein, hydration, sleep, and readiness checks
 - sleep hours, protein grams, and water liters
 - knee pain, shin pain, energy, soreness, and notes
+- Today Risk Guard for reduce/recovery decisions
 - monsoon gear checklist
 - week-wise totals and July 12 proof goals
 - on-screen Coach Brief and LLM-friendly Markdown report
