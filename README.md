@@ -135,3 +135,4 @@ The static client never uses a service-role key.
 - Export JSON backups before switching phones, clearing browser data, or reinstalling.
 - Web Share, Clipboard, Home Screen display mode, App Badge, Wake Lock, Storage persistence, service worker updates, online/offline state, and notification permission are feature-detected. iOS availability varies by Safari/PWA version, so the app always falls back to copy/download/export.
 - Web Push notifications on iOS require a Home Screen web app, explicit permission, and a push backend. The test notification is local to your device; task/stage/gear ticks are sent to the opponent when they have alerts enabled.
+- Offline navigation falls back to the app shell; missing uncached assets fail cleanly instead of returning HTML as an image/script.

@@ -1,4 +1,4 @@
-const CACHE_NAME = "hampta-mountain-body-v24";
+const CACHE_NAME = "hampta-mountain-body-v25";
 const ASSETS = [
   "./",
   "./index.html",
@@ -52,7 +52,11 @@ self.addEventListener("fetch", (event) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return response;
-      }).catch(() => caches.match("./index.html"));
+      }).catch(() => new Response("Offline", {
+        status: 503,
+        statusText: "Offline",
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      }));
     })
   );
 });
@@ -82,9 +86,10 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const targetUrl = event.notification.data && event.notification.data.url
+  const targetPath = event.notification.data && event.notification.data.url
     ? event.notification.data.url
     : "./index.html?tab=today";
+  const targetUrl = new URL(targetPath, self.location.origin).href;
 
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true })
