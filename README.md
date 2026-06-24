@@ -2,7 +2,7 @@
 
 A static, iPhone-friendly PWA for the Hampta Pass prep plan from June 24 to July 20. It stores progress locally with `localStorage`; Supabase is used only for optional Duel sync and push subscription registration.
 
-The current app also includes **Hampta Duel**: a trust-based two-player mode for Tarun vs Sudhanshu. First launch shows only two identity buttons: **I am Tarun** and **I am Sudhanshu**. No Gmail, no password, no magic link. The Today screen includes a compact Duel Pulse with both scores and one next-best action.
+The current app also includes **Hampta Duel**: a trust-based two-player mode for Tarun vs Sudhanshu. First launch shows only two identity buttons: **I am Tarun** and **I am Sudhanshu**. No Gmail, no password, no magic link. The Today screen includes a compact Duel Pulse with both scores, one next-best action, and a post-stage debrief. The Duel tab adds weekly trophies for safe, consistent execution.
 
 Live deployment:
 

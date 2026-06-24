@@ -386,6 +386,69 @@
       border: 0;
       color: var(--ink);
     }
+    .debrief-card {
+      display: none;
+      margin: 12px 0;
+      border: 1px solid rgba(255,211,110,.24);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(41,37,25,.88), rgba(15,21,18,.9));
+      box-shadow: 0 14px 34px rgba(0,0,0,.22);
+      padding: 14px;
+    }
+    .debrief-card.active { display: block; animation: slide-in .24s ease both; }
+    .debrief-top {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 11px;
+      align-items: center;
+    }
+    .debrief-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 17px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background: linear-gradient(135deg, var(--gold), var(--green));
+      font-size: 20px;
+      font-weight: 950;
+      box-shadow: 0 12px 26px rgba(255,211,110,.12);
+    }
+    .debrief-top span {
+      display: block;
+      color: var(--soft);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .debrief-top b {
+      display: block;
+      margin-top: 3px;
+      font-size: 17px;
+      line-height: 1.15;
+    }
+    .debrief-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .debrief-metric {
+      min-height: 58px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 17px;
+      background: rgba(0,0,0,.14);
+      padding: 9px;
+    }
+    .debrief-metric b { display: block; font-size: 17px; line-height: 1; }
+    .debrief-metric span { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.18; }
+    .debrief-copy {
+      margin: 11px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.36;
+    }
 
     .today-card {
       border: 1px solid rgba(94,226,143,.3);
@@ -1231,6 +1294,45 @@
     .stage-token.tarun { color: var(--green); border-color: rgba(94,226,143,.35); }
     .stage-token.sudhanshu { color: var(--blue); border-color: rgba(125,183,255,.35); }
     .stage-token.draw { color: var(--gold); border-color: rgba(255,211,110,.35); }
+    .trophy-board {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .trophy-row {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 66px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.055);
+      padding: 10px;
+    }
+    .trophy-row.leader { border-color: rgba(255,211,110,.34); background: rgba(255,211,110,.08); }
+    .trophy-medal {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background: var(--steel);
+      font-size: 16px;
+      font-weight: 950;
+    }
+    .trophy-row.leader .trophy-medal { background: linear-gradient(135deg, var(--gold), var(--green)); }
+    .trophy-main b { display: block; font-size: 14px; line-height: 1.16; }
+    .trophy-main span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.25; }
+    .trophy-score {
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 950;
+      line-height: 1;
+      text-align: right;
+    }
+    .trophy-score span { display: block; margin-top: 4px; color: var(--soft); font-size: 10px; font-weight: 850; }
 
     @media (max-width: 390px) {
       .app { padding-left: 10px; padding-right: 10px; }
@@ -1242,6 +1344,7 @@
       .actions { grid-template-columns: 1fr; }
       .pulse-scoreboard { grid-template-columns: 1fr; }
       .next-move { grid-template-columns: 1fr; }
+      .debrief-grid { grid-template-columns: 1fr; }
       .nav-btn { font-size: 9px; }
       .week-metrics { grid-template-columns: repeat(2, 1fr); }
       .duel-cards { grid-template-columns: 1fr; }
@@ -1317,6 +1420,7 @@
       </div>
 
       <section class="duel-pulse" id="duelPulse" aria-live="polite"></section>
+      <section class="debrief-card" id="stageDebrief" aria-live="polite"></section>
 
       <div class="panel">
         <div class="ring-wrap">
@@ -1344,6 +1448,12 @@
       </div>
 
       <div class="match-card" id="todayMatchup"></div>
+
+      <div class="panel">
+        <h2>Weekly trophies</h2>
+        <p>Win the week by executing safely. Red recovery days count when you obey the signal.</p>
+        <div class="trophy-board" id="weeklyTrophies"></div>
+      </div>
 
       <div class="panel">
         <h2>Last 7 stages</h2>
@@ -2076,6 +2186,71 @@
       const gap = Math.abs(you.todayScore - opponent.todayScore);
       return `${leader} leads today by ${gap}.`;
     }
+    function debriefCopy(planDay, state, score) {
+      if (state.readiness === "red") {
+        return {
+          title: "Recovery stage cleared",
+          detail: "You protected the knees and shins. That is mountain discipline, not a missed workout.",
+          proof: "Safety"
+        };
+      }
+      if (planDay.type === "stairs" || planDay.type === "test") {
+        return {
+          title: "Climb engine banked",
+          detail: "Stairs are the closest local substitute for Hampta climbs and downhill braking.",
+          proof: "Uphill"
+        };
+      }
+      if (planDay.type === "run" || planDay.type === "walk") {
+        return {
+          title: "Breathing rhythm banked",
+          detail: "Easy run/walk work teaches calm movement when breathing gets loud.",
+          proof: "Engine"
+        };
+      }
+      if (planDay.type === "travel" || planDay.type === "taper") {
+        return {
+          title: "Freshness protected",
+          detail: "Taper wins by removing fatigue. Arrive sharp, not sore.",
+          proof: "Taper"
+        };
+      }
+      return {
+        title: score >= 85 ? "Clean stage banked" : "Stage banked",
+        detail: "One more controlled day converts gym strength into repeatable mountain effort.",
+        proof: "Repeat"
+      };
+    }
+    function renderStageDebrief(data, planDay, state) {
+      const wrap = document.getElementById("stageDebrief");
+      if (!wrap) return;
+      if (!state.complete) {
+        wrap.classList.remove("active");
+        wrap.innerHTML = "";
+        return;
+      }
+      const playerId = selectedPlayerId();
+      const opponentId = playerId === "tarun" ? "sudhanshu" : "tarun";
+      const score = stageScore(planDay, state);
+      const opponentScore = playerId ? stageScore(planDay, dayForPlayer(opponentId, planDay.date)) : 0;
+      const delta = playerId ? score - opponentScore : 0;
+      const copy = debriefCopy(planDay, state, score);
+      const week = currentWeek(data);
+      const weekStats = summarizeDays(week.days);
+      wrap.classList.add("active");
+      wrap.innerHTML = `
+        <div class="debrief-top">
+          <div class="debrief-mark">${escapeHtml(copy.proof.slice(0, 1))}</div>
+          <div><span>Stage debrief</span><b>${escapeHtml(copy.title)}</b></div>
+        </div>
+        <div class="debrief-grid">
+          <div class="debrief-metric"><b>${score}</b><span>today points</span></div>
+          <div class="debrief-metric"><b>${delta === 0 ? "0" : delta > 0 ? `+${delta}` : `${delta}`}</b><span>duel gap</span></div>
+          <div class="debrief-metric"><b>${weekStats.coins}/${week.days.length}</b><span>week stages</span></div>
+        </div>
+        <p class="debrief-copy">${escapeHtml(copy.detail)}</p>
+      `;
+    }
 
     function renderToday() {
       const data = loadStore();
@@ -2093,6 +2268,7 @@
       if (todayTypeStat) todayTypeStat.textContent = badge[0];
       if (streakStat) streakStat.textContent = String(streakCount(data));
       renderDuelPulse(data, day, state);
+      renderStageDebrief(data, day, state);
       document.getElementById("todayCard").innerHTML = `
         <div class="date-line">
           <span class="badge ${badge[1]}">${badge[0]}</span>
@@ -2293,6 +2469,7 @@
         `;
       }).join("");
       renderTodayMatchup(summaries);
+      renderWeeklyTrophies(summaries);
       renderStageTrack();
     }
     function renderTodayMatchup(summaries) {
@@ -2312,6 +2489,34 @@
           <div class="score-player"><b>${sudhanshu.todayScore}</b><span>Sudhanshu</span></div>
         </div>
       `;
+    }
+    function renderWeeklyTrophies(summaries) {
+      const wrap = document.getElementById("weeklyTrophies");
+      if (!wrap) return;
+      const ids = ["tarun", "sudhanshu"];
+      const week = weekLabel(activeDay().date);
+      const rows = ids.map((id) => {
+        const summary = summaries[id];
+        const safeClears = playerSummarySafeClears(id);
+        const safetyBonus = Math.max(0, 30 - summary.redFlags * 10);
+        const trophyScore = summary.weekTotal > 0 ? summary.weekTotal + summary.streak * 8 + safetyBonus : 0;
+        return { id, summary, safeClears, safetyBonus, trophyScore };
+      }).sort((a, b) => b.trophyScore - a.trophyScore);
+      const top = rows[0]?.trophyScore || 0;
+      wrap.innerHTML = rows.map((row, index) => {
+        const leader = row.trophyScore === top && top > 0;
+        const medal = index === 0 ? "1" : "2";
+        return `
+          <div class="trophy-row ${leader ? "leader" : ""}">
+            <div class="trophy-medal">${medal}</div>
+            <div class="trophy-main">
+              <b>${escapeHtml(players[row.id].name)} ${leader ? "holds the week" : "is chasing"}</b>
+              <span>${escapeHtml(week)}: ${row.summary.weekTotal} stage pts, ${row.summary.streak} streak, ${row.safeClears} safe clears.</span>
+            </div>
+            <div class="trophy-score">${row.trophyScore}<span>cup</span></div>
+          </div>
+        `;
+      }).join("");
     }
     function renderStageTrack() {
       const recent = plan.slice(Math.max(0, activePlanIndex() - 6), activePlanIndex() + 1);
