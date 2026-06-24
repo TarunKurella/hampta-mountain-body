@@ -360,6 +360,127 @@
       background: linear-gradient(90deg, var(--green), var(--blue));
       transition: width .25s ease;
     }
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .insight {
+      min-height: 86px;
+      border: 1px solid var(--line);
+      border-radius: 21px;
+      background: rgba(255,255,255,.065);
+      padding: 12px;
+    }
+    .insight b { display: block; font-size: 22px; line-height: 1; letter-spacing: 0; }
+    .insight span { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.25; }
+    .insight strong { display: block; margin-top: 7px; color: var(--text); font-size: 12px; line-height: 1.25; }
+    .mini-bars {
+      display: grid;
+      grid-template-columns: repeat(var(--bars, 7), 1fr);
+      align-items: end;
+      gap: 4px;
+      height: 66px;
+      margin-top: 12px;
+      padding: 8px 6px 0;
+      border-radius: 16px;
+      background: rgba(0,0,0,.16);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .mini-bar {
+      min-height: 5px;
+      height: calc(max(var(--value, 0), 3) * 1%);
+      border-radius: 999px 999px 4px 4px;
+      background: linear-gradient(180deg, var(--green), rgba(140,200,255,.76));
+      opacity: .86;
+    }
+    .mini-bar.warn { background: linear-gradient(180deg, var(--gold), rgba(255,157,102,.8)); }
+    .goal-list { display: grid; gap: 8px; margin-top: 12px; }
+    .goal-card {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+      min-height: 66px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.06);
+      padding: 11px;
+    }
+    .goal-dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-weight: 950;
+      background: var(--soft);
+    }
+    .goal-card.done .goal-dot { background: var(--green); }
+    .goal-card.watch .goal-dot { background: var(--gold); }
+    .goal-card.risk .goal-dot { background: var(--red); color: var(--text); }
+    .goal-card b { display: block; font-size: 14px; line-height: 1.2; }
+    .goal-card small { display: block; margin-top: 4px; color: var(--soft); font-size: 11px; line-height: 1.28; }
+    .week-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.055);
+      padding: 12px;
+      margin-top: 9px;
+    }
+    .week-card h3 { font-size: 15px; margin-bottom: 8px; }
+    .week-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .week-metrics span {
+      min-height: 48px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      padding: 8px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.15;
+    }
+    .week-metrics b { display: block; color: var(--text); font-size: 16px; line-height: 1.05; }
+    .decision-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-top: 10px;
+    }
+    .decision-strip span {
+      min-height: 42px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .decision-strip .active-green { color: var(--green); border-color: rgba(102,242,168,.56); background: rgba(102,242,168,.12); }
+    .decision-strip .active-yellow { color: var(--gold); border-color: rgba(255,211,110,.56); background: rgba(255,211,110,.12); }
+    .decision-strip .active-red { color: var(--red); border-color: rgba(255,100,117,.62); background: rgba(255,100,117,.12); }
+    .ios-api-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .ios-api-list div {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 10px;
+      background: rgba(255,255,255,.055);
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+    .ios-api-list b { color: var(--text); }
 
     .readiness {
       display: grid;
@@ -560,9 +681,10 @@
       .ring-wrap { grid-template-columns: 96px 1fr; }
       .ring { width: 96px; height: 96px; }
       .stats { grid-template-columns: 1fr 1fr; }
-      .quick-grid, .fields { grid-template-columns: 1fr; }
+      .quick-grid, .fields, .insight-grid { grid-template-columns: 1fr; }
       .actions { grid-template-columns: 1fr; }
       .nav-btn { font-size: 9px; }
+      .week-metrics { grid-template-columns: repeat(2, 1fr); }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -651,6 +773,8 @@
           <div class="field"><label for="runWalkMinutes">Run/walk minutes</label><input id="runWalkMinutes" inputmode="numeric" placeholder="30" /></div>
           <div class="field"><label for="sleepHours">Sleep hours</label><input id="sleepHours" inputmode="decimal" placeholder="7" /></div>
           <div class="field"><label for="weightKg">Bodyweight</label><input id="weightKg" inputmode="decimal" placeholder="85.0" /></div>
+          <div class="field"><label for="proteinGrams">Protein grams</label><input id="proteinGrams" inputmode="numeric" placeholder="150" /></div>
+          <div class="field"><label for="waterLiters">Water liters</label><input id="waterLiters" inputmode="decimal" placeholder="3.0" /></div>
           <div class="field"><label for="kneePain">Knee pain</label><select id="kneePain"><option value="green">Green: none</option><option value="yellow">Yellow: tight/heavy</option><option value="red">Red: sharp/limping</option></select></div>
           <div class="field"><label for="shinPain">Shin pain</label><select id="shinPain"><option value="green">Green: none</option><option value="yellow">Yellow: tight/heavy</option><option value="red">Red: sharp/limping</option></select></div>
           <div class="field"><label for="energy">Energy</label><select id="energy"><option value="green">Good</option><option value="yellow">Okay</option><option value="red">Low</option></select></div>
@@ -687,6 +811,35 @@
       </div>
 
       <div class="panel">
+        <h2>Training signal</h2>
+        <p id="coachSignal">Your readiness signal will appear after a few logs.</p>
+        <div class="insight-grid" id="progressInsights"></div>
+        <div class="mini-bars" id="stairsBars" aria-label="Stairs minutes by day"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Proof goals</h2>
+        <p>These are the July 12 proof points. They matter more than pace or gym PRs.</p>
+        <div class="goal-list" id="proofGoals"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Week view</h2>
+        <p>Day-wise effort rolls into week-wise readiness. Missed days do not become debt.</p>
+        <div id="weekSummary"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Coach export</h2>
+        <p>LLM-friendly summary: goals, week totals, daily logs, injury flags, and next action.</p>
+        <div class="actions">
+          <button class="btn primary" id="copyCoachReport" type="button">Copy report</button>
+          <button class="btn" id="shareCoachReport" type="button">Share report</button>
+          <button class="btn full" id="downloadCoachReport" type="button">Download report</button>
+        </div>
+      </div>
+
+      <div class="panel">
         <h2>Backup</h2>
         <p>Progress is stored on this device with localStorage. Export before switching phones, clearing Safari data, or reinstalling.</p>
         <div class="actions">
@@ -700,6 +853,7 @@
         <h2>Install on iPhone</h2>
         <p>Open the deployed HTTPS link in Safari. Tap Share, then Add to Home Screen. Launch from the icon after first load for the app-like view.</p>
         <p class="small">iOS supports offline PWAs after the first successful load. Safari may remove localStorage for sites you do not use for a long time, so keep JSON backups.</p>
+        <div class="ios-api-list" id="iosApiStatus"></div>
       </div>
 
       <div class="panel">
@@ -792,6 +946,7 @@
       ["runWalk", "Run/walk done", "walk counts"],
       ["gym", "Gym done", "no leg failure"],
       ["dietProtein", "Protein done", "140-160 g target"],
+      ["hydration", "Hydration done", "3 L target"],
       ["sleep", "Sleep done", "recovery banked"],
       ["body", "Readiness", "pain checked"]
     ];
@@ -842,8 +997,8 @@
         started: false,
         complete: false,
         readiness: "green",
-        tasks: { stairs:false, runWalk:false, gym:false, dietProtein:false, sleep:false, body:false },
-        metrics: { stairsMinutes:"", runWalkMinutes:"", sleepHours:"", weightKg:"" },
+        tasks: { stairs:false, runWalk:false, gym:false, dietProtein:false, hydration:false, sleep:false, body:false },
+        metrics: { stairsMinutes:"", runWalkMinutes:"", sleepHours:"", weightKg:"", proteinGrams:"", waterLiters:"" },
         signals: { kneePain:"green", shinPain:"green", energy:"green", soreness:"green", notes:"" }
       };
     }
@@ -911,6 +1066,107 @@
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, (char) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[char]));
     }
+    function toNumber(value) {
+      const n = Number.parseFloat(String(value || "").replace(/[^\d.]/g, ""));
+      return Number.isFinite(n) ? n : 0;
+    }
+    function percent(value, goal) {
+      if (!goal) return 0;
+      return Math.max(0, Math.min(100, Math.round((value / goal) * 100)));
+    }
+    function statusClass(value) {
+      if (value === "red") return "active-red";
+      if (value === "yellow") return "active-yellow";
+      return "active-green";
+    }
+    function isBadSignal(day) {
+      return ["kneePain", "shinPain", "energy", "soreness"].some((key) => day.signals[key] === "red");
+    }
+    function weekGroups(data) {
+      const groups = [];
+      plan.forEach((planDay) => {
+        const label = weekLabel(planDay.date);
+        let group = groups.find((item) => item.label === label);
+        if (!group) {
+          group = { label, days: [] };
+          groups.push(group);
+        }
+        group.days.push({ planDay, state: getDay(data, planDay.date) });
+      });
+      return groups;
+    }
+    function summarizeDays(items) {
+      const loggedSleep = items.map(({ state }) => toNumber(state.metrics.sleepHours)).filter(Boolean);
+      const readinessCounts = items.reduce((acc, { state }) => {
+        acc[state.readiness] = (acc[state.readiness] || 0) + 1;
+        return acc;
+      }, { green:0, yellow:0, red:0 });
+      return {
+        coins: items.filter(({ state }) => state.complete).length,
+        checks: items.reduce((sum, { state }) => sum + Object.values(state.tasks).filter(Boolean).length, 0),
+        stairs: items.reduce((sum, { state }) => sum + toNumber(state.metrics.stairsMinutes), 0),
+        runWalk: items.reduce((sum, { state }) => sum + toNumber(state.metrics.runWalkMinutes), 0),
+        proteinDays: items.filter(({ state }) => state.tasks.dietProtein || toNumber(state.metrics.proteinGrams) >= 120).length,
+        hydrationDays: items.filter(({ state }) => state.tasks.hydration || toNumber(state.metrics.waterLiters) >= 2.5).length,
+        sleepAvg: loggedSleep.length ? loggedSleep.reduce((a, b) => a + b, 0) / loggedSleep.length : 0,
+        redFlags: items.filter(({ state }) => isBadSignal(state)).length,
+        readinessCounts
+      };
+    }
+    function allLoggedDays(data) {
+      return plan.map((planDay) => ({ planDay, state: getDay(data, planDay.date) }));
+    }
+    function currentWeek(data) {
+      const active = activeDay();
+      return weekGroups(data).find((group) => group.label === weekLabel(active.date)) || weekGroups(data)[0];
+    }
+    function streakCount(data) {
+      let count = 0;
+      const todayIndex = activePlanIndex();
+      for (let i = todayIndex; i >= 0; i -= 1) {
+        if (!getDay(data, plan[i].date).complete) break;
+        count += 1;
+      }
+      return count;
+    }
+    function proofGoalData(data) {
+      const days = allLoggedDays(data);
+      const maxStairs = Math.max(...days.map(({ state }) => toNumber(state.metrics.stairsMinutes)), 0);
+      const maxRunWalk = Math.max(...days.map(({ state }) => toNumber(state.metrics.runWalkMinutes)), 0);
+      const peakDone = getDay(data, "2026-07-11").complete || maxRunWalk >= 75;
+      const gearDone = gear.filter(([id]) => data.gear[id]).length;
+      const redFlags = days.filter(({ state }) => isBadSignal(state)).length;
+      return [
+        {
+          title: "35-45 min controlled stairs",
+          detail: `${Math.round(maxStairs)} min best logged. This proves uphill engine and downhill braking.`,
+          status: maxStairs >= 35 ? "done" : maxStairs >= 20 ? "watch" : "risk"
+        },
+        {
+          title: "75-100 min long walk / peak test",
+          detail: `${Math.round(maxRunWalk)} min best run/walk logged. Time on feet beats pace.`,
+          status: maxRunWalk >= 75 || peakDone ? "done" : maxRunWalk >= 45 ? "watch" : "risk"
+        },
+        {
+          title: "No red knee/shin pattern",
+          detail: `${redFlags} red body-signal day${redFlags === 1 ? "" : "s"} logged. Red means recovery-only.`,
+          status: redFlags === 0 ? "done" : redFlags <= 2 ? "watch" : "risk"
+        },
+        {
+          title: "Monsoon kit nearly locked",
+          detail: `${gearDone}/${gear.length} gear checks done before travel.`,
+          status: gearDone >= Math.ceil(gear.length * .85) ? "done" : gearDone >= Math.ceil(gear.length * .55) ? "watch" : "risk"
+        }
+      ];
+    }
+    function coachDecision(data) {
+      const today = getDay(data, activeDay().date);
+      const goals = proofGoalData(data);
+      if (today.readiness === "red") return "Red today: recovery-only. Protect knees, shins, sleep, and hydration.";
+      if (today.readiness === "yellow") return "Yellow today: do the reduced version. Bank consistency without adding injury risk.";
+      if (goals.some((goal) => goal.status === "risk")) return "Green today: execute the coin, then close one proof-goal gap.";
+      return "Green today: maintain rhythm. No extra hero work required.";
+    }
 
     function renderToday() {
       const data = loadStore();
@@ -918,6 +1174,8 @@
       const state = getDay(data, day.date);
       const badge = typeBadge(day);
       const coinText = planText(day, state.readiness);
+      const week = currentWeek(data);
+      const weekStats = summarizeDays(week.days);
       document.getElementById("todayCard").innerHTML = `
         <div class="date-line">
           <span class="badge ${badge[1]}">${badge[0]}</span>
@@ -932,6 +1190,12 @@
           <button class="ready-btn ${state.readiness === "red" ? "active" : ""}" data-readiness="red" type="button">Red</button>
         </div>
         <p class="small">${readinessLabel(state.readiness)}</p>
+        <div class="decision-strip" aria-label="Today decision">
+          <span class="${state.readiness === "green" ? "active-green" : ""}">Full plan</span>
+          <span class="${state.readiness === "yellow" ? "active-yellow" : ""}">Reduce 30-50%</span>
+          <span class="${state.readiness === "red" ? "active-red" : ""}">Recovery only</span>
+        </div>
+        <p class="small">${streakCount(data)} day streak. This week: ${weekStats.coins}/${week.days.length} coins, ${Math.round(weekStats.stairs)}m stairs, ${Math.round(weekStats.runWalk)}m run/walk.</p>
         <div class="actions">
           <button class="btn ${state.started ? "" : "primary"}" id="startCoin" type="button">${state.started ? "Started" : "Start coin"}</button>
           <button class="btn primary" id="doneCoin" type="button">${state.complete ? "Done saved" : "Mark done"}</button>
@@ -984,6 +1248,7 @@
       day.complete = true;
       day.tasks[taskForType(planDay.type)] = true;
       day.tasks.dietProtein = true;
+      day.tasks.hydration = true;
       day.tasks.sleep = true;
       day.tasks.body = true;
       saveStore(data);
@@ -1008,7 +1273,7 @@
         html += `
           <article class="day ${day.date === today ? "today" : ""} ${state.complete ? "complete" : ""}">
             <div class="day-head">
-              <div><b>${formatDate(day.date)} - ${escapeHtml(day.label)}</b><span>${day.dow} - ${state.complete ? "complete" : checks + "/6 checks"}</span></div>
+              <div><b>${formatDate(day.date)} - ${escapeHtml(day.label)}</b><span>${day.dow} - ${state.complete ? "complete" : checks + "/" + quickChecks.length + " checks"}</span></div>
               <span class="badge ${badge[1]}">${badge[0]}</span>
             </div>
             <div class="focus">${escapeHtml(day.workout)}</div>
@@ -1058,6 +1323,8 @@
       setValue("runWalkMinutes", day.metrics.runWalkMinutes);
       setValue("sleepHours", day.metrics.sleepHours);
       setValue("weightKg", day.metrics.weightKg);
+      setValue("proteinGrams", day.metrics.proteinGrams);
+      setValue("waterLiters", day.metrics.waterLiters);
       setValue("kneePain", day.signals.kneePain);
       setValue("shinPain", day.signals.shinPain);
       setValue("energy", day.signals.energy);
@@ -1075,12 +1342,17 @@
         day.metrics.runWalkMinutes = document.getElementById("runWalkMinutes").value.trim();
         day.metrics.sleepHours = document.getElementById("sleepHours").value.trim();
         day.metrics.weightKg = document.getElementById("weightKg").value.trim();
+        day.metrics.proteinGrams = document.getElementById("proteinGrams").value.trim();
+        day.metrics.waterLiters = document.getElementById("waterLiters").value.trim();
         day.signals.kneePain = document.getElementById("kneePain").value;
         day.signals.shinPain = document.getElementById("shinPain").value;
         day.signals.energy = document.getElementById("energy").value;
         day.signals.soreness = document.getElementById("soreness").value;
         day.signals.notes = document.getElementById("notes").value.trim();
         day.tasks.body = true;
+        if (toNumber(day.metrics.proteinGrams) >= 120) day.tasks.dietProtein = true;
+        if (toNumber(day.metrics.waterLiters) >= 2.5) day.tasks.hydration = true;
+        if (toNumber(day.metrics.sleepHours) >= 6.5) day.tasks.sleep = true;
         updateReadinessFromSignals(day);
       });
       toast("Readiness saved");
@@ -1105,6 +1377,86 @@
       const progressSummary = document.getElementById("progressSummary");
       if (progressBar) progressBar.style.setProperty("--pct", pct);
       if (progressSummary) progressSummary.textContent = `${dayDone}/${plan.length} mountain coins, ${gearDone}/${gear.length} gear checks, ${pct}% total prep saved.`;
+      renderTrainingSignal(data);
+      renderProofGoals(data);
+      renderWeekSummary(data);
+      renderIosApiStatus(data);
+      updateAppBadge(data);
+    }
+    function renderTrainingSignal(data) {
+      const week = currentWeek(data);
+      const stats = summarizeDays(week.days);
+      const allDays = allLoggedDays(data);
+      const maxStairs = Math.max(...allDays.map(({ state }) => toNumber(state.metrics.stairsMinutes)), 0);
+      const maxRunWalk = Math.max(...allDays.map(({ state }) => toNumber(state.metrics.runWalkMinutes)), 0);
+      const coachSignal = document.getElementById("coachSignal");
+      const insightWrap = document.getElementById("progressInsights");
+      const bars = document.getElementById("stairsBars");
+      if (coachSignal) coachSignal.textContent = coachDecision(data);
+      if (insightWrap) {
+        insightWrap.innerHTML = [
+          [`${stats.coins}/${week.days.length}`, "coins this week", "Consistency is the primary metric."],
+          [`${Math.round(stats.stairs)}m`, "stairs this week", `${Math.round(maxStairs)}m best day. Goal: 35-45m.`],
+          [`${Math.round(stats.runWalk)}m`, "run/walk this week", `${Math.round(maxRunWalk)}m best day. Goal: 75-100m.`],
+          [stats.sleepAvg ? `${stats.sleepAvg.toFixed(1)}h` : "-", "avg sleep logged", `${stats.redFlags} red signal day${stats.redFlags === 1 ? "" : "s"}.`]
+        ].map(([value, label, detail]) => `
+          <div class="insight"><b>${escapeHtml(value)}</b><span>${escapeHtml(label)}</span><strong>${escapeHtml(detail)}</strong></div>
+        `).join("");
+      }
+      if (bars) {
+        const recent = allDays.slice(Math.max(0, activePlanIndex() - 6), activePlanIndex() + 1);
+        bars.style.setProperty("--bars", recent.length || 1);
+        bars.innerHTML = recent.map(({ state }) => {
+          const value = percent(toNumber(state.metrics.stairsMinutes), 45);
+          const warn = state.readiness !== "green" ? "warn" : "";
+          return `<span class="mini-bar ${warn}" style="--value:${value}" title="${escapeHtml(state.date)} stairs"></span>`;
+        }).join("");
+      }
+    }
+    function renderProofGoals(data) {
+      const wrap = document.getElementById("proofGoals");
+      if (!wrap) return;
+      wrap.innerHTML = proofGoalData(data).map((goal) => {
+        const icon = goal.status === "done" ? "OK" : goal.status === "watch" ? "!" : "X";
+        return `
+          <div class="goal-card ${goal.status}">
+            <span class="goal-dot">${icon}</span>
+            <span><b>${escapeHtml(goal.title)}</b><small>${escapeHtml(goal.detail)}</small></span>
+          </div>
+        `;
+      }).join("");
+    }
+    function renderWeekSummary(data) {
+      const wrap = document.getElementById("weekSummary");
+      if (!wrap) return;
+      wrap.innerHTML = weekGroups(data).map((group) => {
+        const stats = summarizeDays(group.days);
+        return `
+          <article class="week-card">
+            <h3>${escapeHtml(group.label)}</h3>
+            <div class="week-metrics">
+              <span><b>${stats.coins}/${group.days.length}</b>coins</span>
+              <span><b>${Math.round(stats.stairs)}m</b>stairs</span>
+              <span><b>${Math.round(stats.runWalk)}m</b>run/walk</span>
+              <span><b>${stats.redFlags}</b>red flags</span>
+            </div>
+            <div class="bar" aria-hidden="true"><div class="bar-fill" style="--pct:${percent(stats.coins, group.days.length)}"></div></div>
+          </article>
+        `;
+      }).join("");
+    }
+    function renderIosApiStatus(data) {
+      const wrap = document.getElementById("iosApiStatus");
+      if (!wrap) return;
+      const standalone = window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+      const items = [
+        ["Install state", standalone ? "Running as Home Screen app." : "Open in Safari, Share, Add to Home Screen."],
+        ["Offline shell", "Service worker caches the app after first HTTPS load."],
+        ["Share API", navigator.share ? "Available for coach report sharing." : "Not available here; copy/download still works."],
+        ["Clipboard", navigator.clipboard ? "Available for one-tap LLM report copy." : "Not available here; use Download report."],
+        ["App badge", navigator.setAppBadge ? "Supported by this browser; badge reflects days left." : "Not supported here; app still works."]
+      ];
+      wrap.innerHTML = items.map(([title, detail]) => `<div><b>${escapeHtml(title)}:</b> ${escapeHtml(detail)}</div>`).join("");
     }
 
     function showTab(tab) {
@@ -1123,6 +1475,89 @@
       a.click();
       URL.revokeObjectURL(a.href);
       toast("Backup exported");
+    }
+    function buildCoachReport() {
+      const data = loadStore();
+      const goals = proofGoalData(data);
+      const active = activeDay();
+      const today = getDay(data, active.date);
+      const lines = [
+        "# Hampta Mountain Body Coach Report",
+        "",
+        `Generated: ${new Date().toLocaleString("en-IN")}`,
+        `Plan window: ${PLAN_START} to ${TREK_START}`,
+        "Context: 26-year-old male, around 85 kg, strong gym base, new cardio base, Hampta Pass trek starts July 20, travel starts July 18.",
+        "Primary goal: convert gym fitness into mountain durability through stairs, time on feet, easy aerobic work, recovery, gear, and taper.",
+        "",
+        "## Today",
+        `Date: ${active.date} (${active.dow})`,
+        `Mountain Coin: ${active.title}`,
+        `Readiness: ${today.readiness}`,
+        `Adjusted task: ${planText(active, today.readiness)}`,
+        `Coach decision: ${coachDecision(data)}`,
+        "",
+        "## Proof Goals",
+        ...goals.map((goal) => `- [${goal.status.toUpperCase()}] ${goal.title}: ${goal.detail}`),
+        "",
+        "## Week Summary"
+      ];
+      weekGroups(data).forEach((group) => {
+        const stats = summarizeDays(group.days);
+        lines.push(`- ${group.label}: ${stats.coins}/${group.days.length} coins, ${Math.round(stats.stairs)} min stairs, ${Math.round(stats.runWalk)} min run/walk, ${stats.sleepAvg ? stats.sleepAvg.toFixed(1) : "-"}h avg sleep, ${stats.proteinDays} protein days, ${stats.hydrationDays} hydration days, ${stats.redFlags} red signal days.`);
+      });
+      lines.push("", "## Day Logs");
+      allLoggedDays(data).forEach(({ planDay, state }) => {
+        const checks = quickChecks.filter(([id]) => state.tasks[id]).map(([, title]) => title).join(", ") || "none";
+        const notes = state.signals.notes ? ` Notes: ${state.signals.notes}` : "";
+        lines.push(`- ${planDay.date} ${planDay.label}: coin=${state.complete ? "done" : "open"}, readiness=${state.readiness}, stairs=${toNumber(state.metrics.stairsMinutes)}m, runWalk=${toNumber(state.metrics.runWalkMinutes)}m, sleep=${toNumber(state.metrics.sleepHours) || "-"}h, protein=${toNumber(state.metrics.proteinGrams) || "-"}g, water=${toNumber(state.metrics.waterLiters) || "-"}L, knee=${state.signals.kneePain}, shin=${state.signals.shinPain}, energy=${state.signals.energy}, soreness=${state.signals.soreness}, checks=${checks}.${notes}`);
+      });
+      lines.push("", "## Gear");
+      gear.forEach(([id, title]) => {
+        lines.push(`- ${data.gear[id] ? "[DONE]" : "[OPEN]"} ${title}`);
+      });
+      lines.push("", "## Rule");
+      lines.push("Do not chase missed days. Use Green/Yellow/Red readiness. Yellow reduces volume 30-50%. Red is recovery-only.");
+      return lines.join("\n");
+    }
+    function downloadText(filename, text, type) {
+      const blob = new Blob([text], { type });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+    async function copyCoachReport() {
+      const report = buildCoachReport();
+      try {
+        await navigator.clipboard.writeText(report);
+        toast("Coach report copied");
+      } catch (err) {
+        downloadText("hampta-coach-report.md", report, "text/markdown");
+        toast("Clipboard blocked. Report downloaded");
+      }
+    }
+    async function shareCoachReport() {
+      const report = buildCoachReport();
+      const file = new File([report], "hampta-coach-report.md", { type: "text/markdown" });
+      try {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ title: "Hampta coach report", text: "Hampta Mountain Body progress report", files: [file] });
+        } else if (navigator.share) {
+          await navigator.share({ title: "Hampta coach report", text: report });
+        } else {
+          throw new Error("Share unavailable");
+        }
+        toast("Share sheet opened");
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        downloadText("hampta-coach-report.md", report, "text/markdown");
+        toast("Share unavailable. Report downloaded");
+      }
+    }
+    function downloadCoachReport() {
+      downloadText("hampta-coach-report.md", buildCoachReport(), "text/markdown");
+      toast("Coach report downloaded");
     }
     function importProgress() {
       const input = document.createElement("input");
@@ -1178,6 +1613,11 @@
       clearTimeout(window.__hamptaToast);
       window.__hamptaToast = setTimeout(() => el.classList.remove("show"), 1500);
     }
+    function updateAppBadge(data) {
+      if (!navigator.setAppBadge) return;
+      const remaining = plan.slice(activePlanIndex()).filter((day) => !getDay(data, day.date).complete).length;
+      navigator.setAppBadge(Math.max(0, remaining)).catch(() => {});
+    }
     function setupRain() {
       const wrap = document.getElementById("rain");
       for (let i = 0; i < 28; i += 1) {
@@ -1206,6 +1646,9 @@
       document.getElementById("exportBackup").addEventListener("click", exportProgress);
       document.getElementById("importBackup").addEventListener("click", importProgress);
       document.getElementById("resetProgress").addEventListener("click", resetProgress);
+      document.getElementById("copyCoachReport").addEventListener("click", copyCoachReport);
+      document.getElementById("shareCoachReport").addEventListener("click", shareCoachReport);
+      document.getElementById("downloadCoachReport").addEventListener("click", downloadCoachReport);
       ["kneePain", "shinPain", "energy", "soreness"].forEach((id) => {
         document.getElementById(id).addEventListener("change", saveBodyLog);
       });
