@@ -1,4 +1,4 @@
-const CACHE_NAME = "hampta-mountain-body-v30";
+const CACHE_NAME = "hampta-mountain-body-v31";
 const ASSETS = [
   "./",
   "./index.html",
