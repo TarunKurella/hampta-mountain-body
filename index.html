@@ -1851,7 +1851,8 @@
       <section class="command-card" id="nextActionCard" aria-live="polite"></section>
 
       <div class="panel">
-        <h3>Quick checks</h3>
+        <h3>Today's checks</h3>
+        <p>Changes with Green, Yellow, or Red. Food and sleep stay on the board.</p>
         <div class="quick-grid" id="quickChecks"></div>
       </div>
 
@@ -2203,6 +2204,34 @@
       ["sleep", "Sleep done", "recovery banked"],
       ["body", "Readiness", "pain checked"]
     ];
+    const quickCheckMap = Object.fromEntries(quickChecks.map((item) => [item[0], item]));
+
+    function checkItem(id, title, meta) {
+      const base = quickCheckMap[id] || [id, title || "Task", meta || ""];
+      return [id, title || base[1], meta || base[2]];
+    }
+    function effectiveQuickChecks(planDay, state) {
+      const mainTask = taskForType(planDay.type);
+      const support = [
+        checkItem("dietProtein", "Food/protein done", "recovery fuel"),
+        checkItem("hydration", "Hydration done", "3 L target"),
+        checkItem("sleep", "Sleep plan done", "protect tomorrow"),
+        checkItem("body", "Readiness", "pain checked")
+      ];
+      if (state.readiness === "red") {
+        return [
+          checkItem("hydration", "Hydration done", "recovery-only target"),
+          checkItem("dietProtein", "Food/protein done", "do not skip fuel"),
+          checkItem("sleep", "Sleep plan done", "main workout today"),
+          checkItem("body", "Readiness", "red signal logged")
+        ];
+      }
+      if (mainTask === "body") return support;
+      const main = state.readiness === "yellow"
+        ? checkItem(mainTask, `${quickCheckMap[mainTask]?.[1] || "Main work"} - reduced`, "30-50% less, pain-free")
+        : checkItem(mainTask);
+      return [main, ...support];
+    }
 
     function selectedPlayerId() {
       const id = localStorage.getItem(PLAYER_KEY);
@@ -2674,7 +2703,10 @@
       return "Green today: maintain rhythm. No extra hero work required.";
     }
     function taskTitle(key) {
-      return quickChecks.find(([id]) => id === key)?.[1] || "Task";
+      return quickCheckMap[key]?.[1] || "Task";
+    }
+    function effectiveTaskTitle(planDay, state, key) {
+      return effectiveQuickChecks(planDay, state).find(([id]) => id === key)?.[1] || taskTitle(key);
     }
     function nextBestAction(planDay, state) {
       if (state.complete) {
@@ -2701,14 +2733,16 @@
           button: "Signal"
         };
       }
-      const recoveryOrder = ["sleep", "hydration"];
+      const recoveryOrder = ["hydration", "dietProtein", "sleep"];
       if (state.readiness === "red") {
         const recoveryTask = recoveryOrder.find((key) => !state.tasks[key]);
         if (recoveryTask) {
+          const recoveryTitle = effectiveTaskTitle(planDay, state, recoveryTask);
           return {
             kind: "task",
             task: recoveryTask,
-            title: `Mark ${taskTitle(recoveryTask).toLowerCase()}`,
+            label: recoveryTitle,
+            title: `Mark ${recoveryTitle.toLowerCase()}`,
             detail: "Red day means recovery points count. No hero work.",
             button: "Log"
           };
@@ -2722,10 +2756,12 @@
       }
       const mainTask = taskForType(planDay.type);
       if (mainTask !== "body" && !state.tasks[mainTask]) {
+        const mainTitle = effectiveTaskTitle(planDay, state, mainTask);
         return {
           kind: "task",
           task: mainTask,
-          title: `Mark ${taskTitle(mainTask).toLowerCase()}`,
+          label: mainTitle,
+          title: `Mark ${mainTitle.toLowerCase()}`,
           detail: state.readiness === "yellow" ? "Use the reduced version. Consistency beats chasing volume." : "Finish the planned stage, then stop while controlled.",
           button: "Log"
         };
@@ -2733,10 +2769,12 @@
       const supportOrder = ["dietProtein", "hydration", "sleep"];
       const supportTask = supportOrder.find((key) => !state.tasks[key]);
       if (supportTask) {
+        const supportTitle = effectiveTaskTitle(planDay, state, supportTask);
         return {
           kind: "task",
           task: supportTask,
-          title: `Mark ${taskTitle(supportTask).toLowerCase()}`,
+          label: supportTitle,
+          title: `Mark ${supportTitle.toLowerCase()}`,
           detail: "Support work turns one workout into repeatable trekking fitness.",
           button: "Log"
         };
@@ -3016,10 +3054,11 @@
           day.tasks[action.task] = true;
           if (action.task === "body") updateReadinessFromSignals(day);
           saveStore(data);
+          const label = action.label || effectiveTaskTitle(activeDay(), day, action.task);
           hapticTap();
-          notifyDuelEvent("task", taskTitle(action.task), date);
+          notifyDuelEvent("task", label, date);
           renderAll();
-          toast(`${taskTitle(action.task)} locked`);
+          toast(`${label} locked`);
         }
         return;
       }
@@ -3030,8 +3069,9 @@
     function renderQuickChecks(data, day, state) {
       const wrap = document.getElementById("quickChecks");
       const locked = !state.started && !state.complete;
+      const checks = effectiveQuickChecks(day, state);
       document.getElementById("quickLockNote")?.remove();
-      wrap.innerHTML = quickChecks.map(([id, title, meta]) => `
+      wrap.innerHTML = checks.map(([id, title, meta]) => `
         <button class="check-card ${state.tasks[id] ? "is-done" : ""} ${locked ? "is-locked" : ""}" data-check="${id}" type="button" aria-pressed="${state.tasks[id] ? "true" : "false"}" ${locked ? "disabled" : ""}>
           <span class="check-box">${state.tasks[id] ? "OK" : locked ? "—" : ""}</span>
           <span><span class="check-title">${title}</span><span class="check-meta">${meta}</span></span>
@@ -3058,7 +3098,9 @@
         checked = !!day.tasks[key];
         if (key === "body" && day.tasks.body) updateReadinessFromSignals(day);
       });
-      const label = quickChecks.find(([id]) => id === key)?.[1] || "Task";
+      const data = loadStore();
+      const planDay = plan.find((item) => item.date === date) || activeDay();
+      const label = effectiveTaskTitle(planDay, getDay(data, date), key);
       hapticTap();
       if (checked) {
         notifyDuelEvent("task", label, date);
@@ -3187,7 +3229,8 @@
         if (tarun.todayScore === sudhanshu.todayScore) result = "Stage draw.";
         else result = `${players[tarun.todayScore > sudhanshu.todayScore ? "tarun" : "sudhanshu"].name} leads today's stage.`;
       }
-      const taskRows = quickChecks.map(([key, title, meta]) => {
+      const boardChecks = effectiveQuickChecks(activeDay(), dayForPlayer(selectedPlayerId() || "tarun", activeDay().date));
+      const taskRows = boardChecks.map(([key, title, meta]) => {
         const tDone = !!tarun.today.tasks[key] || (key === taskForType(activeDay().type) && tarun.today.complete);
         const sDone = !!sudhanshu.today.tasks[key] || (key === taskForType(activeDay().type) && sudhanshu.today.complete);
         return `
@@ -3271,11 +3314,12 @@
           currentWeek = week;
         }
         const badge = typeBadge(day);
-        const checks = Object.values(state.tasks).filter(Boolean).length;
+        const visibleChecks = effectiveQuickChecks(day, state);
+        const checks = visibleChecks.filter(([id]) => state.tasks[id]).length;
         html += `
           <article class="day ${day.date === today ? "today" : ""} ${state.complete ? "complete" : ""}">
             <div class="day-head">
-              <div><b>${formatDate(day.date)} - ${escapeHtml(day.label)}</b><span>${day.dow} - ${state.complete ? "complete" : checks + "/" + quickChecks.length + " checks"}</span></div>
+              <div><b>${formatDate(day.date)} - ${escapeHtml(day.label)}</b><span>${day.dow} - ${state.complete ? "complete" : checks + "/" + visibleChecks.length + " checks"}</span></div>
               <span class="badge ${badge[1]}">${badge[0]}</span>
             </div>
             <div class="focus">${escapeHtml(day.workout)}</div>
@@ -3416,9 +3460,13 @@
 
     function renderProgress() {
       const data = loadStore();
-      const total = plan.length + quickChecks.length * plan.length + gear.length;
+      const totalChecks = plan.reduce((sum, day) => sum + effectiveQuickChecks(day, getDay(data, day.date)).length, 0);
+      const total = plan.length + totalChecks + gear.length;
       const dayDone = plan.filter((day) => getDay(data, day.date).complete).length;
-      const taskDone = plan.reduce((sum, day) => sum + Object.values(getDay(data, day.date).tasks).filter(Boolean).length, 0);
+      const taskDone = plan.reduce((sum, day) => {
+        const state = getDay(data, day.date);
+        return sum + effectiveQuickChecks(day, state).filter(([id]) => state.tasks[id]).length;
+      }, 0);
       const gearDone = gear.filter(([id]) => data.gear[id]).length;
       const pct = Math.round(((dayDone + taskDone + gearDone) / total) * 100);
       document.getElementById("progressRing").style.setProperty("--pct", pct);
@@ -4159,7 +4207,7 @@
       });
       lines.push("", "## Day Logs");
       allLoggedDays(data).forEach(({ planDay, state }) => {
-        const checks = quickChecks.filter(([id]) => state.tasks[id]).map(([, title]) => title).join(", ") || "none";
+        const checks = effectiveQuickChecks(planDay, state).filter(([id]) => state.tasks[id]).map(([, title]) => title).join(", ") || "none";
         const notes = state.signals.notes ? ` Notes: ${state.signals.notes}` : "";
         lines.push(`- ${planDay.date} ${planDay.label}: stage=${state.complete ? "cleared" : "open"}, readiness=${state.readiness}, stairs=${toNumber(state.metrics.stairsMinutes)}m, runWalk=${toNumber(state.metrics.runWalkMinutes)}m, sleep=${toNumber(state.metrics.sleepHours) || "-"}h, protein=${toNumber(state.metrics.proteinGrams) || "-"}g, water=${toNumber(state.metrics.waterLiters) || "-"}L, knee=${state.signals.kneePain}, shin=${state.signals.shinPain}, energy=${state.signals.energy}, soreness=${state.signals.soreness}, checks=${checks}.${notes}`);
       });

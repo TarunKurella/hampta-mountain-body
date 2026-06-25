@@ -83,6 +83,7 @@ Use the Progress tab:
 The app tracks only decision-changing trek-prep signals:
 
 - top-of-Today next action, so the first screen tells you exactly what to do now
+- Green/Yellow/Red adaptive Today checklist: full work, reduced work, or recovery-only while keeping food and sleep
 - Today shortcut to Progress & Backup for proof goals, exports, and device settings
 - Progress opens as a Today detail view with a clear return path
 - daily Stage completion and streak
