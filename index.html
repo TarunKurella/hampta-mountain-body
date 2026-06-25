@@ -38,6 +38,10 @@
       --orange: #ff9d66;
       --red: #ff6475;
       --blue: #7db7ff;
+      --lilac: #c5b0f4;
+      --cream: #f4ecd6;
+      --coral: #f3c9b6;
+      --block-mint: #c8e6cd;
       --steel: #9ba7a0;
       --ink: #03100c;
       --radius: 18px;
@@ -118,7 +122,7 @@
     .app {
       width: min(100%, 500px);
       margin: 0 auto;
-      padding: calc(6px + var(--safe-top)) 14px calc(96px + var(--safe-bottom));
+      padding: calc(8px + var(--safe-top)) 14px calc(112px + var(--safe-bottom));
     }
     .topbar {
       position: sticky;
@@ -194,6 +198,7 @@
       background: linear-gradient(180deg, rgba(32,46,41,.82), rgba(12,22,19,.72));
       box-shadow: var(--shadow-soft);
     }
+    body[data-tab]:not([data-tab="today"]) .mission { display: none; }
     .mission::before {
       content: "";
       position: absolute;
@@ -222,7 +227,7 @@
     .view { display: none; }
     .view.active { display: block; animation: slide-in .24s ease both; }
     .view-title {
-      margin: 14px 2px 10px;
+      margin: 18px 6px 18px;
     }
     .view-title h2 {
       margin: 0;
@@ -240,16 +245,31 @@
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: none; }
     }
+    @keyframes soft-pop {
+      0% { transform: scale(.985); opacity: .86; }
+      62% { transform: scale(1.012); opacity: 1; }
+      100% { transform: scale(1); }
+    }
 
     .panel {
-      margin: 12px 0;
-      padding: 15px;
+      margin: 16px 0;
+      padding: 18px;
       border: 1px solid rgba(255,255,255,.09);
       border-radius: 24px;
       background: var(--material);
       box-shadow: var(--shadow-soft);
       -webkit-backdrop-filter: blur(22px) saturate(1.35);
       backdrop-filter: blur(22px) saturate(1.35);
+    }
+    .panel.protein-panel {
+      border-color: rgba(200,230,205,.28);
+      background:
+        linear-gradient(180deg, rgba(200,230,205,.13), rgba(18,29,25,.82)),
+        rgba(255,255,255,.055);
+    }
+    .panel.duel-panel {
+      border-color: rgba(197,176,244,.26);
+      background: linear-gradient(180deg, rgba(197,176,244,.12), rgba(16,22,25,.84));
     }
     .panel.tight { padding: 12px; }
     .panel h3, .panel h2 {
@@ -260,7 +280,7 @@
     .panel h2 { font-size: clamp(21px, 5.6vw, 25px); }
     .panel h3 { font-size: clamp(17px, 4.6vw, 20px); }
     .panel p {
-      margin: 8px 0;
+      margin: 10px 0;
       color: var(--muted);
       font-size: clamp(13px, 3.5vw, 15px);
       line-height: 1.42;
@@ -777,6 +797,12 @@
       background: linear-gradient(180deg, rgba(94,226,143,.98), rgba(82,196,129,.92));
       box-shadow: 0 10px 24px rgba(94,226,143,.16);
     }
+    .btn.mint {
+      border: 0;
+      color: #03100c;
+      background: linear-gradient(180deg, var(--block-mint), #7fe2a8);
+      box-shadow: 0 10px 24px rgba(127,226,168,.14);
+    }
     .btn.warn { border-color: rgba(255,100,117,.42); background: rgba(255,100,117,.12); }
     .btn.full { grid-column: 1 / -1; }
     .btn:active { transform: scale(.98); }
@@ -848,6 +874,241 @@
       text-transform: uppercase;
       letter-spacing: .08em;
     }
+
+    .protein-hero {
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(200,230,205,.32);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(197,176,244,.22), transparent 35%),
+        linear-gradient(135deg, rgba(200,230,205,.94), rgba(244,236,214,.9));
+      color: #03100c;
+      padding: 22px;
+      box-shadow: 0 18px 42px rgba(0,0,0,.24);
+      animation: soft-pop .26s ease both;
+    }
+    .protein-hero h2 {
+      margin: 0;
+      font-size: clamp(40px, 11vw, 52px);
+      line-height: .96;
+      letter-spacing: 0;
+    }
+    .protein-hero p {
+      margin: 7px 0 0;
+      color: rgba(3,16,12,.72);
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 650;
+    }
+    .protein-meter {
+      margin-top: 22px;
+      border-radius: 999px;
+      background: rgba(3,16,12,.12);
+      height: 14px;
+      overflow: hidden;
+    }
+    .protein-meter span {
+      display: block;
+      width: min(var(--pct, 0%), 100%);
+      height: 100%;
+      border-radius: inherit;
+      background: #03100c;
+      transition: width .28s ease;
+    }
+    .protein-hero-foot {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .protein-hero-foot span {
+      min-height: 52px;
+      border: 1px solid rgba(3,16,12,.12);
+      border-radius: 18px;
+      background: rgba(255,255,255,.38);
+      padding: 9px;
+      color: rgba(3,16,12,.68);
+      font-size: 11px;
+      line-height: 1.15;
+      font-weight: 750;
+    }
+    .protein-hero-foot b {
+      display: block;
+      color: #03100c;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .protein-hero-foot .status b {
+      font-size: 16px;
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+    .protein-quick {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: 18px;
+    }
+    .food-chip {
+      min-height: 76px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      background: rgba(255,255,255,.065);
+      color: var(--text);
+      padding: 10px;
+      font: inherit;
+      text-align: left;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+    }
+    .food-chip:active { transform: scale(.975); }
+    .food-chip strong { display: block; font-size: 14px; line-height: 1.15; }
+    .food-chip span { display: block; margin-top: 5px; color: var(--soft); font-size: 11px; line-height: 1.2; }
+    .food-chip.power { border-color: rgba(200,230,205,.28); background: rgba(200,230,205,.1); }
+    .food-chip.support { border-color: rgba(244,236,214,.24); background: rgba(244,236,214,.08); }
+    .protein-log {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .food-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 9px;
+      align-items: center;
+      min-height: 58px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: rgba(255,255,255,.055);
+      padding: 9px;
+    }
+    .food-row b { display: block; font-size: 14px; line-height: 1.15; }
+    .food-row span { display: block; margin-top: 4px; color: var(--soft); font-size: 11px; line-height: 1.2; }
+    .food-row .grams { color: var(--mint); font-weight: 950; font-size: 15px; white-space: nowrap; }
+    .icon-btn {
+      width: 44px;
+      min-width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      font: inherit;
+      font-size: 20px;
+      font-weight: 850;
+      display: grid;
+      place-items: center;
+    }
+    .week-protein-bars {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: end;
+      gap: 5px;
+      min-height: 112px;
+      margin-top: 12px;
+      padding: 10px 8px 7px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(0,0,0,.14);
+    }
+    .protein-day-bar {
+      display: grid;
+      grid-template-rows: 1fr auto auto;
+      align-items: end;
+      gap: 4px;
+      min-width: 0;
+      color: var(--soft);
+      font-size: 9px;
+      font-weight: 850;
+      text-align: center;
+    }
+    .protein-day-bar i {
+      display: block;
+      min-height: 6px;
+      height: max(var(--value, 3%), 3%);
+      border-radius: 999px 999px 5px 5px;
+      background: rgba(255,255,255,.18);
+    }
+    .protein-day-bar.min i { background: linear-gradient(180deg, var(--block-mint), var(--green)); }
+    .protein-day-bar.target i { background: linear-gradient(180deg, var(--green), var(--blue)); }
+    .fuel-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .fuel-item {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 54px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.055);
+      color: var(--text);
+      padding: 9px;
+      font: inherit;
+      text-align: left;
+    }
+    .fuel-item.is-done { background: rgba(200,230,205,.1); border-color: rgba(200,230,205,.28); }
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      align-items: end;
+      background: rgba(0,0,0,.48);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+    .sheet-backdrop.active { display: flex; }
+    .bottom-sheet {
+      width: min(540px, 100%);
+      margin: 0 auto;
+      max-height: calc(100svh - 40px - var(--safe-top));
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 28px 28px 0 0;
+      background: rgba(13,23,20,.96);
+      padding: 10px 16px calc(18px + var(--safe-bottom));
+      box-shadow: 0 -24px 64px rgba(0,0,0,.44);
+      animation: sheet-up .22s cubic-bezier(.2,.9,.2,1) both;
+    }
+    @keyframes sheet-up {
+      from { transform: translateY(28px); opacity: .86; }
+      to { transform: none; opacity: 1; }
+    }
+    .sheet-grabber {
+      width: 42px;
+      height: 5px;
+      margin: 2px auto 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.24);
+    }
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .sheet-head h2 { margin: 0; font-size: 22px; line-height: 1.05; }
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .segmented button {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255,255,255,.055);
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .segmented button.active { color: var(--ink); background: var(--block-mint); border-color: transparent; }
 
     .ring-wrap {
       display: grid;
@@ -1233,25 +1494,25 @@
     .bottom-nav {
       position: fixed;
       left: 50%;
-      bottom: calc(10px + var(--safe-bottom));
+      bottom: calc(12px + var(--safe-bottom));
       transform: translateX(-50%);
       z-index: 30;
       width: min(540px, calc(100vw - 18px));
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 5px;
-      padding: 7px;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: rgba(3,7,6,.72);
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 28px;
+      background: rgba(3,7,6,.78);
       -webkit-backdrop-filter: blur(28px) saturate(1.35);
       backdrop-filter: blur(28px) saturate(1.35);
       box-shadow: 0 18px 55px rgba(0,0,0,.42);
     }
     .nav-btn {
-      min-height: 48px;
+      min-height: 54px;
       border: 0;
-      border-radius: 18px;
+      border-radius: 20px;
       background: transparent;
       color: var(--soft);
       font: inherit;
@@ -1265,6 +1526,10 @@
     }
     .nav-btn svg { width: 20px; height: 20px; }
     .nav-btn.active, .nav-btn[aria-selected="true"] { background: rgba(102,242,168,.15); color: var(--green); }
+    .nav-btn.active[data-tab="protein"], .nav-btn[aria-selected="true"][data-tab="protein"] { background: rgba(200,230,205,.16); color: var(--block-mint); }
+    .nav-btn.active[data-tab="duel"], .nav-btn[aria-selected="true"][data-tab="duel"] { background: rgba(197,176,244,.16); color: var(--lilac); }
+    .nav-btn.active[data-tab="calendar"], .nav-btn[aria-selected="true"][data-tab="calendar"] { background: rgba(125,183,255,.16); color: var(--blue); }
+    .nav-btn.active[data-tab="body"], .nav-btn[aria-selected="true"][data-tab="body"] { background: rgba(255,211,110,.14); color: var(--gold); }
 
     .back-row {
       margin: 10px 0 12px;
@@ -1883,6 +2148,51 @@
       </div>
     </section>
 
+    <section id="view-protein" class="view">
+      <div class="view-title">
+        <h2>Protein</h2>
+        <p>Fuel recovery. Do not turn food into a spreadsheet.</p>
+      </div>
+      <section class="protein-hero" id="proteinHero" aria-live="polite"></section>
+
+      <div class="panel protein-panel">
+        <div class="command-top">
+          <div>
+            <h3>Fast add</h3>
+            <p>Tap once. Long logging dies; simple fuel wins.</p>
+          </div>
+          <button class="icon-btn" id="openProteinSheet" type="button" aria-label="Add custom protein food">+</button>
+        </div>
+        <div class="fields">
+          <div class="field full">
+            <label for="proteinPresetSelect">Food -> protein</label>
+            <select id="proteinPresetSelect"></select>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn mint full" id="addSelectedProtein" type="button">Add selected food</button>
+        </div>
+        <div class="protein-quick" id="proteinQuick"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Today log</h3>
+        <div class="protein-log" id="proteinLog"></div>
+      </div>
+
+      <div class="panel protein-panel">
+        <h3>Week fuel</h3>
+        <p>Green means recovery minimum. Bright means target closed.</p>
+        <div class="week-protein-bars" id="proteinWeekBars" aria-label="Protein grams by day this week"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Trek fuel kit</h3>
+        <p>Test stomach-safe travel fuel before the bus and trail.</p>
+        <div class="fuel-list" id="fuelKit"></div>
+      </div>
+    </section>
+
     <section id="view-train" class="view">
       <div class="view-title">
         <h2>Train</h2>
@@ -1984,7 +2294,7 @@
           <div class="field"><label for="stairsMinutes">Stairs minutes</label><input id="stairsMinutes" inputmode="numeric" placeholder="20" /></div>
           <div class="field"><label for="runWalkMinutes">Run/walk minutes</label><input id="runWalkMinutes" inputmode="numeric" placeholder="30" /></div>
           <div class="field"><label for="sleepHours">Sleep hours</label><input id="sleepHours" inputmode="decimal" placeholder="7" /></div>
-          <div class="field"><label for="proteinGrams">Protein grams</label><input id="proteinGrams" inputmode="numeric" placeholder="150" /></div>
+          <div class="field"><label for="proteinGrams">Protein today</label><input id="proteinGrams" inputmode="numeric" placeholder="Logged in Protein" readonly /></div>
           <div class="field"><label for="waterLiters">Water liters</label><input id="waterLiters" inputmode="decimal" placeholder="3.0" /></div>
           <div class="field"><label for="kneePain">Knee pain</label><select id="kneePain"><option value="green">Green: none</option><option value="yellow">Yellow: tight/heavy</option><option value="red">Red: sharp/limping</option></select></div>
           <div class="field"><label for="shinPain">Shin pain</label><select id="shinPain"><option value="green">Green: none</option><option value="yellow">Yellow: tight/heavy</option><option value="red">Red: sharp/limping</option></select></div>
@@ -2011,7 +2321,7 @@
       <div class="panel">
         <h3>Diet defaults</h3>
         <p><b>Target:</b> 82-83 kg by trek if it happens naturally. No crash diet.</p>
-        <p><b>Protein:</b> 140-160 g/day. <b>Water:</b> about 3 L/day plus electrolytes if sweating. <b>Carbs:</b> keep rice, roti, or banana around workouts.</p>
+        <p><b>Protein:</b> 105 g recovery minimum, 130 g target. <b>Water:</b> about 3 L/day plus electrolytes if sweating. <b>Carbs:</b> keep rice, roti, or banana around workouts.</p>
       </div>
     </section>
 
@@ -2094,17 +2404,17 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V21H5V10"/><path d="M9 21v-6h6v6"/></svg>
       Today
     </button>
-    <button class="nav-btn" data-tab="calendar" type="button" role="tab" aria-selected="false" aria-controls="view-calendar" aria-label="Calendar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v5M16 2v5M3 10h18"/></svg>
-      Route
-    </button>
-    <button class="nav-btn" data-tab="train" type="button" role="tab" aria-selected="false" aria-controls="view-train" aria-label="Train">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
-      Train
+    <button class="nav-btn" data-tab="protein" type="button" role="tab" aria-selected="false" aria-controls="view-protein" aria-label="Protein">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12v7a6 6 0 0 1-12 0V3Z"/><path d="M8 21h8"/><path d="M12 16v5"/><path d="M9 7h6"/></svg>
+      Protein
     </button>
     <button class="nav-btn" data-tab="duel" type="button" role="tab" aria-selected="false" aria-controls="view-duel" aria-label="Duel">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h10l2 5-7 11L5 9l2-5Z"/><path d="M5 9h14"/><path d="m9 4 3 5 3-5"/></svg>
       Duel
+    </button>
+    <button class="nav-btn" data-tab="calendar" type="button" role="tab" aria-selected="false" aria-controls="view-calendar" aria-label="Route">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v5M16 2v5M3 10h18"/></svg>
+      Route
     </button>
     <button class="nav-btn" data-tab="body" type="button" role="tab" aria-selected="false" aria-controls="view-body" aria-label="Readiness">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h17"/><path d="M8 16v-5M13 16V8M18 16v-9"/></svg>
@@ -2113,6 +2423,54 @@
   </nav>
 
   <div class="toast" id="toast" role="status" aria-live="polite">Saved</div>
+
+  <div class="sheet-backdrop" id="proteinSheet" role="dialog" aria-modal="true" aria-labelledby="proteinSheetTitle">
+    <div class="bottom-sheet">
+      <div class="sheet-grabber" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <h2 id="proteinSheetTitle">Add protein</h2>
+        <button class="icon-btn" id="closeProteinSheet" type="button" aria-label="Close protein sheet">×</button>
+      </div>
+      <div class="fields">
+        <div class="field full">
+          <label for="proteinFoodName">Food</label>
+          <input id="proteinFoodName" placeholder="Curd bowl" />
+        </div>
+        <div class="field">
+          <label for="proteinFoodGrams">Protein grams</label>
+          <input id="proteinFoodGrams" inputmode="numeric" placeholder="12" />
+        </div>
+        <div class="field">
+          <label for="proteinFoodSlot">Timing</label>
+          <select id="proteinFoodSlot">
+            <option value="morning">Morning</option>
+            <option value="lunch">Lunch</option>
+            <option value="evening">Evening</option>
+            <option value="night">Night</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Quality</label>
+          <div class="segmented" id="proteinQuality">
+            <button class="active" data-protein-quality="strong" type="button">Strong</button>
+            <button data-protein-quality="support" type="button">Support</button>
+            <button data-protein-quality="custom" type="button">Custom</button>
+          </div>
+        </div>
+        <div class="field full">
+          <label>Stomach</label>
+          <div class="segmented" id="proteinStomach">
+            <button class="active" data-protein-stomach="safe" type="button">Safe</button>
+            <button data-protein-stomach="heavy" type="button">Heavy</button>
+            <button data-protein-stomach="avoid" type="button">Avoid</button>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn mint full" id="saveProteinEntry" type="button">Add to today</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const PLAN_START = "2026-06-24";
@@ -2199,12 +2557,38 @@
       ["stairs", "Stairs done", "minutes logged"],
       ["runWalk", "Run/walk done", "walk counts"],
       ["gym", "Gym done", "no leg failure"],
-      ["dietProtein", "Protein done", "140-160 g target"],
+      ["dietProtein", "Protein done", "105g min / 130g target"],
       ["hydration", "Hydration done", "3 L target"],
       ["sleep", "Sleep done", "recovery banked"],
       ["body", "Readiness", "pain checked"]
     ];
     const quickCheckMap = Object.fromEntries(quickChecks.map((item) => [item[0], item]));
+    const PROTEIN_MIN = 105;
+    const PROTEIN_TARGET = 130;
+    const proteinPresets = [
+      { id:"whey-scoop", name:"1 scoop whey", grams:25, quality:"strong", slot:"evening", stomach:"safe" },
+      { id:"milk-250", name:"Milk 250ml", grams:8, quality:"support", slot:"night", stomach:"safe" },
+      { id:"buttermilk-250", name:"Buttermilk 250ml", grams:4, quality:"support", slot:"evening", stomach:"safe" },
+      { id:"curd-200", name:"Curd 200g", grams:7, quality:"support", slot:"lunch", stomach:"safe" },
+      { id:"greek-yogurt-100", name:"Greek yogurt 100g", grams:10, quality:"strong", slot:"evening", stomach:"safe" },
+      { id:"low-fat-paneer-100", name:"Low-fat paneer 100g", grams:22, quality:"strong", slot:"lunch", stomach:"safe" },
+      { id:"regular-paneer-100", name:"Regular paneer 100g", grams:16, quality:"strong", slot:"lunch", stomach:"heavy" },
+      { id:"soy-chunks-50", name:"Soy chunks 50g dry", grams:26, quality:"strong", slot:"lunch", stomach:"heavy" },
+      { id:"tofu-100", name:"Tofu 100g", grams:17, quality:"strong", slot:"lunch", stomach:"safe" },
+      { id:"tempeh-100", name:"Tempeh 100g", grams:19, quality:"strong", slot:"lunch", stomach:"safe" },
+      { id:"edamame-100", name:"Edamame 100g", grams:11, quality:"support", slot:"evening", stomach:"safe" },
+      { id:"dal-bowl", name:"Dal bowl", grams:9, quality:"support", slot:"lunch", stomach:"safe" },
+      { id:"eggs-2", name:"2 eggs", grams:12, quality:"strong", slot:"morning", stomach:"safe" },
+      { id:"chicken-100", name:"Chicken 100g", grams:31, quality:"strong", slot:"lunch", stomach:"safe" },
+      { id:"fish-100", name:"Fish 100g", grams:22, quality:"strong", slot:"lunch", stomach:"safe" },
+      { id:"prawns-100", name:"Prawns 100g", grams:24, quality:"strong", slot:"lunch", stomach:"safe" }
+    ];
+    const fuelKit = [
+      ["whey-sachets", "Whey sachets packed", "Travel protein without kitchen dependency."],
+      ["electrolytes-packed", "Electrolytes packed", "Sweat, bus travel, and monsoon insurance."],
+      ["bars-tested", "Protein bars tested", "Only carry what your stomach accepts."],
+      ["trail-snacks-tested", "Trail snacks tested", "Banana, chikki, dates, or nuts that sit well."]
+    ];
 
     function checkItem(id, title, meta) {
       const base = quickCheckMap[id] || [id, title || "Task", meta || ""];
@@ -2213,7 +2597,7 @@
     function effectiveQuickChecks(planDay, state) {
       const mainTask = taskForType(planDay.type);
       const support = [
-        checkItem("dietProtein", "Food/protein done", "recovery fuel"),
+        checkItem("dietProtein", "Food/protein done", proteinStatusMeta(state)),
         checkItem("hydration", "Hydration done", "3 L target"),
         checkItem("sleep", "Sleep plan done", "protect tomorrow"),
         checkItem("body", "Readiness", "pain checked")
@@ -2221,7 +2605,7 @@
       if (state.readiness === "red") {
         return [
           checkItem("hydration", "Hydration done", "recovery-only target"),
-          checkItem("dietProtein", "Food/protein done", "do not skip fuel"),
+          checkItem("dietProtein", "Food/protein done", proteinTotal(state) >= PROTEIN_MIN ? "recovery fuel banked" : "protein still counts"),
           checkItem("sleep", "Sleep plan done", "main workout today"),
           checkItem("body", "Readiness", "red signal logged")
         ];
@@ -2279,7 +2663,7 @@
       if (done) localStorage.setItem(NOTIFY_ONBOARD_KEY, "done");
     }
     function blankStore() {
-      return { version: 2, createdAt: new Date().toISOString(), days: {}, gear: {} };
+      return { version: 2, createdAt: new Date().toISOString(), days: {}, gear: {}, fuelKit: {}, proteinFoods: [] };
     }
     function normalizeStore(raw) {
       const source = raw && typeof raw === "object" ? raw : {};
@@ -2298,6 +2682,19 @@
         Object.keys(clean.tasks).forEach((key) => { clean.tasks[key] = !!incomingTasks[key]; });
         const incomingMetrics = incoming.metrics && typeof incoming.metrics === "object" ? incoming.metrics : {};
         Object.keys(clean.metrics).forEach((key) => { clean.metrics[key] = String(incomingMetrics[key] || ""); });
+        const incomingEntries = Array.isArray(incoming.proteinEntries) ? incoming.proteinEntries : [];
+        clean.proteinEntries = incomingEntries.map(normalizeProteinEntry).filter(Boolean).slice(-80);
+        if (!clean.proteinEntries.length && toNumber(incomingMetrics.proteinGrams) > 0) {
+          clean.proteinEntries.push({
+            id: `legacy-protein-${planDay.date}`,
+            name: "Manual protein",
+            grams: Math.round(toNumber(incomingMetrics.proteinGrams)),
+            quality: "custom",
+            slot: "evening",
+            stomach: "safe",
+            createdAt: typeof incoming.updatedAt === "string" ? incoming.updatedAt : new Date().toISOString()
+          });
+        }
         const incomingSignals = incoming.signals && typeof incoming.signals === "object" ? incoming.signals : {};
         ["kneePain", "shinPain", "energy", "soreness"].forEach((key) => {
           if (["green", "yellow", "red"].includes(incomingSignals[key])) clean.signals[key] = incomingSignals[key];
@@ -2307,6 +2704,12 @@
       });
       const sourceGear = source.gear && typeof source.gear === "object" ? source.gear : {};
       gear.forEach(([id]) => { next.gear[id] = !!sourceGear[id]; });
+      const sourceFuel = source.fuelKit && typeof source.fuelKit === "object" ? source.fuelKit : {};
+      fuelKit.forEach(([id]) => { next.fuelKit[id] = !!sourceFuel[id]; });
+      next.proteinFoods = Array.isArray(source.proteinFoods)
+        ? source.proteinFoods.map(normalizeProteinFood).filter(Boolean).slice(-30)
+        : [];
+      Object.values(next.days).forEach(syncDailyDerived);
       return next;
     }
     function loadStore() {
@@ -2379,7 +2782,7 @@
       const mainDone = !!state.complete || !!state.tasks[mainTask];
       const signalDone = !!state.tasks.body;
       const recoveryDone = !!state.tasks.sleep || toNumber(state.metrics.sleepHours) >= 6.5 || state.readiness === "red";
-      const nutritionDone = !!state.tasks.dietProtein || toNumber(state.metrics.proteinGrams) >= 120;
+      const nutritionDone = proteinTotal(state) >= PROTEIN_MIN;
       const hydrationDone = !!state.tasks.hydration || toNumber(state.metrics.waterLiters) >= 2.5;
       const notesDone = !!(state.signals.notes || "").trim() || !!state.tasks.gym || planDay.type === "gear" || planDay.type === "mobility";
       let score = 0;
@@ -2401,6 +2804,7 @@
       let redFlags = 0;
       let maxStairs = 0;
       let maxRunWalk = 0;
+      let proteinDays = 0;
       plan.forEach((planDay) => {
         const state = dayForPlayer(playerId, planDay.date);
         const score = stageScore(planDay, state);
@@ -2408,6 +2812,7 @@
         if (weekLabel(planDay.date) === week) weekTotal += score;
         if (state.complete) cleared += 1;
         if (isBadSignal(state)) redFlags += 1;
+        if (proteinTotal(state) >= PROTEIN_MIN) proteinDays += 1;
         maxStairs = Math.max(maxStairs, toNumber(state.metrics.stairsMinutes));
         maxRunWalk = Math.max(maxRunWalk, toNumber(state.metrics.runWalkMinutes));
       });
@@ -2428,6 +2833,7 @@
         streak: streakCountForPlayer(playerId),
         readinessIndex,
         gearPct: percent(gearDone, gear.length),
+        proteinDays,
         redFlags,
         today: dayForPlayer(playerId, activeDay().date),
         todayScore: stageScore(activeDay(), dayForPlayer(playerId, activeDay().date)),
@@ -2487,6 +2893,7 @@
         readiness: "green",
         tasks: { stairs:false, runWalk:false, gym:false, dietProtein:false, hydration:false, sleep:false, body:false },
         metrics: { stairsMinutes:"", runWalkMinutes:"", sleepHours:"", proteinGrams:"", waterLiters:"" },
+        proteinEntries: [],
         signals: { kneePain:"green", shinPain:"green", energy:"green", soreness:"green", notes:"" }
       };
     }
@@ -2498,6 +2905,7 @@
       const data = loadStore();
       const day = getDay(data, date);
       updater(day, data);
+      syncDailyDerived(day);
       saveStore(data);
       renderAll();
     }
@@ -2561,6 +2969,70 @@
     function toNumber(value) {
       const n = Number.parseFloat(String(value || "").replace(/[^\d.]/g, ""));
       return Number.isFinite(n) ? n : 0;
+    }
+    function normalizeProteinFood(food) {
+      if (!food || typeof food !== "object") return null;
+      const name = String(food.name || "").trim().slice(0, 42);
+      const grams = Math.round(toNumber(food.grams));
+      if (!name || grams <= 0) return null;
+      return {
+        id: String(food.id || `custom-${Date.now()}`).slice(0, 60),
+        name,
+        grams,
+        quality: ["strong", "support", "custom"].includes(food.quality) ? food.quality : "custom",
+        slot: ["morning", "lunch", "evening", "night"].includes(food.slot) ? food.slot : "evening",
+        stomach: ["safe", "heavy", "avoid"].includes(food.stomach) ? food.stomach : "safe"
+      };
+    }
+    function normalizeProteinEntry(entry) {
+      const food = normalizeProteinFood(entry);
+      if (!food) return null;
+      return {
+        ...food,
+        id: String(entry.id || `entry-${Date.now()}-${Math.random().toString(16).slice(2)}`),
+        createdAt: typeof entry.createdAt === "string" ? entry.createdAt : new Date().toISOString()
+      };
+    }
+    function proteinEntries(day) {
+      return Array.isArray(day.proteinEntries) ? day.proteinEntries : [];
+    }
+    function legacyProteinGrams(day) {
+      return day.proteinEntries === undefined ? toNumber(day.metrics.proteinGrams) : 0;
+    }
+    function proteinTotal(day) {
+      const entries = proteinEntries(day);
+      if (entries.length) return entries.reduce((sum, entry) => sum + toNumber(entry.grams), 0);
+      return legacyProteinGrams(day);
+    }
+    function proteinStatus(day) {
+      const total = proteinTotal(day);
+      if (total >= PROTEIN_TARGET) return "closed";
+      if (total >= PROTEIN_MIN) return "good";
+      if (total >= 80) return "needs";
+      return "low";
+    }
+    function proteinStatusMeta(day) {
+      const total = Math.round(proteinTotal(day));
+      if (total >= PROTEIN_TARGET) return `${total}/${PROTEIN_TARGET}g target closed`;
+      if (total >= PROTEIN_MIN) return `${total}g good enough`;
+      const left = Math.max(0, PROTEIN_MIN - total);
+      return `${left}g to recovery minimum`;
+    }
+    function proteinCoachCopy(day) {
+      const total = proteinTotal(day);
+      if (day.readiness === "red") return "Training is off. Protein still counts.";
+      if (day.readiness === "yellow") return "Reduce load. Keep protein.";
+      if (total >= PROTEIN_TARGET) return "Protein target closed.";
+      if (total >= PROTEIN_MIN) return "Good enough. Do not overthink.";
+      if (total >= 80) return "One more protein hit. Recovery is not optional.";
+      return "Start with one simple protein hit.";
+    }
+    function syncDailyDerived(day) {
+      const total = proteinTotal(day);
+      day.metrics.proteinGrams = total ? String(Math.round(total)) : "";
+      day.tasks.dietProtein = total >= PROTEIN_MIN;
+      if (toNumber(day.metrics.waterLiters) >= 2.5) day.tasks.hydration = true;
+      if (toNumber(day.metrics.sleepHours) >= 6.5) day.tasks.sleep = true;
     }
     function percent(value, goal) {
       if (!goal) return 0;
@@ -2641,7 +3113,7 @@
         checks: items.reduce((sum, { state }) => sum + Object.values(state.tasks).filter(Boolean).length, 0),
         stairs: items.reduce((sum, { state }) => sum + toNumber(state.metrics.stairsMinutes), 0),
         runWalk: items.reduce((sum, { state }) => sum + toNumber(state.metrics.runWalkMinutes), 0),
-        proteinDays: items.filter(({ state }) => state.tasks.dietProtein || toNumber(state.metrics.proteinGrams) >= 120).length,
+        proteinDays: items.filter(({ state }) => proteinTotal(state) >= PROTEIN_MIN).length,
         hydrationDays: items.filter(({ state }) => state.tasks.hydration || toNumber(state.metrics.waterLiters) >= 2.5).length,
         sleepAvg: loggedSleep.length ? loggedSleep.reduce((a, b) => a + b, 0) / loggedSleep.length : 0,
         redFlags: items.filter(({ state }) => isBadSignal(state)).length,
@@ -2737,6 +3209,14 @@
       if (state.readiness === "red") {
         const recoveryTask = recoveryOrder.find((key) => !state.tasks[key]);
         if (recoveryTask) {
+          if (recoveryTask === "dietProtein" && proteinTotal(state) < PROTEIN_MIN) {
+            return {
+              kind: "protein",
+              title: "Add one protein hit",
+              detail: "Red day removes training. Recovery fuel still counts.",
+              button: "Protein"
+            };
+          }
           const recoveryTitle = effectiveTaskTitle(planDay, state, recoveryTask);
           return {
             kind: "task",
@@ -2769,6 +3249,14 @@
       const supportOrder = ["dietProtein", "hydration", "sleep"];
       const supportTask = supportOrder.find((key) => !state.tasks[key]);
       if (supportTask) {
+        if (supportTask === "dietProtein" && proteinTotal(state) < PROTEIN_MIN) {
+          return {
+            kind: "protein",
+            title: "Add one protein hit",
+            detail: state.readiness === "yellow" ? "Reduce load, keep protein. One simple hit moves recovery forward." : "Recovery is the adaptation. Log food, then close the day.",
+            button: "Protein"
+          };
+        }
         const supportTitle = effectiveTaskTitle(planDay, state, supportTask);
         return {
           kind: "task",
@@ -2868,7 +3356,7 @@
       } else {
         orders.push("Hydration handled. Do not chase more training tonight.");
       }
-      if (!state.tasks.dietProtein && toNumber(state.metrics.proteinGrams) < 120) {
+      if (proteinTotal(state) < PROTEIN_MIN) {
         orders.push("Protein meal before sleep. Recovery is part of the score.");
       } else {
         orders.push("Protein banked. Keep dinner normal, not heroic.");
@@ -2923,6 +3411,172 @@
           </div>
         </div>
       `;
+    }
+
+    function proteinFoodOptions(data = loadStore()) {
+      const custom = Array.isArray(data.proteinFoods) ? data.proteinFoods : [];
+      const byName = new Map();
+      [...proteinPresets, ...custom].forEach((food) => {
+        const clean = normalizeProteinFood(food);
+        if (clean) byName.set(clean.name.toLowerCase(), clean);
+      });
+      return [...byName.values()];
+    }
+    function addProteinEntry(food, date = activeDay().date) {
+      const clean = normalizeProteinFood(food);
+      if (!clean) {
+        hapticTap();
+        toast("Add food and grams");
+        return;
+      }
+      const data = loadStore();
+      const day = getDay(data, date);
+      day.started = true;
+      day.proteinEntries = proteinEntries(day);
+      day.proteinEntries.push({
+        ...clean,
+        id: `entry-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        createdAt: new Date().toISOString()
+      });
+      syncDailyDerived(day);
+      if (!proteinPresets.some((item) => item.name.toLowerCase() === clean.name.toLowerCase())) {
+        const exists = (data.proteinFoods || []).some((item) => item.name.toLowerCase() === clean.name.toLowerCase());
+        if (!exists) data.proteinFoods = [...(data.proteinFoods || []), clean].slice(-30);
+      }
+      saveStore(data);
+      hapticSave();
+      renderAll();
+      notifyDuelEvent("task", `${clean.name} +${clean.grams}g protein`, date);
+      toast(`+${clean.grams}g protein`);
+    }
+    function removeProteinEntry(entryId, date = activeDay().date) {
+      const data = loadStore();
+      const day = getDay(data, date);
+      day.proteinEntries = proteinEntries(day).filter((entry) => entry.id !== entryId);
+      syncDailyDerived(day);
+      saveStore(data);
+      hapticTap();
+      renderAll();
+      toast("Protein removed");
+    }
+    function setSegment(containerId, value) {
+      document.querySelectorAll(`#${containerId} button`).forEach((button) => {
+        const key = containerId === "proteinQuality" ? "proteinQuality" : "proteinStomach";
+        button.classList.toggle("active", button.dataset[key] === value);
+      });
+    }
+    function openProteinSheet(food = null) {
+      const sheet = document.getElementById("proteinSheet");
+      if (!sheet) return;
+      const clean = food ? normalizeProteinFood(food) : null;
+      setValue("proteinFoodName", clean?.name || "");
+      setValue("proteinFoodGrams", clean?.grams || "");
+      setValue("proteinFoodSlot", clean?.slot || "evening");
+      setSegment("proteinQuality", clean?.quality || "strong");
+      setSegment("proteinStomach", clean?.stomach || "safe");
+      sheet.classList.add("active");
+    }
+    function closeProteinSheet() {
+      document.getElementById("proteinSheet")?.classList.remove("active");
+    }
+    function saveProteinEntryFromSheet() {
+      addProteinEntry({
+        name: document.getElementById("proteinFoodName").value.trim(),
+        grams: document.getElementById("proteinFoodGrams").value.trim(),
+        slot: document.getElementById("proteinFoodSlot").value,
+        quality: document.querySelector("#proteinQuality .active")?.dataset.proteinQuality || "custom",
+        stomach: document.querySelector("#proteinStomach .active")?.dataset.proteinStomach || "safe"
+      });
+      closeProteinSheet();
+    }
+    function renderProtein() {
+      const data = loadStore();
+      const day = getDay(data, activeDay().date);
+      const total = Math.round(proteinTotal(day));
+      const minLeft = Math.max(0, PROTEIN_MIN - total);
+      const targetLeft = Math.max(0, PROTEIN_TARGET - total);
+      const entries = proteinEntries(day);
+      const options = proteinFoodOptions(data);
+      const hero = document.getElementById("proteinHero");
+      if (hero) {
+        const hitCopy = total >= PROTEIN_TARGET ? "Target closed" : total >= PROTEIN_MIN ? "Recovery minimum hit" : `${minLeft}g to minimum`;
+        hero.style.setProperty("--pct", percent(total, PROTEIN_TARGET));
+        hero.innerHTML = `
+          <h2>${total} / ${PROTEIN_TARGET}g</h2>
+          <p>${escapeHtml(proteinCoachCopy(day))}</p>
+          <div class="protein-meter" aria-hidden="true"><span></span></div>
+          <div class="protein-hero-foot">
+            <span><b>${targetLeft}</b>g left</span>
+            <span><b>${entries.length}</b>hits logged</span>
+            <span class="status"><b>${escapeHtml(hitCopy)}</b>status</span>
+          </div>
+        `;
+      }
+      const select = document.getElementById("proteinPresetSelect");
+      if (select) select.innerHTML = options.map((food) => `<option value="${escapeHtml(food.id)}">${escapeHtml(food.name)} -> ${food.grams}g</option>`).join("");
+      const quick = document.getElementById("proteinQuick");
+      if (quick) {
+        quick.innerHTML = options.slice(0, 10).map((food) => `
+          <button class="food-chip ${food.quality === "support" ? "support" : "power"}" data-protein-food="${escapeHtml(food.id)}" type="button" aria-label="Add ${escapeHtml(food.name)}, ${food.grams} grams protein">
+            <strong>${escapeHtml(food.name)} <span>+${food.grams}g</span></strong>
+            <span>${escapeHtml(food.slot)} · ${escapeHtml(food.quality)} · ${escapeHtml(food.stomach)}</span>
+          </button>
+        `).join("");
+      }
+      const log = document.getElementById("proteinLog");
+      if (log) {
+        log.innerHTML = entries.length ? entries.slice().reverse().map((entry) => `
+          <div class="food-row">
+            <span><b>${escapeHtml(entry.name)}</b><span>${escapeHtml(entry.slot)} · ${escapeHtml(entry.quality)} · ${escapeHtml(entry.stomach)}</span></span>
+            <span class="grams">${Math.round(toNumber(entry.grams))}g</span>
+            <button class="icon-btn" data-remove-protein="${escapeHtml(entry.id)}" type="button" aria-label="Remove ${escapeHtml(entry.name)}">×</button>
+          </div>
+        `).join("") : `<p class="small">No protein logged yet. Add one simple hit.</p>`;
+      }
+      const weekBars = document.getElementById("proteinWeekBars");
+      if (weekBars) {
+        weekBars.innerHTML = currentWeek(data).days.slice(0, 7).map(({ planDay, state }) => {
+          const grams = Math.round(proteinTotal(state));
+          const cls = grams >= PROTEIN_TARGET ? "target" : grams >= PROTEIN_MIN ? "min" : "";
+          return `<span class="protein-day-bar ${cls}" style="--value:${percent(grams, PROTEIN_TARGET)}"><i></i><b>${escapeHtml(planDay.dow.slice(0, 3))}</b><span>${grams}</span></span>`;
+        }).join("");
+      }
+      renderFuelKit(data);
+      document.querySelectorAll("[data-protein-food]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const food = options.find((item) => item.id === button.dataset.proteinFood);
+          addProteinEntry(food);
+        });
+        button.addEventListener("contextmenu", (event) => {
+          event.preventDefault();
+          const food = options.find((item) => item.id === button.dataset.proteinFood);
+          openProteinSheet(food);
+        });
+      });
+      document.querySelectorAll("[data-remove-protein]").forEach((button) => {
+        button.addEventListener("click", () => removeProteinEntry(button.dataset.removeProtein));
+      });
+    }
+    function renderFuelKit(data) {
+      const wrap = document.getElementById("fuelKit");
+      if (!wrap) return;
+      wrap.innerHTML = fuelKit.map(([id, title, detail]) => `
+        <button class="fuel-item ${data.fuelKit?.[id] ? "is-done" : ""}" data-fuel="${id}" type="button" aria-pressed="${data.fuelKit?.[id] ? "true" : "false"}">
+          <span class="check-box">${data.fuelKit?.[id] ? "OK" : ""}</span>
+          <span><b>${escapeHtml(title)}</b><span>${escapeHtml(detail)}</span></span>
+        </button>
+      `).join("");
+      document.querySelectorAll("[data-fuel]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const next = loadStore();
+          next.fuelKit = next.fuelKit || {};
+          next.fuelKit[button.dataset.fuel] = !next.fuelKit[button.dataset.fuel];
+          saveStore(next);
+          hapticTap();
+          renderAll();
+          toast(next.fuelKit[button.dataset.fuel] ? "Fuel kit locked" : "Fuel kit unchecked");
+        });
+      });
     }
 
     function renderToday() {
@@ -3046,6 +3700,11 @@
         toast("Pick today's signal");
         return;
       }
+      if (action.kind === "protein") {
+        showTab("protein");
+        toast("Add one protein hit");
+        return;
+      }
       if (action.kind === "task" && action.task) {
         const data = loadStore();
         const day = getDay(data, date);
@@ -3084,6 +3743,16 @@
         button.addEventListener("click", () => {
           if (button.disabled) {
             toast("Start stage first");
+            return;
+          }
+          if (button.dataset.check === "dietProtein") {
+            hapticTap();
+            if (proteinTotal(state) < PROTEIN_MIN) {
+              showTab("protein");
+              toast("Log protein first");
+            } else {
+              toast("Protein banked");
+            }
             return;
           }
           button.classList.add("just-checked");
@@ -3157,7 +3826,7 @@
               <span><b>${summary.weekTotal}</b>week</span>
               <span><b>${summary.streak}</b>streak</span>
               <span><b>${summary.readinessIndex}%</b>ready</span>
-              <span><b>${summary.gearPct}%</b>loadout</span>
+              <span><b>${summary.proteinDays}</b>protein</span>
             </div>
             <div class="stamp-row">${(summary.stamps.length ? summary.stamps : ["Basecamp"]).map((stamp) => `<span class="stamp">${escapeHtml(stamp)}</span>`).join("")}</div>
           </article>
@@ -3380,7 +4049,7 @@
       setValue("stairsMinutes", day.metrics.stairsMinutes);
       setValue("runWalkMinutes", day.metrics.runWalkMinutes);
       setValue("sleepHours", day.metrics.sleepHours);
-      setValue("proteinGrams", day.metrics.proteinGrams);
+      setValue("proteinGrams", proteinTotal(day) ? `${Math.round(proteinTotal(day))}g` : "");
       setValue("waterLiters", day.metrics.waterLiters);
       setValue("kneePain", day.signals.kneePain);
       setValue("shinPain", day.signals.shinPain);
@@ -3436,7 +4105,6 @@
         day.metrics.stairsMinutes = document.getElementById("stairsMinutes").value.trim();
         day.metrics.runWalkMinutes = document.getElementById("runWalkMinutes").value.trim();
         day.metrics.sleepHours = document.getElementById("sleepHours").value.trim();
-        day.metrics.proteinGrams = document.getElementById("proteinGrams").value.trim();
         day.metrics.waterLiters = document.getElementById("waterLiters").value.trim();
         day.signals.kneePain = document.getElementById("kneePain").value;
         day.signals.shinPain = document.getElementById("shinPain").value;
@@ -3444,9 +4112,9 @@
         day.signals.soreness = document.getElementById("soreness").value;
         day.signals.notes = document.getElementById("notes").value.trim();
         day.tasks.body = true;
-        if (toNumber(day.metrics.proteinGrams) >= 120) day.tasks.dietProtein = true;
         if (toNumber(day.metrics.waterLiters) >= 2.5) day.tasks.hydration = true;
         if (toNumber(day.metrics.sleepHours) >= 6.5) day.tasks.sleep = true;
+        syncDailyDerived(day);
         updateReadinessFromSignals(day);
       });
       toast("Readiness saved");
@@ -3537,6 +4205,7 @@
               <span><b>${stats.coins}/${group.days.length}</b>stages</span>
               <span><b>${Math.round(stats.stairs)}m</b>stairs</span>
               <span><b>${Math.round(stats.runWalk)}m</b>run/walk</span>
+              <span><b>${stats.proteinDays}</b>protein</span>
               <span><b>${stats.redFlags}</b>red flags</span>
             </div>
             <div class="bar" aria-hidden="true"><div class="bar-fill" style="--pct:${percent(stats.coins, group.days.length)}"></div></div>
@@ -4007,6 +4676,7 @@
           subscription: subscription.toJSON(),
           preferences: {
             morning: true,
+            protein: true,
             evening: true,
             friendCleared: true,
             rivalry: true,
@@ -4147,6 +4817,7 @@
     function showTab(tab) {
       if (!document.getElementById("view-" + tab)) tab = "today";
       localStorage.setItem(TAB_KEY, tab);
+      document.body.dataset.tab = tab;
       document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === "view-" + tab));
       const navTab = tab === "backup" ? "today" : tab;
       document.querySelectorAll(".nav-btn").forEach((button) => {
@@ -4205,11 +4876,27 @@
         const stats = summarizeDays(group.days);
         lines.push(`- ${group.label}: ${stats.coins}/${group.days.length} stages, ${Math.round(stats.stairs)} min stairs, ${Math.round(stats.runWalk)} min run/walk, ${stats.sleepAvg ? stats.sleepAvg.toFixed(1) : "-"}h avg sleep, ${stats.proteinDays} protein days, ${stats.hydrationDays} hydration days, ${stats.redFlags} red signal days.`);
       });
+      lines.push("", "## Protein Week");
+      weekGroups(data).forEach((group) => {
+        const totals = group.days.map(({ state }) => proteinTotal(state));
+        const avg = totals.length ? Math.round(totals.reduce((a, b) => a + b, 0) / totals.length) : 0;
+        const targetHits = group.days.filter(({ state }) => proteinTotal(state) >= PROTEIN_TARGET).length;
+        const minHits = group.days.filter(({ state }) => proteinTotal(state) >= PROTEIN_MIN).length;
+        const missed = group.days.filter(({ state }) => proteinTotal(state) < PROTEIN_MIN).length;
+        lines.push(`- ${group.label}: avg=${avg}g, recovery_min_days=${minHits}/${group.days.length}, target_days=${targetHits}/${group.days.length}, missed_recovery_fuel_days=${missed}.`);
+      });
+      lines.push("", "## Protein Day Logs");
+      allLoggedDays(data).forEach(({ planDay, state }) => {
+        const total = Math.round(proteinTotal(state));
+        const entries = proteinEntries(state);
+        const foods = entries.length ? entries.map((entry) => `${entry.name}:${Math.round(toNumber(entry.grams))}g:${entry.slot}:${entry.quality}:${entry.stomach}`).join(", ") : "none";
+        lines.push(`- ${planDay.date}: protein_total=${total}g, hit_min=${total >= PROTEIN_MIN}, hit_target=${total >= PROTEIN_TARGET}, foods=${foods}`);
+      });
       lines.push("", "## Day Logs");
       allLoggedDays(data).forEach(({ planDay, state }) => {
         const checks = effectiveQuickChecks(planDay, state).filter(([id]) => state.tasks[id]).map(([, title]) => title).join(", ") || "none";
         const notes = state.signals.notes ? ` Notes: ${state.signals.notes}` : "";
-        lines.push(`- ${planDay.date} ${planDay.label}: stage=${state.complete ? "cleared" : "open"}, readiness=${state.readiness}, stairs=${toNumber(state.metrics.stairsMinutes)}m, runWalk=${toNumber(state.metrics.runWalkMinutes)}m, sleep=${toNumber(state.metrics.sleepHours) || "-"}h, protein=${toNumber(state.metrics.proteinGrams) || "-"}g, water=${toNumber(state.metrics.waterLiters) || "-"}L, knee=${state.signals.kneePain}, shin=${state.signals.shinPain}, energy=${state.signals.energy}, soreness=${state.signals.soreness}, checks=${checks}.${notes}`);
+        lines.push(`- ${planDay.date} ${planDay.label}: stage=${state.complete ? "cleared" : "open"}, readiness=${state.readiness}, stairs=${toNumber(state.metrics.stairsMinutes)}m, runWalk=${toNumber(state.metrics.runWalkMinutes)}m, sleep=${toNumber(state.metrics.sleepHours) || "-"}h, protein=${proteinTotal(state) || "-"}g, water=${toNumber(state.metrics.waterLiters) || "-"}L, knee=${state.signals.kneePain}, shin=${state.signals.shinPain}, energy=${state.signals.energy}, soreness=${state.signals.soreness}, checks=${checks}.${notes}`);
       });
       lines.push("", "## Gear");
       gear.forEach(([id, title]) => {
@@ -4337,6 +5024,7 @@
     function renderAll() {
       renderIdentityGate();
       renderToday();
+      renderProtein();
       renderDuel();
       renderCalendar();
       renderGear();
@@ -4363,6 +5051,24 @@
       document.getElementById("downloadCoachReport").addEventListener("click", downloadCoachReport);
       document.getElementById("timerToggle").addEventListener("click", toggleTrailTimer);
       document.getElementById("timerSave").addEventListener("click", saveTrailTimer);
+      document.getElementById("openProteinSheet").addEventListener("click", () => openProteinSheet());
+      document.getElementById("closeProteinSheet").addEventListener("click", closeProteinSheet);
+      document.getElementById("saveProteinEntry").addEventListener("click", saveProteinEntryFromSheet);
+      document.getElementById("addSelectedProtein").addEventListener("click", () => {
+        const data = loadStore();
+        const options = proteinFoodOptions(data);
+        const selected = document.getElementById("proteinPresetSelect").value;
+        addProteinEntry(options.find((food) => food.id === selected));
+      });
+      document.getElementById("proteinSheet").addEventListener("click", (event) => {
+        if (event.target.id === "proteinSheet") closeProteinSheet();
+      });
+      document.querySelectorAll("#proteinQuality button").forEach((button) => {
+        button.addEventListener("click", () => setSegment("proteinQuality", button.dataset.proteinQuality));
+      });
+      document.querySelectorAll("#proteinStomach button").forEach((button) => {
+        button.addEventListener("click", () => setSegment("proteinStomach", button.dataset.proteinStomach));
+      });
       document.querySelectorAll("[data-timer-mode]").forEach((button) => {
         button.addEventListener("click", () => setTimerMode(button.dataset.timerMode));
       });
@@ -4432,7 +5138,7 @@
     function openInitialTab() {
       const tab = new URLSearchParams(location.search).get("tab");
       const saved = localStorage.getItem(TAB_KEY);
-      const allowed = ["today", "train", "duel", "calendar", "body", "backup"];
+      const allowed = ["today", "protein", "train", "duel", "calendar", "body", "backup"];
       if (allowed.includes(tab)) showTab(tab);
       else if (allowed.includes(saved)) showTab(saved);
     }

@@ -51,6 +51,7 @@ Deno.serve(async (request) => {
     duel_code: DUEL_CODE,
     player_id: body.playerId,
     morning_enabled: prefs.morning ?? true,
+    protein_enabled: prefs.protein ?? true,
     evening_enabled: prefs.evening ?? true,
     friend_cleared_enabled: prefs.friendCleared ?? true,
     rivalry_enabled: prefs.rivalry ?? true,

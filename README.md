@@ -49,7 +49,7 @@ No build command is needed. The publish directory is the folder itself.
 5. Launch from the Home Screen icon.
 
 After the first successful load, the service worker caches the app shell so it can open offline.
-Where supported, Home Screen shortcuts can open Today, Duel, Signal, or Progress & Backup directly.
+Where supported, Home Screen shortcuts can open Today, Protein, Duel, Signal, or Progress & Backup directly.
 
 ## Notifications on iPhone
 
@@ -59,13 +59,14 @@ iOS notifications work only after the deployed HTTPS app is added to the Home Sc
 2. Choose **I am Tarun** or **I am Sudhanshu**.
 3. Use the notification sheet that appears: tap **Enable**, then **Test**.
 4. If the sheet was skipped, go to **Progress & Backup** and use **Allow** / **Test notification**.
-5. After permission is granted, this device receives morning/night reminders and opponent duel alerts. Your own ticks stay quiet and show only in-app feedback.
+5. After permission is granted, this device receives morning/protein/night reminders and opponent duel alerts. Your own ticks stay quiet and show only in-app feedback.
 
 The service worker also listens for real push payloads from the Supabase-backed push pipeline. iOS does not allow reliable notification behavior from a normal Safari tab.
 
 Scheduled reminders, when the Supabase cron pipeline is enabled:
 
 - **06:00 IST**: morning stage reminder with days left.
+- **15:00 IST**: protein check only when the synced local log is below 60 g.
 - **22:00 IST**: night progress summary and recovery closeout.
 - **On task/stage/gear completion**: the opponent gets a duel notification such as `Tarun logged Stairs done` when they have alerts enabled.
 
@@ -84,6 +85,8 @@ The app tracks only decision-changing trek-prep signals:
 
 - top-of-Today next action, so the first screen tells you exactly what to do now
 - Green/Yellow/Red adaptive Today checklist: full work, reduced work, or recovery-only while keeping food and sleep
+- Protein tab as a trek fuel system: day-wise food entries, timing, quality, stomach tag, weekly bars, and 105g/130g thresholds
+- Protein presets for whey, milk, buttermilk, curd, Greek yogurt, paneer, soy chunks, tofu, tempeh, edamame, dal, eggs, chicken, fish, and prawns
 - Today shortcut to Progress & Backup for proof goals, exports, and device settings
 - Progress opens as a Today detail view with a clear return path
 - daily Stage completion and streak
@@ -123,7 +126,7 @@ The app works without Supabase. To enable cross-device sync and push registratio
 
 1. Create a Supabase project.
 2. Run `supabase/schema.sql`.
-3. Deploy the `duel-sync` and `register-push` Edge Functions under `supabase/functions`.
+3. Deploy the `duel-sync`, `register-push`, `duel-event`, and `send-reminders` Edge Functions under `supabase/functions`.
 4. Fill `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `VAPID_PUBLIC_KEY` constants in `index.html`.
 5. Configure VAPID private key and subject as Supabase function secrets.
 

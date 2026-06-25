@@ -30,6 +30,13 @@
       "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
+      "name": "Protein",
+      "short_name": "Protein",
+      "description": "Log recovery fuel for today.",
+      "url": "./index.html?tab=protein",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
       "name": "Signal",
       "short_name": "Signal",
       "description": "Log pain, sleep, energy, and effort.",

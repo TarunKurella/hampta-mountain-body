@@ -10,9 +10,10 @@ const corsHeaders = {
 const DUEL_CODE = "HAMPTA20";
 const TREK_START = "2026-07-20";
 const START_DATE = "2026-06-24";
-const VALID_TYPES = new Set(["morning", "evening"]);
+const PROTEIN_AFTERNOON_MIN = 60;
+const VALID_TYPES = new Set(["morning", "protein", "evening"]);
 
-type ReminderType = "morning" | "evening";
+type ReminderType = "morning" | "protein" | "evening";
 
 type PushRow = {
   id: string;
@@ -59,20 +60,26 @@ Deno.serve(async (request) => {
 
   const { data: preferenceRows, error: preferenceError } = await supabase
     .from("notification_preferences")
-    .select("player_id, morning_enabled, evening_enabled")
+    .select("player_id, morning_enabled, protein_enabled, evening_enabled")
     .eq("duel_code", DUEL_CODE);
   if (preferenceError) return json({ error: preferenceError.message }, 500);
   const preferences = Object.fromEntries((preferenceRows || []).map((row) => [row.player_id, row]));
 
   const summary = await buildSummary(supabase);
   const deduped = dedupeSubscriptions((subscriptions || []) as PushRow[]);
+  const targetRows = deduped.filter((row) => {
+    const prefs = preferences[row.player_id];
+    if (type === "morning") return prefs?.morning_enabled !== false;
+    if (type === "protein") return prefs?.protein_enabled !== false && summary.players[row.player_id].proteinToday < PROTEIN_AFTERNOON_MIN;
+    return prefs?.evening_enabled !== false;
+  });
   if (body.dryRun) {
     return json({
       ok: true,
       dryRun: true,
       type,
-      targetCount: deduped.length,
-      samplePayloads: deduped.slice(0, 2).map((row) => buildPayload(type, row.player_id, summary)),
+      targetCount: targetRows.length,
+      samplePayloads: targetRows.slice(0, 2).map((row) => buildPayload(type, row.player_id, summary)),
     });
   }
 
@@ -80,14 +87,10 @@ Deno.serve(async (request) => {
   let disabled = 0;
   const failures: string[] = [];
 
-  for (const row of deduped) {
-    const prefs = preferences[row.player_id];
-    if (type === "morning" && prefs?.morning_enabled === false) continue;
-    if (type === "evening" && prefs?.evening_enabled === false) continue;
-
+  for (const row of targetRows) {
     const payload = JSON.stringify(buildPayload(type, row.player_id, summary));
     try {
-      await webpush.sendNotification(row.subscription, payload, { TTL: type === "morning" ? 21600 : 14400 });
+      await webpush.sendNotification(row.subscription, payload, { TTL: type === "morning" ? 21600 : type === "protein" ? 7200 : 14400 });
       sent += 1;
     } catch (err) {
       const statusCode = Number((err as { statusCode?: number }).statusCode || 0);
@@ -117,8 +120,8 @@ async function buildSummary(supabase: ReturnType<typeof createClient>) {
   if (error) throw error;
 
   const players = {
-    tarun: { cleared: 0, score: 0, todayDone: false },
-    sudhanshu: { cleared: 0, score: 0, todayDone: false },
+    tarun: { cleared: 0, score: 0, todayDone: false, proteinToday: 0 },
+    sudhanshu: { cleared: 0, score: 0, todayDone: false, proteinToday: 0 },
   };
 
   for (const row of logs || []) {
@@ -126,7 +129,10 @@ async function buildSummary(supabase: ReturnType<typeof createClient>) {
     if (!players[playerId]) continue;
     if (row.status === "cleared") players[playerId].cleared += 1;
     players[playerId].score += Number(row.score || 0);
-    if (row.log_date === today && row.status === "cleared") players[playerId].todayDone = true;
+    if (row.log_date === today) {
+      if (row.status === "cleared") players[playerId].todayDone = true;
+      players[playerId].proteinToday = proteinTotal(row.payload);
+    }
   }
 
   return {
@@ -151,6 +157,16 @@ function buildPayload(type: ReminderType, playerId: "tarun" | "sudhanshu", summa
     };
   }
 
+  if (type === "protein") {
+    const grams = Math.round(player.proteinToday || 0);
+    return {
+      title: `Protein check: ${grams}/${PROTEIN_AFTERNOON_MIN}g by 3pm`,
+      body: `${name}, add one simple protein hit now. Afternoon fuel keeps the 130g target realistic.`,
+      tag: `hampta-protein-${summary.today}-${playerId}`,
+      url: "./index.html?tab=protein",
+    };
+  }
+
   const lead = player.score - opponent.score;
   const leadText = lead === 0 ? "Duel level" : lead > 0 ? `You lead by ${lead}` : `You trail by ${Math.abs(lead)}`;
   return {
@@ -159,6 +175,23 @@ function buildPayload(type: ReminderType, playerId: "tarun" | "sudhanshu", summa
     tag: `hampta-evening-${summary.today}-${playerId}`,
     url: "./index.html?tab=body",
   };
+}
+
+function proteinTotal(payload: unknown) {
+  if (!payload || typeof payload !== "object") return 0;
+  const day = payload as {
+    proteinEntries?: Array<{ grams?: unknown }>;
+    metrics?: { proteinGrams?: unknown };
+  };
+  if (Array.isArray(day.proteinEntries) && day.proteinEntries.length) {
+    return day.proteinEntries.reduce((sum, entry) => sum + numberFrom(entry?.grams), 0);
+  }
+  return numberFrom(day.metrics?.proteinGrams);
+}
+
+function numberFrom(value: unknown) {
+  const n = Number.parseFloat(String(value || "").replace(/[^\d.]/g, ""));
+  return Number.isFinite(n) ? n : 0;
 }
 
 function dedupeSubscriptions(rows: PushRow[]) {

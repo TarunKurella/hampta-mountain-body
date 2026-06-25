@@ -47,6 +47,7 @@ create table if not exists public.notification_preferences (
   duel_code text not null references public.duels(code) on delete cascade,
   player_id text not null references public.duel_profiles(player_id) on delete cascade,
   morning_enabled boolean not null default true,
+  protein_enabled boolean not null default true,
   evening_enabled boolean not null default true,
   friend_cleared_enabled boolean not null default true,
   rivalry_enabled boolean not null default true,
